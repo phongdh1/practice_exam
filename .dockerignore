@@ -1,0 +1,14 @@
+node_modules
+.next
+dist
+.git
+_bmad-output
+.env
+.env.*
+!.env.example
+**/*.md
+**/.turbo
+**/coverage
+apps/admin/.next
+apps/web/.next
+apps/zalo-mini-app/dist

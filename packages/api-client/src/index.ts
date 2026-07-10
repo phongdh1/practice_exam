@@ -8,6 +8,7 @@ import type {
   AdminAuthAuditEntry,
   AdminCourseView,
   AdminDashboardKpis,
+  AdminNotificationsRecentResponse,
   AdminRoleType,
   AdminReconciliationDay,
   AdminRevenueReport,
@@ -56,6 +57,7 @@ import type {
 
 export const SETTINGS_QUERY_STALE_MS = 5 * 60 * 1000;
 export const DASHBOARD_QUERY_STALE_MS = 5 * 60 * 1000;
+export const ADMIN_NOTIFICATIONS_POLL_MS = 60_000;
 
 export interface ApiClientConfig {
   baseUrl: string;
@@ -127,6 +129,17 @@ export class ApiClient {
 
   listSubjects(): Promise<ApiResponse<SubjectCatalogItem[]>> {
     return this.request<SubjectCatalogItem[]>("/api/v1/subjects");
+  }
+
+  listSubjectsPaginated(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<ApiResponse<PaginatedResult<SubjectCatalogItem>>> {
+    const qs = new URLSearchParams();
+    if (params?.page !== undefined) qs.set("page", String(params.page));
+    if (params?.limit !== undefined) qs.set("limit", String(params.limit));
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    return this.request<PaginatedResult<SubjectCatalogItem>>(`/api/v1/subjects${suffix}`);
   }
 
   getFreeTierUsage(): Promise<ApiResponse<FreeTierUsageSummary>> {
@@ -853,6 +866,11 @@ export class ApiClient {
   adminGetDashboardKpis(): Promise<ApiResponse<AdminDashboardKpis>> {
     return this.request<AdminDashboardKpis>("/api/v1/admin/dashboard/kpis");
   }
+
+  adminListRecentNotifications(since?: string): Promise<ApiResponse<AdminNotificationsRecentResponse>> {
+    const qs = since ? `?since=${encodeURIComponent(since)}` : "";
+    return this.request<AdminNotificationsRecentResponse>(`/api/v1/admin/notifications/recent${qs}`);
+  }
 }
 
 export function createApiClient(config: ApiClientConfig): ApiClient {
@@ -874,6 +892,7 @@ export const queryKeys = {
   },
   subjects: {
     all: ["subjects"] as const,
+    catalogPage: (page: number, limit: number) => ["subjects", "catalog", page, limit] as const,
     detail: (id: string) => ["subjects", id] as const,
     admin: ["subjects", "admin"] as const,
   },
@@ -957,6 +976,9 @@ export const queryKeys = {
   },
   dashboard: {
     kpis: ["dashboard", "kpis"] as const,
+  },
+  notifications: {
+    recent: (since?: string) => ["notifications", "recent", since] as const,
   },
 };
 

@@ -3,6 +3,7 @@
 import { createApiClient, queryKeys } from "@practice-exam/api-client";
 import { disclaimerQueryOptions } from "@/lib/web-api";
 import {
+  CatalogPagination,
   CatalogSkeleton,
   CandidateFooter,
   DisclaimerGate,
@@ -12,15 +13,16 @@ import {
   SubjectCatalogGrid,
 } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useWebSession } from "@/components/web-session-provider";
 
 const apiClient = createApiClient({
   baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001",
 });
 
+const CATALOG_PAGE_SIZE = 12;
+
 async function fetchFreeTierUsage() {
-  // Optional-auth probe: guests get 401 without a session — must not redirect (public catalog).
   const res = await fetch("/api/entitlements/free-tier");
   if (res.status === 401) return null;
   if (!res.ok) throw new Error("Failed to load entitlements");
@@ -29,6 +31,8 @@ async function fetchFreeTierUsage() {
 
 export default function HomePage() {
   const { isAuthenticated, user } = useWebSession();
+  const [page, setPage] = useState(1);
+
   const {
     data: subjectsResponse,
     isLoading,
@@ -36,8 +40,8 @@ export default function HomePage() {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: queryKeys.subjects.all,
-    queryFn: () => apiClient.listSubjects(),
+    queryKey: queryKeys.subjects.catalogPage(page, CATALOG_PAGE_SIZE),
+    queryFn: () => apiClient.listSubjectsPaginated({ page, limit: CATALOG_PAGE_SIZE }),
   });
 
   const { data: disclaimerResponse } = useQuery(disclaimerQueryOptions);
@@ -48,7 +52,8 @@ export default function HomePage() {
     retry: false,
   });
 
-  const subjects = subjectsResponse?.data ?? [];
+  const catalog = subjectsResponse?.data;
+  const subjects = catalog?.items ?? [];
   const disclaimer = disclaimerResponse?.data ?? FALLBACK_PLATFORM_DISCLAIMER;
   const freeTierUsedBySubjectId = useMemo(() => {
     const map: Record<string, number> = {};
@@ -78,12 +83,23 @@ export default function HomePage() {
               </p>
             )}
             {!isLoading && !isError && (
-              <SubjectCatalogGrid
-                subjects={subjects}
-                userName={isAuthenticated ? (user?.displayName ?? "Học viên") : undefined}
-                freeTierUsedBySubjectId={freeTierUsedBySubjectId}
-                getSubjectHref={(subject) => `/subjects/${subject.id}`}
-              />
+              <>
+                <SubjectCatalogGrid
+                  subjects={subjects}
+                  totalCount={catalog?.total}
+                  userName={isAuthenticated ? (user?.displayName ?? "Học viên") : undefined}
+                  freeTierUsedBySubjectId={freeTierUsedBySubjectId}
+                  getSubjectHref={(subject) => `/subjects/${subject.id}`}
+                />
+                {catalog && (
+                  <CatalogPagination
+                    page={catalog.page}
+                    totalPages={catalog.totalPages}
+                    total={catalog.total}
+                    onPageChange={setPage}
+                  />
+                )}
+              </>
             )}
           </div>
         </main>

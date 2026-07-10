@@ -1,4 +1,4 @@
-# Sprint Status — Practice Exam
+# Sprint Status ? Practice Exam
 # STATUS DEFINITIONS:
 #   backlog: Story not yet ready for development
 #   ready-for-dev: Story validated and ready to implement
@@ -7,19 +7,22 @@
 #   done: Reviewed and merged/accepted
 
 last_updated: "2026-07-10"
+# STORY-65 code review re-pass 2026-07-10: Approved — TOCTOU fixes verified, all AC pass → done
+# STORY-71..73 code review 2026-07-10: STORY-72/73 done (defer-only); STORY-71 in-progress (1 patch)
+# STORY-71..73 implemented 2026-07-10 (admin notifications, table UX, catalog pagination)
 # STORY-69 merged/accepted 2026-07-10
 # Correct Course 2026-07-10: STORY-69..73 from sprint-change-proposal-2026-07-10-web-admin-ux
-# STORY-65 code review fixes 2026-07-09: TOCTOU race fixed, subscribed + concurrency e2e added → review
+# STORY-65 code review fixes 2026-07-09: TOCTOU race fixed, subscribed + concurrency e2e added ? review
 # EPIC-14 Study Mode added 2026-07-09: STORY-65..68 from sprint-change-proposal-2026-07-09-study-mode
-# STORY-64 (8-41) bulk actions on A-30 started 2026-07-02 → in-progress
+# STORY-64 (8-41) bulk actions on A-30 started 2026-07-02 ? in-progress
 # STORY-63 added 2026-07-02: import UX + multi-type Excel template with DanhMuc dropdowns
-# STORY-61/STORY-62 code review 2026-07-02: all patch findings applied → done
-# 13-57 code review 2026-07-01: 5 patches applied and verified → done
-# EPIC-12 code review final pass 2026-07-01: Approved — all 3 stories → done
-# EPIC-11 re-code-review 2026-07-01: Approved — all 5 stories → done
-# EPIC-12 code review re-pass 2026-07-01: High fixes verified; Medium items remain → in-progress
-# EPIC-12 code review 2026-07-01: changes requested → in-progress
-# EPIC-7 code review second pass 2026-07-01: all stories approved → done
+# STORY-61/STORY-62 code review 2026-07-02: all patch findings applied ? done
+# 13-57 code review 2026-07-01: 5 patches applied and verified ? done
+# EPIC-12 code review final pass 2026-07-01: Approved ? all 3 stories ? done
+# EPIC-11 re-code-review 2026-07-01: Approved ? all 5 stories ? done
+# EPIC-12 code review re-pass 2026-07-01: High fixes verified; Medium items remain ? in-progress
+# EPIC-12 code review 2026-07-01: changes requested ? in-progress
+# EPIC-7 code review second pass 2026-07-01: all stories approved ? done
 project: Practice_Exam
 epic_in_focus: EPIC-14
 
@@ -36,14 +39,14 @@ development_status:
   2-8-zalo-oauth-mini-app: review
   2-9-link-auth-identity: review
   2-10-merge-users-account-link: review
-  2-69-web-session-provider-shell-auth: done  # merged/accepted 2026-07-10 � code review P1-P4 + D1 Option A
+  2-69-web-session-provider-shell-auth: done  # merged/accepted 2026-07-10 ? code review P1-P4 + D1 Option A
   2-70-candidate-account-profile-w50: backlog
   epic-3: review
   3-11-subject-catalog-api: review
   3-12-candidate-subject-catalog-ui: review
   3-13-free-tier-entitlement-enforcement: review
   3-14-platform-disclaimer-guardrails: review
-  3-73-subject-catalog-pagination: backlog
+  3-73-subject-catalog-pagination: done
   epic-4: review
   4-15-subscription-model-entitlement-service: review
   4-16-payos-checkout-initiation: review
@@ -97,7 +100,7 @@ development_status:
   11-52-revenue-reports-subject-channel: done
   11-53-promo-code-management: done
   epic-12: done
-# EPIC-12 code review final pass 2026-07-01: Approved — all Medium + High verified
+# EPIC-12 code review final pass 2026-07-01: Approved ? all Medium + High verified
   12-54-zalo-mini-app-configuration: done
   12-55-payment-provider-merchant-config: done
   12-56-webhook-event-log-manual-retry: done
@@ -106,10 +109,10 @@ development_status:
   13-58-admin-user-management: done
   13-59-system-settings: done
   13-60-admin-dashboard-kpis: done
-  13-71-admin-activity-notifications: backlog
-  13-72-admin-table-ux-standardization: backlog
+  13-71-admin-activity-notifications: in-progress
+  13-72-admin-table-ux-standardization: done
   epic-14: in-progress
-  14-65-study-mode-api-entitlements: review
+  14-65-study-mode-api-entitlements: done
   14-66-candidate-study-mode-ui: done
   14-67-subject-detail-study-integration: done
   14-68-admin-study-tier-limit-config: done

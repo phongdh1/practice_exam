@@ -3,7 +3,7 @@
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { adminApi } from "@/lib/admin-api";
 import { DASHBOARD_QUERY_STALE_MS, queryKeys } from "@practice-exam/api-client";
-import { MaterialIcon } from "@practice-exam/ui";
+import { MaterialIcon, AdminDataTable, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
@@ -125,26 +125,24 @@ export default function AdminDashboard() {
             <h3 className="mb-4 text-heading font-heading text-primary">
               Đăng ký đang hoạt động theo môn
             </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[480px] border-collapse text-body-sm">
-                <thead>
-                  <tr className="border-b border-outline-variant text-left">
-                    <th className="px-3 py-2">Môn</th>
-                    <th className="px-3 py-2">Mã</th>
-                    <th className="px-3 py-2">Số gói active</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {kpis.subscriptionsBySubject.map((row) => (
-                    <tr key={row.subjectId} className="border-b border-outline-variant last:border-0">
-                      <td className="px-3 py-2">{row.subjectName}</td>
-                      <td className="px-3 py-2 font-mono text-label">{row.subjectCode}</td>
-                      <td className="px-3 py-2">{row.activeCount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AdminDataTable className="shadow-none">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Môn</TableHead>
+                  <TableHead>Mã</TableHead>
+                  <TableHead>Số gói active</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {kpis.subscriptionsBySubject.map((row) => (
+                  <TableRow key={row.subjectId}>
+                    <TableCell>{row.subjectName}</TableCell>
+                    <TableCell className="font-mono text-label">{row.subjectCode}</TableCell>
+                    <TableCell>{row.activeCount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </AdminDataTable>
           </section>
         )}
 

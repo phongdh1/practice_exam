@@ -5,8 +5,19 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
-import { Badge } from "@practice-exam/ui";
+import {
+  AdminDataTable,
+  AdminIconAction,
+  AdminTableActions,
+  Badge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Undo2 } from "lucide-react";
 import { PaymentsSectionTabs } from "@/components/payments-section-tabs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useState } from "react";
@@ -134,56 +145,54 @@ function PaymentsContent() {
       )}
 
       {items.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-outline-variant">
-          <table className="w-full text-left text-body-sm">
-            <thead className="bg-surface-container-low text-label">
-              <tr>
-                <th className="px-4 py-3">Người dùng / Môn</th>
-                <th className="px-4 py-3">Số tiền</th>
-                <th className="px-4 py-3">Provider</th>
-                <th className="px-4 py-3">Trạng thái</th>
-                <th className="px-4 py-3">Mã ngoài</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((tx) => (
-                <tr key={tx.id} className="border-t border-outline-variant">
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{tx.userDisplayName ?? tx.userId}</div>
-                    <div className="text-ink-muted">
-                      {tx.subjectName} ({tx.subjectCode})
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">{tx.amountVnd.toLocaleString("vi-VN")} ₫</td>
-                  <td className="px-4 py-3">
-                    {tx.provider} / {tx.channel}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge variant={tx.status === "paid" ? "secondary" : "outline"}>
-                      {STATUS_LABELS[tx.status] ?? tx.status}
-                    </Badge>
-                    {tx.subscriptionId && (
-                      <div className="mt-1 text-label text-ink-muted">Sub: {tx.subscriptionStatus}</div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-label">{tx.externalRef ?? "—"}</td>
-                  <td className="px-4 py-3">
-                    {tx.status === "paid" && (
-                      <button
-                        type="button"
-                        className="text-primary underline"
+        <AdminDataTable>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Người dùng / Môn</TableHead>
+              <TableHead>Số tiền</TableHead>
+              <TableHead>Provider</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead>Mã ngoài</TableHead>
+              <TableHead className="w-[60px]" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((tx) => (
+              <TableRow key={tx.id}>
+                <TableCell>
+                  <div className="font-medium">{tx.userDisplayName ?? tx.userId}</div>
+                  <div className="text-ink-muted">
+                    {tx.subjectName} ({tx.subjectCode})
+                  </div>
+                </TableCell>
+                <TableCell>{tx.amountVnd.toLocaleString("vi-VN")} ₫</TableCell>
+                <TableCell>
+                  {tx.provider} / {tx.channel}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={tx.status === "paid" ? "secondary" : "outline"}>
+                    {STATUS_LABELS[tx.status] ?? tx.status}
+                  </Badge>
+                  {tx.subscriptionId && (
+                    <div className="mt-1 text-label text-ink-muted">Sub: {tx.subscriptionStatus}</div>
+                  )}
+                </TableCell>
+                <TableCell className="font-mono text-label">{tx.externalRef ?? "—"}</TableCell>
+                <TableCell>
+                  {tx.status === "paid" && (
+                    <AdminTableActions>
+                      <AdminIconAction
+                        icon={Undo2}
+                        label="Hoàn tiền"
                         onClick={() => setRefundId(tx.id)}
-                      >
-                        Hoàn tiền
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      />
+                    </AdminTableActions>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </AdminDataTable>
       )}
 
       {result && result.totalPages > 1 && (

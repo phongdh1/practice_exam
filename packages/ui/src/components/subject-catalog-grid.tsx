@@ -12,6 +12,8 @@ export interface SubjectCatalogGridProps {
   getSubjectHref?: (subject: SubjectCatalogItem) => string;
   onSubjectClick?: (subject: SubjectCatalogItem) => void;
   freeTierUsedBySubjectId?: Record<string, number>;
+  /** Total catalog count across all pages (when paginated). Defaults to subjects.length. */
+  totalCount?: number;
   className?: string;
 }
 
@@ -23,6 +25,7 @@ export function SubjectCatalogGrid({
   getSubjectHref,
   onSubjectClick,
   freeTierUsedBySubjectId = {},
+  totalCount,
   className,
 }: SubjectCatalogGridProps) {
   if (subjects.length === 0) {
@@ -63,7 +66,9 @@ export function SubjectCatalogGrid({
       <section>
         <div className="mb-6 flex items-end justify-between">
           <h2 className="text-heading font-heading text-on-surface">Danh mục môn học</h2>
-          <span className="text-caption text-ink-muted">{subjects.length} môn học khả dụng</span>
+          <span className="text-caption text-ink-muted">
+            {(totalCount ?? subjects.length).toLocaleString("vi-VN")} môn học khả dụng
+          </span>
         </div>
         <div className="space-y-8">
           {courseGroups.map((group) => (

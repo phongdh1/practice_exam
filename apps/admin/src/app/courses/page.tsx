@@ -4,10 +4,21 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
-import { Badge } from "@practice-exam/ui";
+import {
+  AdminDataTable,
+  AdminIconAction,
+  AdminTableActions,
+  AdminTableEmpty,
+  Badge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Archive, ArrowDown, ArrowUp, Check, Pencil } from "lucide-react";
 import { CatalogSectionToolbar } from "@/components/catalog-section-tabs";
-import Link from "next/link";
 import { useState } from "react";
 
 export default function CoursesPage() {
@@ -69,86 +80,68 @@ function CoursesContent() {
         </p>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
-        <table className="w-full text-left text-body">
-          <thead className="bg-surface-container-low text-label">
-            <tr>
-              <th className="px-4 py-3">Khóa học</th>
-              <th className="px-4 py-3">Thứ tự</th>
-              <th className="px-4 py-3">Môn học</th>
-              <th className="px-4 py-3">Trạng thái</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-ink-muted">
-                  Đang tải...
-                </td>
-              </tr>
-            )}
-            {!isLoading && courses.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-ink-muted">
-                  Chưa có khóa học.
-                </td>
-              </tr>
-            )}
-            {courses.map((course, index) => (
-              <tr key={course.id} className="border-t border-outline-variant">
-                <td className="px-4 py-3">
-                  <div className="font-medium">{course.name}</div>
-                  <div className="font-mono text-label text-ink-muted">{course.code}</div>
-                  {course.description && (
-                    <div className="mt-1 text-body-sm text-ink-muted">{course.description}</div>
-                  )}
-                </td>
-                <td className="px-4 py-3">{course.displayOrder}</td>
-                <td className="px-4 py-3">{course.subjectCount}</td>
-                <td className="px-4 py-3">
-                  <Badge variant={course.visibility === "active" ? "secondary" : "outline"}>
-                    {course.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
-                  </Badge>
-                </td>
-                <td className="space-x-3 px-4 py-3 text-right">
-                  <button
-                    type="button"
-                    className="text-primary underline disabled:opacity-40"
+      <AdminDataTable>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Khóa học</TableHead>
+            <TableHead>Thứ tự</TableHead>
+            <TableHead>Môn học</TableHead>
+            <TableHead>Trạng thái</TableHead>
+            <TableHead className="w-[180px]" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading && <AdminTableEmpty colSpan={5}>Đang tải...</AdminTableEmpty>}
+          {!isLoading && courses.length === 0 && (
+            <AdminTableEmpty colSpan={5}>Chưa có khóa học.</AdminTableEmpty>
+          )}
+          {courses.map((course, index) => (
+            <TableRow key={course.id}>
+              <TableCell>
+                <div className="font-medium">{course.name}</div>
+                <div className="font-mono text-label text-ink-muted">{course.code}</div>
+                {course.description && (
+                  <div className="mt-1 text-body-sm text-ink-muted">{course.description}</div>
+                )}
+              </TableCell>
+              <TableCell>{course.displayOrder}</TableCell>
+              <TableCell>{course.subjectCount}</TableCell>
+              <TableCell>
+                <Badge variant={course.visibility === "active" ? "secondary" : "outline"}>
+                  {course.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">
+                <AdminTableActions>
+                  <AdminIconAction
+                    icon={ArrowUp}
+                    label="Lên"
                     disabled={index === 0 || reorderMutation.isPending}
                     onClick={() => moveCourse(index, -1)}
-                  >
-                    Lên
-                  </button>
-                  <button
-                    type="button"
-                    className="text-primary underline disabled:opacity-40"
+                  />
+                  <AdminIconAction
+                    icon={ArrowDown}
+                    label="Xuống"
                     disabled={index === courses.length - 1 || reorderMutation.isPending}
                     onClick={() => moveCourse(index, 1)}
-                  >
-                    Xuống
-                  </button>
-                  <button
-                    type="button"
-                    className="text-primary underline"
+                  />
+                  <AdminIconAction
+                    icon={course.visibility === "active" ? Archive : Check}
+                    label={course.visibility === "active" ? "Lưu trữ" : "Kích hoạt"}
                     onClick={() =>
                       visibilityMutation.mutate({
                         id: course.id,
                         visibility: course.visibility === "active" ? "archived" : "active",
                       })
                     }
-                  >
-                    {course.visibility === "active" ? "Lưu trữ" : "Kích hoạt"}
-                  </button>
-                  <Link href={`/courses/${course.id}`} className="text-primary underline">
-                    Sửa
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  />
+                  <AdminIconAction icon={Pencil} label="Sửa" href={`/courses/${course.id}`} />
+                </AdminTableActions>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </AdminDataTable>
     </AdminPageShell>
   );
 }

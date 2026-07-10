@@ -5,8 +5,19 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
-import { Badge } from "@practice-exam/ui";
+import {
+  AdminDataTable,
+  AdminIconAction,
+  AdminTableActions,
+  Badge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Power } from "lucide-react";
 import { PaymentsSectionTabs } from "@/components/payments-section-tabs";
 import { useState } from "react";
 
@@ -168,66 +179,60 @@ function PromoCodesContent() {
       {isLoading && <p className="text-ink-muted">Đang tải...</p>}
 
       {codes.length > 0 && (
-        <div className="overflow-hidden rounded-xl border">
-          <table className="w-full text-left text-body-sm">
-            <thead className="bg-surface-container-low text-label">
-              <tr>
-                <th className="px-4 py-3">Mã</th>
-                <th className="px-4 py-3">Giảm giá</th>
-                <th className="px-4 py-3">Hết hạn</th>
-                <th className="px-4 py-3">Đã dùng</th>
-                <th className="px-4 py-3">Môn học</th>
-                <th className="px-4 py-3">Trạng thái</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {codes.map((promo) => (
-                <tr key={promo.id} className="border-t">
-                  <td className="px-4 py-3 font-mono font-medium">{promo.code}</td>
-                  <td className="px-4 py-3">
-                    {promo.discountType === "percentage"
-                      ? `${promo.discountValue}%`
-                      : `${promo.discountValue.toLocaleString("vi-VN")} ₫`}
-                  </td>
-                  <td className="px-4 py-3">
-                    {new Date(promo.expiresAt).toLocaleDateString("vi-VN")}
-                  </td>
-                  <td className="px-4 py-3">
-                    {promo.usageCount} / {promo.usageLimit}
-                  </td>
-                  <td className="px-4 py-3 text-ink-muted">
-                    {promo.subjectIds.length === 0
-                      ? "Tất cả"
-                      : `${promo.subjectIds.length} môn`}
-                  </td>
-                  <td className="px-4 py-3">
-                    {promo.isExpired ? (
-                      <Badge variant="outline">Hết hạn</Badge>
-                    ) : promo.isActive ? (
-                      <Badge variant="secondary">Hoạt động</Badge>
-                    ) : (
-                      <Badge variant="outline">Tắt</Badge>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    {!promo.isExpired && (
-                      <button
-                        type="button"
-                        className="text-primary underline"
+        <AdminDataTable>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Mã</TableHead>
+              <TableHead>Giảm giá</TableHead>
+              <TableHead>Hết hạn</TableHead>
+              <TableHead>Đã dùng</TableHead>
+              <TableHead>Môn học</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead className="w-[60px]" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {codes.map((promo) => (
+              <TableRow key={promo.id}>
+                <TableCell className="font-mono font-medium">{promo.code}</TableCell>
+                <TableCell>
+                  {promo.discountType === "percentage"
+                    ? `${promo.discountValue}%`
+                    : `${promo.discountValue.toLocaleString("vi-VN")} ₫`}
+                </TableCell>
+                <TableCell>{new Date(promo.expiresAt).toLocaleDateString("vi-VN")}</TableCell>
+                <TableCell>
+                  {promo.usageCount} / {promo.usageLimit}
+                </TableCell>
+                <TableCell className="text-ink-muted">
+                  {promo.subjectIds.length === 0 ? "Tất cả" : `${promo.subjectIds.length} môn`}
+                </TableCell>
+                <TableCell>
+                  {promo.isExpired ? (
+                    <Badge variant="outline">Hết hạn</Badge>
+                  ) : promo.isActive ? (
+                    <Badge variant="secondary">Hoạt động</Badge>
+                  ) : (
+                    <Badge variant="outline">Tắt</Badge>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {!promo.isExpired && (
+                    <AdminTableActions>
+                      <AdminIconAction
+                        icon={Power}
+                        label={promo.isActive ? "Tắt" : "Bật"}
                         onClick={() =>
                           toggleMutation.mutate({ id: promo.id, isActive: !promo.isActive })
                         }
-                      >
-                        {promo.isActive ? "Tắt" : "Bật"}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      />
+                    </AdminTableActions>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </AdminDataTable>
       )}
     </AdminPageShell>
   );

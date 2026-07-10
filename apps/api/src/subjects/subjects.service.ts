@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { Prisma, type SubjectVisibility } from "@prisma/client";
-import type { SubjectCatalogItem } from "@practice-exam/types";
+import type { PaginatedResult, SubjectCatalogItem } from "@practice-exam/types";
 import { scanProhibitedClaims } from "@practice-exam/utils";
 import { ContentComplianceService } from "../content-compliance/content-compliance.service";
 import { PrismaService } from "../prisma/prisma.service";
@@ -69,6 +69,56 @@ export class SubjectsService {
       orderBy: [{ course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
     });
 
+    return this.mapCatalogItems(subjects);
+  }
+
+  async listActiveCatalogPaginated(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<SubjectCatalogItem>> {
+    const where = { visibility: "active" as const, course: { visibility: "active" as const } };
+    const [subjects, totalBeforeFilter] = await Promise.all([
+      this.prisma.subject.findMany({
+        where,
+        include: { pricing: true, course: true },
+        orderBy: [{ course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
+      }),
+      this.prisma.subject.count({ where }),
+    ]);
+
+    const allItems = this.mapCatalogItems(subjects);
+    const total = allItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    const safePage = Math.min(Math.max(page, 1), totalPages);
+    const start = (safePage - 1) * limit;
+    const items = allItems.slice(start, start + limit);
+
+    if (totalBeforeFilter !== subjects.length) {
+      this.logger.warn(
+        `Catalog pagination: ${totalBeforeFilter - subjects.length} active subjects excluded by pricing/compliance filters`,
+      );
+    }
+
+    return {
+      items,
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    };
+  }
+
+  private mapCatalogItems(
+    subjects: Array<{
+      id: string;
+      courseId: string;
+      code: string;
+      name: string;
+      description: string | null;
+      course: { code: string; name: string };
+      pricing: { monthlyAmountVnd: number; freeTierLimit: number } | null;
+    }>,
+  ): SubjectCatalogItem[] {
     const missingPricing = subjects.filter((subject) => subject.pricing === null);
     for (const subject of missingPricing) {
       this.logger.warn(

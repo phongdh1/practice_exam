@@ -5,9 +5,19 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
-import { Badge, MaterialIcon } from "@practice-exam/ui";
+import {
+  AdminDataTable,
+  AdminIconAction,
+  AdminTableActions,
+  Badge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
+import { UserRound } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useState } from "react";
 
@@ -85,47 +95,41 @@ function UsersSearchContent() {
       )}
 
       {results.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-outline-variant">
-          <table className="w-full text-left text-body">
-            <thead className="bg-surface-container-low text-label">
-              <tr>
-                <th className="px-4 py-3">Người dùng</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Zalo ID</th>
-                <th className="px-4 py-3">Trạng thái</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {results.map((user) => (
-                <tr key={user.id} className="border-t border-outline-variant">
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{user.displayName ?? "—"}</div>
-                    <div className="text-label text-ink-muted">{user.id}</div>
-                  </td>
-                  <td className="px-4 py-3">{user.email ?? "—"}</td>
-                  <td className="px-4 py-3">{user.zaloId ?? "—"}</td>
-                  <td className="px-4 py-3">
-                    {user.isSuspended ? (
-                      <Badge variant="destructive">Đã khóa</Badge>
-                    ) : (
-                      <Badge variant="secondary">Hoạt động</Badge>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/users/${user.id}`}
-                      className="inline-flex items-center gap-1 text-primary hover:underline"
-                    >
-                      Hồ sơ
-                      <MaterialIcon name="chevron_right" className="text-base" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminDataTable>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Người dùng</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Zalo ID</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead className="w-[60px]" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {results.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <div className="font-medium">{user.displayName ?? "—"}</div>
+                  <div className="text-label text-ink-muted">{user.id}</div>
+                </TableCell>
+                <TableCell>{user.email ?? "—"}</TableCell>
+                <TableCell>{user.zaloId ?? "—"}</TableCell>
+                <TableCell>
+                  {user.isSuspended ? (
+                    <Badge variant="destructive">Đã khóa</Badge>
+                  ) : (
+                    <Badge variant="secondary">Hoạt động</Badge>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  <AdminTableActions>
+                    <AdminIconAction icon={UserRound} label="Hồ sơ" href={`/users/${user.id}`} />
+                  </AdminTableActions>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </AdminDataTable>
       )}
     </AdminPageShell>
   );

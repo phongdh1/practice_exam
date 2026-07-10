@@ -1,7 +1,7 @@
 ---
 id: STORY-65
 story_key: 14-65-study-mode-api-entitlements
-status: review
+status: done
 baseline_commit: NO_VCS
 prd_refs: ["FR-47", "FR-5"]
 ad_refs: ["AD-11", "AD-3"]
@@ -246,6 +246,41 @@ Composer (dev-story workflow)
 
 **Recommended fix (High):** At the start of `consumeStudyViewInTransaction`, `findUnique` on `StudyViewLog` for `(userId, subjectId, questionId, periodKey)`; if exists, return current tier status without increment. Wrap `studyViewLog.create` in `P2002` handler that returns idempotent success. Remove or keep service-layer pre-check as fast-path only.
 
+### Review Findings (re-pass 2026-07-10)
+
+Prior patch items (TOCTOU race, subscribed e2e, concurrency test) verified in code and tests.
+
+- [x] [Review][Defer] List endpoint loads all `StudyViewLog` rows for user+subject+period on every list request — acceptable for MVP; revisit pagination or aggregate query at scale [`apps/api/src/study/study.service.ts:41-45`]
+
+**AC coverage (re-pass):**
+
+| AC | Status | Evidence |
+|----|--------|----------|
+| AC-1 | Pass | List stem/metadata only; `studyTier` included; e2e asserts no answer fields |
+| AC-2 | Pass | Detail returns answers; atomic consume in transaction; free tier untouched (unit + e2e) |
+| AC-3 | Pass | 6th new view → 403 `STUDY_TIER_EXCEEDED` with subscribe CTA |
+| AC-4 | Pass | Subscribed e2e: list/detail all questions, zero tier rows/logs |
+| AC-5 | Pass | Sequential re-view + concurrent duplicate e2e; in-tx log check + P2002 handler (unit) |
+| AC-6 | Pass | All gates use `subjectId` only |
+| AC-7 | Pass | Published-only filter; 404 for non-published detail |
+
+### Senior Developer Review (AI) — re-pass
+
+**Outcome:** Approved (2026-07-10)
+
+**Verdict:** Approved — prior High/Medium findings resolved. `consumeStudyViewInTransaction` checks `StudyViewLog` inside the transaction, handles `P2002` idempotently, and rolls back view-log insert when tier cap blocks increment. Subscribed bypass and concurrency covered by e2e.
+
+**Summary by severity:**
+
+| Severity | Count | Notes |
+|----------|-------|-------|
+| High | 0 | TOCTOU race fixed |
+| Medium | 0 | Subscribed e2e + concurrency test added |
+| Low | 0 | Subscribed `remaining` documented in `@practice-exam/types` |
+| Defer | 1 | List view-log query at scale (new) + prior FK defer retained |
+
+**Tests run:** `pnpm --filter api test -- study` (13 passed); `pnpm --filter api test -- entitlements.service.spec` (13 passed)
+
 ## Status
 
-review
+done

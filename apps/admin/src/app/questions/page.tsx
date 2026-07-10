@@ -12,8 +12,21 @@ import {
   type BulkQuestionRow,
 } from "@practice-exam/api-client";
 import type { QuestionSummary } from "@practice-exam/types";
-import { Badge, MaterialIcon } from "@practice-exam/ui";
+import {
+  AdminDataTable,
+  AdminIconAction,
+  AdminTableActions,
+  AdminTableEmpty,
+  Badge,
+  MaterialIcon,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
@@ -303,116 +316,99 @@ function QuestionBankContent() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
-        <table className="w-full text-left text-body">
-          <thead className="border-b border-outline-variant bg-surface-container-low text-label text-on-surface-variant">
-            <tr>
-              <th className="w-12 px-4 py-3">
-                <input
-                  type="checkbox"
-                  aria-label="Chọn tất cả câu hỏi trên trang"
-                  checked={allSelected}
-                  disabled={bulkRunning}
-                  ref={(el) => {
-                    if (el) el.indeterminate = someSelected && !allSelected;
-                  }}
-                  onChange={toggleAll}
-                  className="rounded border-outline-variant text-primary disabled:opacity-40"
-                />
-              </th>
-              <th className="px-4 py-3">Câu hỏi</th>
-              <th className="px-4 py-3">Môn</th>
-              <th className="px-4 py-3">Trạng thái</th>
-              <th className="px-4 py-3">Độ khó</th>
-              <th className="px-4 py-3">Tác giả</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-ink-muted">
-                  Đang tải...
-                </td>
-              </tr>
-            )}
-            {!isLoading && items.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-ink-muted">
-                  Không có câu hỏi phù hợp.
-                </td>
-              </tr>
-            )}
-            {items.map((q: QuestionSummary) => {
-              const checked = selectedIds.has(q.id);
-              return (
-                <tr
-                  key={q.id}
-                  className={`border-b border-outline-variant/50 hover:bg-surface-container-low/50 ${
-                    checked ? "bg-primary/5" : ""
-                  }`}
+      <AdminDataTable
+        footer={
+          result && result.total > result.pageSize ? (
+            <div className="flex items-center justify-between border-t border-outline-variant px-4 py-3 text-label">
+              <span>
+                {result.total} câu hỏi — trang {result.page}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={result.page <= 1}
+                  onClick={() => setFilter("page", String(result.page - 1))}
+                  className="rounded border px-3 py-1 disabled:opacity-40"
                 >
-                  <td className="px-4 py-3">
-                    <input
-                      type="checkbox"
-                      aria-label={`Chọn câu hỏi ${q.stem.slice(0, 40)}`}
-                      checked={checked}
-                      disabled={bulkRunning}
-                      onChange={() => toggleRow(q.id)}
-                      className="rounded border-outline-variant text-primary disabled:opacity-40"
-                    />
-                  </td>
-                  <td className="max-w-md truncate px-4 py-3">{q.stem}</td>
-                  <td className="px-4 py-3">{q.subjectName}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant="secondary">{STATUS_LABELS[q.status] ?? q.status}</Badge>
-                  </td>
-                  <td className="px-4 py-3 capitalize">{q.difficulty}</td>
-                  <td className="px-4 py-3">{q.authorName}</td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end gap-3">
-                      <Link href={`/questions/${q.id}/edit`} className="text-primary hover:underline">
-                        Sửa
-                      </Link>
-                      <Link
-                        href={`/questions/${q.id}/preview`}
-                        className="text-primary hover:underline"
-                      >
-                        Xem trước
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        {result && result.total > result.pageSize && (
-          <div className="flex items-center justify-between border-t border-outline-variant px-4 py-3 text-label">
-            <span>
-              {result.total} câu hỏi — trang {result.page}
-            </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                disabled={result.page <= 1}
-                onClick={() => setFilter("page", String(result.page - 1))}
-                className="rounded border px-3 py-1 disabled:opacity-40"
-              >
-                Trước
-              </button>
-              <button
-                type="button"
-                disabled={result.page * result.pageSize >= result.total}
-                onClick={() => setFilter("page", String(result.page + 1))}
-                className="rounded border px-3 py-1 disabled:opacity-40"
-              >
-                Sau
-              </button>
+                  Trước
+                </button>
+                <button
+                  type="button"
+                  disabled={result.page * result.pageSize >= result.total}
+                  onClick={() => setFilter("page", String(result.page + 1))}
+                  className="rounded border px-3 py-1 disabled:opacity-40"
+                >
+                  Sau
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          ) : undefined
+        }
+      >
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-12">
+              <input
+                type="checkbox"
+                aria-label="Chọn tất cả câu hỏi trên trang"
+                checked={allSelected}
+                disabled={bulkRunning}
+                ref={(el) => {
+                  if (el) el.indeterminate = someSelected && !allSelected;
+                }}
+                onChange={toggleAll}
+                className="rounded border-outline-variant text-primary disabled:opacity-40"
+              />
+            </TableHead>
+            <TableHead>Câu hỏi</TableHead>
+            <TableHead>Môn</TableHead>
+            <TableHead>Trạng thái</TableHead>
+            <TableHead>Độ khó</TableHead>
+            <TableHead>Tác giả</TableHead>
+            <TableHead className="w-[100px]" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading && <AdminTableEmpty colSpan={7}>Đang tải...</AdminTableEmpty>}
+          {!isLoading && items.length === 0 && (
+            <AdminTableEmpty colSpan={7}>Không có câu hỏi phù hợp.</AdminTableEmpty>
+          )}
+          {items.map((q: QuestionSummary) => {
+            const checked = selectedIds.has(q.id);
+            return (
+              <TableRow key={q.id} data-state={checked ? "selected" : undefined}>
+                <TableCell>
+                  <input
+                    type="checkbox"
+                    aria-label={`Chọn câu hỏi ${q.stem.slice(0, 40)}`}
+                    checked={checked}
+                    disabled={bulkRunning}
+                    onChange={() => toggleRow(q.id)}
+                    className="rounded border-outline-variant text-primary disabled:opacity-40"
+                  />
+                </TableCell>
+                <TableCell className="max-w-md truncate">{q.stem}</TableCell>
+                <TableCell>{q.subjectName}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">{STATUS_LABELS[q.status] ?? q.status}</Badge>
+                </TableCell>
+                <TableCell className="capitalize">{q.difficulty}</TableCell>
+                <TableCell>{q.authorName}</TableCell>
+                <TableCell className="text-right">
+                  <AdminTableActions>
+                    <AdminIconAction icon={Pencil} label="Sửa" href={`/questions/${q.id}/edit`} />
+                    <AdminIconAction
+                      icon={Eye}
+                      label="Xem trước"
+                      href={`/questions/${q.id}/preview`}
+                    />
+                  </AdminTableActions>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </AdminDataTable>
     </AdminPageShell>
   );
 }

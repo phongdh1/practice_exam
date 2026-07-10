@@ -5,6 +5,7 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
+import { AdminDataTable, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
 import { PaymentsSectionTabs } from "@/components/payments-section-tabs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -110,48 +111,44 @@ function RevenueContent() {
           </div>
 
           <h2 className="mb-2 text-title-md">Theo môn học</h2>
-          <div className="mb-6 overflow-hidden rounded-xl border">
-            <table className="w-full text-left text-body-sm">
-              <thead className="bg-surface-container-low text-label">
-                <tr>
-                  <th className="px-4 py-3">Môn học</th>
-                  <th className="px-4 py-3">Doanh thu</th>
-                  <th className="px-4 py-3">Số GD</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.bySubject.map((row) => (
-                  <tr key={row.subjectId} className="border-t">
-                    <td className="px-4 py-3">{row.subjectName}</td>
-                    <td className="px-4 py-3">{row.revenueVnd.toLocaleString("vi-VN")} ₫</td>
-                    <td className="px-4 py-3">{row.count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminDataTable className="mb-6">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Môn học</TableHead>
+                <TableHead>Doanh thu</TableHead>
+                <TableHead>Số GD</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {report.bySubject.map((row) => (
+                <TableRow key={row.subjectId}>
+                  <TableCell>{row.subjectName}</TableCell>
+                  <TableCell>{row.revenueVnd.toLocaleString("vi-VN")} ₫</TableCell>
+                  <TableCell>{row.count}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </AdminDataTable>
 
           <h2 className="mb-2 text-title-md">Theo kênh</h2>
-          <div className="overflow-hidden rounded-xl border">
-            <table className="w-full text-left text-body-sm">
-              <thead className="bg-surface-container-low text-label">
-                <tr>
-                  <th className="px-4 py-3">Kênh</th>
-                  <th className="px-4 py-3">Doanh thu</th>
-                  <th className="px-4 py-3">Số GD</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.byChannel.map((row) => (
-                  <tr key={row.channel} className="border-t">
-                    <td className="px-4 py-3">{row.channel}</td>
-                    <td className="px-4 py-3">{row.revenueVnd.toLocaleString("vi-VN")} ₫</td>
-                    <td className="px-4 py-3">{row.count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminDataTable>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Kênh</TableHead>
+                <TableHead>Doanh thu</TableHead>
+                <TableHead>Số GD</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {report.byChannel.map((row) => (
+                <TableRow key={row.channel}>
+                  <TableCell>{row.channel}</TableCell>
+                  <TableCell>{row.revenueVnd.toLocaleString("vi-VN")} ₫</TableCell>
+                  <TableCell>{row.count}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </AdminDataTable>
         </>
       )}
     </AdminPageShell>

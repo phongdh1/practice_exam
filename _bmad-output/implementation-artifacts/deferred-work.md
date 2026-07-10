@@ -13,6 +13,10 @@
 
 - **STORY-65** — `study_tier_usage.subject_id` has no FK to `subjects` (mirrors `free_tier_usage` pattern) — pre-existing schema convention.
 
+## Deferred from: code review of STORY-65 (2026-07-10)
+
+- **STORY-65** — List endpoint loads all `StudyViewLog` rows for user+subject+period on every list request — performance defer at scale; MVP acceptable.
+
 ## Deferred from: code review of EPIC-1 + EPIC-2 (2026-06-30)
 
 - **STORY-1** — No git repository initialized (`baseline_commit: NO_VCS`); known project state, version control setup deferred.
@@ -125,6 +129,25 @@
 ## Deferred from: code review of spec-frontend-401-login-redirect (2026-07-10)
 
 - `tsconfig.tsbuildinfo` files in working tree — build-artifact noise unrelated to feature logic.
+
+## Deferred from: code review of STORY-71 (2026-07-10)
+
+- **STORY-71** — No controller RBAC integration test for `/admin/notifications/recent` — follows 13-60 MVP test-scope pattern.
+- **STORY-71** — Bell component has no poll error UI — stale feed on API failure is silent.
+
+## Deferred from: code review of STORY-72 (2026-07-10)
+
+- **STORY-72** — Deferred pages (`webhooks`, `import`, `flags`, `review`) intentionally out of scope per story.
+- **STORY-72** — Disabled `AdminIconAction` buttons may not show tooltips (Radix disabled-trigger pattern) — a11y polish.
+- **STORY-72** — No automated tests for `AdminDataTable` / `AdminIconAction` primitives — visual component smoke coverage acceptable for MVP.
+
+## Deferred from: code review of STORY-73 (2026-07-10)
+
+- **STORY-73** — `listActiveCatalogPaginated` loads full active catalog then slices in memory — DB skip/take when catalog grows.
+- **STORY-73** — No unit tests for paginated catalog path — controller/service specs cover non-paginated path only.
+- **STORY-73** — Home page page state not in URL — refresh loses current page.
+- **STORY-73** — Course group headers may repeat or split across pages when a course spans page boundaries — flat pagination tradeoff.
+- **STORY-73** — `featuredCount` applies per page (first two cards on every page get featured styling) — minor visual polish.
 
 ## Deferred from: code review of STORY-69 (2026-07-10)
 

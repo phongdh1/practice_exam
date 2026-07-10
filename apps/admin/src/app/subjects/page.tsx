@@ -4,10 +4,21 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
-import { Badge } from "@practice-exam/ui";
+import {
+  AdminDataTable,
+  AdminIconAction,
+  AdminTableActions,
+  AdminTableEmpty,
+  Badge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Archive, Check, Pencil } from "lucide-react";
 import { CatalogSectionToolbar } from "@/components/catalog-section-tabs";
-import Link from "next/link";
 import { useState } from "react";
 
 export default function SubjectsPage() {
@@ -51,101 +62,76 @@ function SubjectsContent() {
         </p>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
-        <table className="w-full text-left text-body">
-          <thead className="bg-surface-container-low text-label">
-            <tr>
-              <th className="px-4 py-3">Môn học</th>
-              <th className="px-4 py-3">Course</th>
-              <th className="px-4 py-3">Giá</th>
-              <th className="px-4 py-3">Go-live</th>
-              <th className="px-4 py-3">Trạng thái</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-ink-muted">
-                  Đang tải...
-                </td>
-              </tr>
-            )}
-            {!isLoading && subjects.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-ink-muted">
-                  Chưa có môn học.
-                </td>
-              </tr>
-            )}
-            {subjects.map((subject) => (
-              <tr key={subject.id} className="border-t border-outline-variant">
-                <td className="px-4 py-3">
-                  <div className="font-medium">{subject.name}</div>
-                  <div className="font-mono text-label text-ink-muted">{subject.code}</div>
-                </td>
-                <td className="px-4 py-3">{subject.courseName}</td>
-                <td className="px-4 py-3">
-                  {subject.monthlyAmountVnd?.toLocaleString("vi-VN") ?? "—"} ₫
-                </td>
-                <td className="px-4 py-3 text-body-sm">
-                  {subject.goLive.publishedQuestionCount}/
-                  {subject.goLive.requirements.minPublishedQuestions} câu hỏi,{" "}
-                  {subject.goLive.approvedTemplateCount}/
-                  {subject.goLive.requirements.minApprovedTemplates} template
-                </td>
-                <td className="px-4 py-3">
-                  <Badge variant={subject.visibility === "active" ? "secondary" : "outline"}>
-                    {subject.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
-                  </Badge>
-                </td>
-                <td className="space-x-3 px-4 py-3 text-right">
+      <AdminDataTable>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Môn học</TableHead>
+            <TableHead>Course</TableHead>
+            <TableHead>Giá</TableHead>
+            <TableHead>Go-live</TableHead>
+            <TableHead>Trạng thái</TableHead>
+            <TableHead className="w-[120px]" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading && <AdminTableEmpty colSpan={6}>Đang tải...</AdminTableEmpty>}
+          {!isLoading && subjects.length === 0 && (
+            <AdminTableEmpty colSpan={6}>Chưa có môn học.</AdminTableEmpty>
+          )}
+          {subjects.map((subject) => (
+            <TableRow key={subject.id}>
+              <TableCell>
+                <div className="font-medium">{subject.name}</div>
+                <div className="font-mono text-label text-ink-muted">{subject.code}</div>
+              </TableCell>
+              <TableCell>{subject.courseName}</TableCell>
+              <TableCell>
+                {subject.monthlyAmountVnd?.toLocaleString("vi-VN") ?? "—"} ₫
+              </TableCell>
+              <TableCell className="text-body-sm">
+                {subject.goLive.publishedQuestionCount}/
+                {subject.goLive.requirements.minPublishedQuestions} câu hỏi,{" "}
+                {subject.goLive.approvedTemplateCount}/
+                {subject.goLive.requirements.minApprovedTemplates} template
+              </TableCell>
+              <TableCell>
+                <Badge variant={subject.visibility === "active" ? "secondary" : "outline"}>
+                  {subject.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">
+                <AdminTableActions>
                   {subject.visibility === "archived" ? (
                     subject.goLive.canActivate ? (
-                      <button
-                        type="button"
-                        className="text-primary underline disabled:cursor-not-allowed disabled:opacity-40"
+                      <AdminIconAction
+                        icon={Check}
+                        label="Kích hoạt"
                         disabled={visibilityMutation.isPending}
                         onClick={() =>
-                          visibilityMutation.mutate({
-                            id: subject.id,
-                            visibility: "active",
-                          })
+                          visibilityMutation.mutate({ id: subject.id, visibility: "active" })
                         }
-                      >
-                        Kích hoạt
-                      </button>
-                    ) : (
-                      <span
-                        className="text-ink-muted"
-                        title={`Chưa đủ ${subject.goLive.requirements.minPublishedQuestions} câu Published và ${subject.goLive.requirements.minApprovedTemplates} Mock Exam Template đã duyệt`}
-                      >
-                        Chưa đủ go-live
-                      </span>
-                    )
+                      />
+                    ) : null
                   ) : (
-                    <button
-                      type="button"
-                      className="text-primary underline"
+                    <AdminIconAction
+                      icon={Archive}
+                      label="Lưu trữ"
                       onClick={() =>
-                        visibilityMutation.mutate({
-                          id: subject.id,
-                          visibility: "archived",
-                        })
+                        visibilityMutation.mutate({ id: subject.id, visibility: "archived" })
                       }
-                    >
-                      Lưu trữ
-                    </button>
+                    />
                   )}
-                  <Link href={`/subjects/${subject.id}`} className="text-primary underline">
-                    Sửa
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  <AdminIconAction
+                    icon={Pencil}
+                    label="Sửa"
+                    href={`/subjects/${subject.id}`}
+                  />
+                </AdminTableActions>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </AdminDataTable>
     </AdminPageShell>
   );
 }

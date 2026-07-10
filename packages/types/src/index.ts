@@ -913,3 +913,27 @@ export interface AdminAuthAuditEntry {
   details: Record<string, unknown> | null;
   createdAt: string;
 }
+
+// --- Admin: Activity notifications (STORY-71) ---
+
+export type AdminNotificationType = "registration" | "payment";
+
+export interface AdminNotificationItem {
+  id: string;
+  type: AdminNotificationType;
+  title: string;
+  occurredAt: string;
+  href: string;
+  metadata?: {
+    userId?: string;
+    userDisplayName?: string | null;
+    amountVnd?: number;
+    subjectName?: string;
+  };
+}
+
+export interface AdminNotificationsRecentResponse {
+  items: AdminNotificationItem[];
+  since: string;
+  generatedAt: string;
+}

@@ -79,6 +79,22 @@ export {
 } from "./components/ui/select";
 export { Separator } from "./components/ui/separator";
 export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from "./components/ui/table";
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "./components/ui/tooltip";
+export {
   Sheet,
   SheetPortal,
   SheetOverlay,
@@ -120,6 +136,14 @@ export {
   type AdminNavItem,
   type AdminSettingsSubNav,
 } from "./components/admin-shell";
+export {
+  AdminDataTable,
+  AdminTableEmpty,
+  AdminTableActions,
+  type AdminDataTableProps,
+} from "./components/admin-data-table";
+export { AdminIconAction, type AdminIconActionProps } from "./components/admin-icon-action";
+export { CatalogPagination, type CatalogPaginationProps } from "./components/catalog-pagination";
 export {
   ZaloAppHeader,
   ZaloBottomTabs,

@@ -19,6 +19,7 @@ import { IntegrationsModule } from "./integrations/integrations.module";
 import { PaymentsAdminModule } from "./payments-admin/payments-admin.module";
 import { AdminUsersModule } from "./admin-users/admin-users.module";
 import { AdminDashboardModule } from "./admin-dashboard/admin-dashboard.module";
+import { AdminNotificationsModule } from "./admin-notifications/admin-notifications.module";
 import { CoursesModule } from "./courses/courses.module";
 import { StudyModule } from "./study/study.module";
 
@@ -44,6 +45,7 @@ import { StudyModule } from "./study/study.module";
     IntegrationsModule,
     AdminUsersModule,
     AdminDashboardModule,
+    AdminNotificationsModule,
     CoursesModule,
     StudyModule,
   ],

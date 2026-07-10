@@ -5,6 +5,7 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
+import { AdminDataTable, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
 import { PaymentsSectionTabs } from "@/components/payments-section-tabs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -92,40 +93,38 @@ function ReconciliationContent() {
       )}
 
       {rows.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-outline-variant">
-          <table className="w-full text-left text-body-sm">
-            <thead className="bg-surface-container-low text-label">
-              <tr>
-                <th className="px-4 py-3">Ngày (ICT)</th>
-                <th className="px-4 py-3">Provider</th>
-                <th className="px-4 py-3">Giao dịch</th>
-                <th className="px-4 py-3">Doanh thu</th>
-                <th className="px-4 py-3">Thất bại</th>
-                <th className="px-4 py-3">Chờ</th>
-                <th className="px-4 py-3">Sai lệch</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={`${row.provider}-${row.date}`} className="border-t border-outline-variant">
-                  <td className="px-4 py-3">{row.date}</td>
-                  <td className="px-4 py-3 uppercase">{row.provider}</td>
-                  <td className="px-4 py-3">{row.transactionCount}</td>
-                  <td className="px-4 py-3">{row.grossRevenueVnd.toLocaleString("vi-VN")} ₫</td>
-                  <td className="px-4 py-3">{row.failedCount}</td>
-                  <td className="px-4 py-3">{row.pendingCount}</td>
-                  <td className="px-4 py-3">
-                    {row.discrepancyCount > 0 ? (
-                      <span className="font-medium text-error">{row.discrepancyCount}</span>
-                    ) : (
-                      row.discrepancyCount
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminDataTable>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Ngày (ICT)</TableHead>
+              <TableHead>Provider</TableHead>
+              <TableHead>Giao dịch</TableHead>
+              <TableHead>Doanh thu</TableHead>
+              <TableHead>Thất bại</TableHead>
+              <TableHead>Chờ</TableHead>
+              <TableHead>Sai lệch</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={`${row.provider}-${row.date}`}>
+                <TableCell>{row.date}</TableCell>
+                <TableCell className="uppercase">{row.provider}</TableCell>
+                <TableCell>{row.transactionCount}</TableCell>
+                <TableCell>{row.grossRevenueVnd.toLocaleString("vi-VN")} ₫</TableCell>
+                <TableCell>{row.failedCount}</TableCell>
+                <TableCell>{row.pendingCount}</TableCell>
+                <TableCell>
+                  {row.discrepancyCount > 0 ? (
+                    <span className="font-medium text-error">{row.discrepancyCount}</span>
+                  ) : (
+                    row.discrepancyCount
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </AdminDataTable>
       )}
     </AdminPageShell>
   );
