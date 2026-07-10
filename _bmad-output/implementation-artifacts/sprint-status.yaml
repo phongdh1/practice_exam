@@ -6,7 +6,9 @@
 #   review: Implementation complete, awaiting code review
 #   done: Reviewed and merged/accepted
 
-last_updated: "2026-07-09"
+last_updated: "2026-07-10"
+# STORY-69 merged/accepted 2026-07-10
+# Correct Course 2026-07-10: STORY-69..73 from sprint-change-proposal-2026-07-10-web-admin-ux
 # STORY-65 code review fixes 2026-07-09: TOCTOU race fixed, subscribed + concurrency e2e added → review
 # EPIC-14 Study Mode added 2026-07-09: STORY-65..68 from sprint-change-proposal-2026-07-09-study-mode
 # STORY-64 (8-41) bulk actions on A-30 started 2026-07-02 → in-progress
@@ -28,17 +30,20 @@ development_status:
   1-3-scaffold-nestjs-api: review
   1-4-shared-ui-package: review
   1-5-scaffold-client-apps: review
-  epic-2: review
+  epic-2: in-progress
   2-6-email-registration-password-signin: review
   2-7-google-oauth-signin-web: review
   2-8-zalo-oauth-mini-app: review
   2-9-link-auth-identity: review
   2-10-merge-users-account-link: review
+  2-69-web-session-provider-shell-auth: done  # merged/accepted 2026-07-10 � code review P1-P4 + D1 Option A
+  2-70-candidate-account-profile-w50: backlog
   epic-3: review
   3-11-subject-catalog-api: review
   3-12-candidate-subject-catalog-ui: review
   3-13-free-tier-entitlement-enforcement: review
   3-14-platform-disclaimer-guardrails: review
+  3-73-subject-catalog-pagination: backlog
   epic-4: review
   4-15-subscription-model-entitlement-service: review
   4-16-payos-checkout-initiation: review
@@ -101,6 +106,8 @@ development_status:
   13-58-admin-user-management: done
   13-59-system-settings: done
   13-60-admin-dashboard-kpis: done
+  13-71-admin-activity-notifications: backlog
+  13-72-admin-table-ux-standardization: backlog
   epic-14: in-progress
   14-65-study-mode-api-entitlements: review
   14-66-candidate-study-mode-ui: done
