@@ -4,9 +4,11 @@ import { AuthShell } from "@practice-exam/ui";
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useWebSession } from "@/components/web-session-provider";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { invalidateSession } = useWebSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -28,7 +30,9 @@ export default function RegisterPage() {
         setError(body.error ?? "Không thể đăng ký. Vui lòng thử lại.");
         return;
       }
-      router.push("/sign-in?registered=1");
+      await invalidateSession();
+      router.push("/");
+      router.refresh();
     } catch {
       setError("Không thể đăng ký. Vui lòng thử lại.");
     } finally {

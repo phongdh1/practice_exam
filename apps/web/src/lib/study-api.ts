@@ -1,4 +1,5 @@
 import type { StudyApiAdapter } from "@practice-exam/ui";
+import { webAuthFetch } from "./auth-fetch";
 
 export class StudyApiError extends Error {
   readonly code?: string;
@@ -25,17 +26,15 @@ export function createWebStudyApi(subjectId: string): StudyApiAdapter {
       if (params?.page) search.set("page", String(params.page));
       if (params?.pageSize) search.set("pageSize", String(params.pageSize));
       const suffix = search.toString() ? `?${search.toString()}` : "";
-      const res = await fetch(`/api/study/subjects/${id}/questions${suffix}`);
-      if (res.status === 401) throw new StudyApiError("Vui lòng đăng nhập để xem câu hỏi.");
+      const res = await webAuthFetch(`/api/study/subjects/${id}/questions${suffix}`);
       return parseJson(res);
     },
     async getQuestionDetail(id, questionId) {
-      const res = await fetch(`/api/study/subjects/${id}/questions/${questionId}`);
-      if (res.status === 401) throw new StudyApiError("Vui lòng đăng nhập để xem câu hỏi.");
+      const res = await webAuthFetch(`/api/study/subjects/${id}/questions/${questionId}`);
       return parseJson(res);
     },
     async flagQuestion(questionId, comment) {
-      const res = await fetch(`/api/questions/${questionId}/flag`, {
+      const res = await webAuthFetch(`/api/questions/${questionId}/flag`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comment }),

@@ -2,27 +2,50 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect } from "react";
+import { useWebSession } from "@/components/web-session-provider";
 
 function OAuthCallbackHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { invalidateSession } = useWebSession();
 
   useEffect(() => {
-    const accessToken = searchParams.get("accessToken");
-    const refreshToken = searchParams.get("refreshToken");
-    const mergeSummary = searchParams.get("mergeSummary");
+    let cancelled = false;
 
-    if (accessToken && refreshToken) {
-      document.cookie = `access_token=${accessToken}; path=/; max-age=${15 * 60}; samesite=lax`;
-      document.cookie = `refresh_token=${refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
+    async function completeOAuth() {
+      const accessToken = searchParams.get("accessToken");
+      const refreshToken = searchParams.get("refreshToken");
+      const mergeSummary = searchParams.get("mergeSummary");
+
+      if (accessToken && refreshToken) {
+        const res = await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken, refreshToken }),
+        });
+        if (!res.ok) {
+          if (cancelled) return;
+          router.replace("/sign-in?error=oauth_session");
+          return;
+        }
+        await invalidateSession();
+      }
+
+      if (cancelled) return;
+
+      if (mergeSummary) {
+        router.replace(`/account/merge-summary?mergeSummary=${encodeURIComponent(mergeSummary)}`);
+        return;
+      }
+      router.replace("/");
     }
 
-    if (mergeSummary) {
-      router.replace(`/account/merge-summary?mergeSummary=${encodeURIComponent(mergeSummary)}`);
-      return;
-    }
-    router.replace("/");
-  }, [searchParams, router]);
+    void completeOAuth();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, router, invalidateSession]);
 
   return (
     <main className="mx-auto max-w-md p-8 text-center">

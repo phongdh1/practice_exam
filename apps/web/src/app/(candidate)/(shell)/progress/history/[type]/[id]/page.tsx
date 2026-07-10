@@ -1,6 +1,7 @@
 "use client";
 
 import { queryKeys } from "@practice-exam/api-client";
+import { webAuthFetch } from "@/lib/auth-fetch";
 import { disclaimerQueryOptions } from "@/lib/web-api";
 import {
   CatalogSkeleton,
@@ -16,14 +17,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 async function fetchPracticeDetail(sessionId: string) {
-  const res = await fetch(`/api/progress/attempts/practice/${sessionId}`);
+  const res = await webAuthFetch(`/api/progress/attempts/practice/${sessionId}`);
   if (!res.ok) throw new Error("Failed to load detail");
   const body = await res.json();
   return body.data;
 }
 
 async function fetchMockResults(attemptId: string) {
-  const res = await fetch(`/api/mock-exams/attempts/${attemptId}/results`);
+  const res = await webAuthFetch(`/api/mock-exams/attempts/${attemptId}/results`);
   if (!res.ok) throw new Error("Failed to load results");
   const body = await res.json();
   return body.data;

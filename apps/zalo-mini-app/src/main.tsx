@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { createApiClient, queryKeys } from "@practice-exam/api-client";
 import { disclaimerQueryOptions } from "./lib/zalo-api";
+import { zaloOnUnauthorized } from "./lib/session";
 import { MaintenanceGate } from "./components/maintenance-gate";
 import {
   AttemptHistoryList,
@@ -53,6 +54,7 @@ function createClient() {
   return createApiClient({
     baseUrl: API_URL,
     getAccessToken: getStoredToken,
+    onUnauthorized: zaloOnUnauthorized,
   });
 }
 
@@ -961,12 +963,8 @@ function AttemptDetailPage() {
   const mockQuery = useQuery({
     queryKey: ["mock-exam", "results", id],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/v1/mock-exam-attempts/${id}/results`, {
-        headers: { Authorization: `Bearer ${getStoredToken()}` },
-      });
-      if (!res.ok) throw new Error("Failed");
-      const body = await res.json();
-      return body.data;
+      const res = await createClient().getMockExamAttemptResults(id);
+      return res.data;
     },
     enabled: isValidType && !isPractice,
     retry: false,

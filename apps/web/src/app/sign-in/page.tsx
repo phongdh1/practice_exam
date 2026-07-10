@@ -2,16 +2,16 @@
 
 import { createApiClient } from "@practice-exam/api-client";
 import { AuthShell } from "@practice-exam/ui";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useWebSession } from "@/components/web-session-provider";
 
 const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 function SignInForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const registered = searchParams.get("registered") === "1";
+  const { invalidateSession } = useWebSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +32,7 @@ function SignInForm() {
         setError(body.error ?? "Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
         return;
       }
+      await invalidateSession();
       router.push("/");
       router.refresh();
     } catch {
@@ -52,12 +53,6 @@ function SignInForm() {
           </Link>
         </p>
       </div>
-
-      {registered && (
-        <p className="mb-4 rounded-lg bg-success-muted p-3 text-sm text-success" role="status">
-          Đăng ký thành công. Vui lòng đăng nhập.
-        </p>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
@@ -124,9 +119,5 @@ function SignInForm() {
 }
 
 export default function SignInPage() {
-  return (
-    <Suspense>
-      <SignInForm />
-    </Suspense>
-  );
+  return <SignInForm />;
 }

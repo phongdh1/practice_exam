@@ -21,6 +21,7 @@ describe("AuthController (e2e)", () => {
       externalId: string;
       passwordHash?: string;
       userId: string;
+      createdAt?: Date;
     }[];
   }>();
 
@@ -47,6 +48,7 @@ describe("AuthController (e2e)", () => {
                 externalId: identityData.externalId as string,
                 passwordHash: identityData.passwordHash as string | undefined,
                 userId: id,
+                createdAt: new Date("2026-06-29T00:00:00.000Z"),
               }]
             : [],
         };
@@ -181,6 +183,7 @@ describe("AuthController (e2e)", () => {
         externalId: "candidate@example.com",
         passwordHash: hash,
         userId: "user-1",
+        createdAt: new Date("2026-06-29T00:00:00.000Z"),
       }],
     });
 
@@ -215,6 +218,45 @@ describe("AuthController (e2e)", () => {
     const res = await request(app.getHttpServer())
       .post("/api/v1/auth/link/zalo")
       .send({ accessToken: "test-zalo-link" });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("GET /auth/me returns profile for authenticated user", async () => {
+    const login = await request(app.getHttpServer())
+      .post("/api/v1/auth/register")
+      .send({ email: "me@example.com", password: "password123", displayName: "Me User" });
+
+    const token = login.body.data.tokens.accessToken as string;
+
+    const res = await request(app.getHttpServer())
+      .get("/api/v1/auth/me")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.displayName).toBe("Me User");
+    expect(res.body.data.identities[0].provider).toBe("email");
+    expect(res.body.data.identities[0].linkedAt).toBeDefined();
+  });
+
+  it("GET /auth/me rejects unauthenticated requests", async () => {
+    const res = await request(app.getHttpServer()).get("/api/v1/auth/me");
+    expect(res.status).toBe(401);
+  });
+
+  it("GET /auth/me rejects suspended users", async () => {
+    const login = await request(app.getHttpServer())
+      .post("/api/v1/auth/register")
+      .send({ email: "suspended@example.com", password: "password123" });
+
+    const token = login.body.data.tokens.accessToken as string;
+    const userId = login.body.data.user.id as string;
+    const user = users.get(userId);
+    if (user) user.isSuspended = true;
+
+    const res = await request(app.getHttpServer())
+      .get("/api/v1/auth/me")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(401);
   });

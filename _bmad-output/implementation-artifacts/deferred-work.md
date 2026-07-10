@@ -121,3 +121,13 @@
 - **Active subject re-validation** — raising mins on an already-active subject does not auto-archive or warn beyond edit banner.
 - **minsBySubject fallback** — missing subject ID in map silently uses DEFAULT_* constants.
 - **Pre-existing active subjects below 200/1** — migration adds defaults but does not re-check catalog readiness.
+
+## Deferred from: code review of spec-frontend-401-login-redirect (2026-07-10)
+
+- `tsconfig.tsbuildinfo` files in working tree — build-artifact noise unrelated to feature logic.
+
+## Deferred from: code review of STORY-69 (2026-07-10)
+
+- **STORY-69** — `clearWebSession` / `getWebAccessToken` read `document.cookie` but tokens are httpOnly — client-side session clear/token read ineffective; needs BFF logout route.
+- **STORY-69** — OAuth tokens passed in URL query params (referrer/history leak risk) — Google routes commented out; existing redirect contract.
+- **STORY-69** — No unit/integration tests for BFF `/api/auth/me` or `/api/auth/set-session` routes — API `auth/me` e2e covered; BFF layer untested.

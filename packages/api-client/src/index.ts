@@ -14,6 +14,7 @@ import type {
   AdminUserProfile,
   AdminUserSearchResult,
   ApiResponse,
+  AuthMeUser,
   AuthResult,
   CheckoutResult,
   ContentComplianceScanResult,
@@ -25,6 +26,7 @@ import type {
   MaintenanceMode,
   MergeSummary,
   MockExamAccess,
+  MockExamResultsView,
   PaginatedResult,
   PaymentDetail,
   PaymentMerchantConfigView,
@@ -207,6 +209,10 @@ export class ApiClient {
     return `${this.config.baseUrl}/api/v1/auth/link/google`;
   }
 
+  getMe(): Promise<ApiResponse<AuthMeUser>> {
+    return this.request<AuthMeUser>("/api/v1/auth/me");
+  }
+
   listSubscriptions(): Promise<ApiResponse<SubscriptionSummary[]>> {
     return this.request<SubscriptionSummary[]>("/api/v1/subscriptions");
   }
@@ -306,6 +312,10 @@ export class ApiClient {
 
   getPracticeSessionDetail(sessionId: string): Promise<ApiResponse<PracticeSessionDetailView>> {
     return this.request<PracticeSessionDetailView>(`/api/v1/progress/attempts/practice/${sessionId}`);
+  }
+
+  getMockExamAttemptResults(attemptId: string): Promise<ApiResponse<MockExamResultsView>> {
+    return this.request<MockExamResultsView>(`/api/v1/mock-exam-attempts/${attemptId}/results`);
   }
 
   getProgressSummary(days: 30 | 90 = 30): Promise<ApiResponse<ProgressSummaryResponse>> {
@@ -849,10 +859,19 @@ export function createApiClient(config: ApiClientConfig): ApiClient {
   return new ApiClient(config);
 }
 
+export {
+  authFetch,
+  createUnauthorizedGuard,
+  UnauthorizedError,
+  type UnauthorizedGuardConfig,
+} from "./unauthorized-guard";
+
 /** TanStack Query key factories */
 export const queryKeys = {
   health: ["health"] as const,
-  auth: ["auth"] as const,
+  auth: {
+    me: ["auth", "me"] as const,
+  },
   subjects: {
     all: ["subjects"] as const,
     detail: (id: string) => ["subjects", id] as const,
@@ -941,7 +960,7 @@ export const queryKeys = {
   },
 };
 
-export type { MergeSummary, AuthResult };
+export type { MergeSummary, AuthResult, AuthMeUser };
 
 export {
   partitionByStatus,

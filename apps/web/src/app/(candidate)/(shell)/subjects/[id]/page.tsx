@@ -2,6 +2,7 @@
 
 import { createApiClient, queryKeys } from "@practice-exam/api-client";
 import { disclaimerQueryOptions } from "@/lib/web-api";
+import { webAuthFetch } from "@/lib/auth-fetch";
 import {
   CatalogSkeleton,
   DisclaimerGate,
@@ -20,6 +21,7 @@ const apiClient = createApiClient({
 });
 
 async function fetchSubjectSubscription(subjectId: string): Promise<SubjectSubscriptionView | null> {
+  // Optional-auth probe: guests get 401 without a session — must not redirect (public subject detail).
   const res = await fetch(`/api/subscriptions/${subjectId}`);
   if (res.status === 401) return null;
   if (!res.ok) return null;
@@ -46,6 +48,7 @@ export default function SubjectDetailPage() {
   const { data: entitlementResponse } = useQuery({
     queryKey: queryKeys.entitlements.subject(subjectId),
     queryFn: async () => {
+      // Optional-auth probe: guests get 401 without a session — must not redirect (public subject detail).
       const res = await fetch(`/api/entitlements/${subjectId}`);
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to load entitlement");
@@ -57,6 +60,7 @@ export default function SubjectDetailPage() {
   const { data: studyTierResponse } = useQuery({
     queryKey: queryKeys.study.tier(subjectId),
     queryFn: async () => {
+      // Optional-auth probe: guests get 401 without a session — must not redirect (public subject detail).
       const res = await fetch(`/api/study/subjects/${subjectId}/tier`);
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to load study tier");
@@ -81,11 +85,7 @@ export default function SubjectDetailPage() {
     if (!subject) return;
     setActionError(null);
 
-    const res = await fetch(`/api/study/subjects/${subjectId}/tier`);
-    if (res.status === 401) {
-      setActionError("Vui lòng đăng nhập để xem câu hỏi.");
-      return;
-    }
+    const res = await webAuthFetch(`/api/study/subjects/${subjectId}/tier`);
     if (!res.ok) {
       setActionError("Không thể kiểm tra quyền ôn tập. Vui lòng thử lại.");
       return;
@@ -103,12 +103,7 @@ export default function SubjectDetailPage() {
       return;
     }
 
-    const res = await fetch(`/api/practice/subjects/${subjectId}`);
-    if (res.status === 401) {
-      setActionError("Vui lòng đăng nhập để luyện tập.");
-      return;
-    }
-
+    await webAuthFetch(`/api/practice/subjects/${subjectId}`);
     router.push(`/subjects/${subjectId}/practice`);
   }
 
@@ -116,11 +111,7 @@ export default function SubjectDetailPage() {
     if (!subject) return;
     setActionError(null);
 
-    const res = await fetch(`/api/entitlements/${subjectId}/mock-exam`);
-    if (res.status === 401) {
-      setActionError("Vui lòng đăng nhập để thi thử.");
-      return;
-    }
+    const res = await webAuthFetch(`/api/entitlements/${subjectId}/mock-exam`);
     if (!res.ok) {
       setActionError("Không thể kiểm tra quyền thi thử. Vui lòng thử lại.");
       return;

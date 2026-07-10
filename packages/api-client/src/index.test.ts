@@ -12,6 +12,7 @@ describe("ApiClient", () => {
   });
 
   it("exposes entitlements and settings query keys", () => {
+    expect(queryKeys.auth.me).toEqual(["auth", "me"]);
     expect(queryKeys.entitlements.freeTier).toEqual(["entitlements", "free-tier"]);
     expect(queryKeys.settings.disclaimer).toEqual(["settings", "disclaimer"]);
   });

@@ -7,20 +7,20 @@ import {
   CandidateFooter,
   DisclaimerGate,
   FALLBACK_PLATFORM_DISCLAIMER,
-  InternalLink,
   LandingHero,
   PullToRefresh,
   SubjectCatalogGrid,
 } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useCandidateShell } from "@/components/candidate-shell-context";
+import { useWebSession } from "@/components/web-session-provider";
 
 const apiClient = createApiClient({
   baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001",
 });
 
 async function fetchFreeTierUsage() {
+  // Optional-auth probe: guests get 401 without a session — must not redirect (public catalog).
   const res = await fetch("/api/entitlements/free-tier");
   if (res.status === 401) return null;
   if (!res.ok) throw new Error("Failed to load entitlements");
@@ -28,6 +28,7 @@ async function fetchFreeTierUsage() {
 }
 
 export default function HomePage() {
+  const { isAuthenticated, user } = useWebSession();
   const {
     data: subjectsResponse,
     isLoading,
@@ -49,7 +50,6 @@ export default function HomePage() {
 
   const subjects = subjectsResponse?.data ?? [];
   const disclaimer = disclaimerResponse?.data ?? FALLBACK_PLATFORM_DISCLAIMER;
-  const isAuthenticated = entitlementsResponse !== undefined && entitlementsResponse !== null;
   const freeTierUsedBySubjectId = useMemo(() => {
     const map: Record<string, number> = {};
     for (const item of entitlementsResponse?.data?.items ?? []) {
@@ -57,21 +57,6 @@ export default function HomePage() {
     }
     return map;
   }, [entitlementsResponse]);
-
-  const accountAction = useMemo(
-    () =>
-      !isAuthenticated ? (
-        <InternalLink
-          href="/sign-in"
-          className="rounded-lg bg-primary px-4 py-2 text-label font-medium text-on-primary"
-        >
-          Đăng nhập
-        </InternalLink>
-      ) : undefined,
-    [isAuthenticated],
-  );
-
-  useCandidateShell({ accountAction });
 
   const content = (
     <>
@@ -95,7 +80,7 @@ export default function HomePage() {
             {!isLoading && !isError && (
               <SubjectCatalogGrid
                 subjects={subjects}
-                userName={isAuthenticated ? "Học viên" : undefined}
+                userName={isAuthenticated ? (user?.displayName ?? "Học viên") : undefined}
                 freeTierUsedBySubjectId={freeTierUsedBySubjectId}
                 getSubjectHref={(subject) => `/subjects/${subject.id}`}
               />

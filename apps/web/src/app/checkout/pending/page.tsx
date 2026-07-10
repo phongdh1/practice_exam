@@ -1,5 +1,6 @@
 "use client";
 
+import { webAuthFetch } from "@/lib/auth-fetch";
 import {
   PaymentConfirmationView,
   PaymentFailedView,
@@ -11,7 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 
 async function fetchPayment(paymentId: string) {
-  const res = await fetch(`/api/payments/${paymentId}`);
+  const res = await webAuthFetch(`/api/payments/${paymentId}`);
   if (!res.ok) throw new Error("Failed to load payment");
   return res.json();
 }

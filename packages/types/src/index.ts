@@ -23,6 +23,19 @@ export interface AuthIdentityView {
   externalId: string;
 }
 
+/** Linked identity summary for GET /auth/me (no externalId exposed) */
+export interface AuthIdentityLinkedView {
+  provider: AuthProviderType;
+  linkedAt: string;
+}
+
+export interface AuthMeUser {
+  id: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  identities: AuthIdentityLinkedView[];
+}
+
 export interface AuthUser {
   id: string;
   displayName: string | null;

@@ -2,6 +2,7 @@
 
 import { queryKeys } from "@practice-exam/api-client";
 import { disclaimerQueryOptions } from "@/lib/web-api";
+import { webAuthFetch } from "@/lib/auth-fetch";
 import {
   AttemptHistoryList,
   CatalogSkeleton,
@@ -12,8 +13,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchAttemptHistory() {
-  const res = await fetch("/api/progress/attempts");
-  if (res.status === 401) throw new Error("UNAUTHORIZED");
+  const res = await webAuthFetch("/api/progress/attempts");
   if (!res.ok) throw new Error("Failed to load history");
   const body = await res.json();
   return body.data;

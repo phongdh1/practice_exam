@@ -1,4 +1,5 @@
 import type { PracticeApiAdapter } from "@practice-exam/ui";
+import { webAuthFetch } from "./auth-fetch";
 
 export class PracticeApiError extends Error {
   readonly code?: string;
@@ -21,25 +22,23 @@ async function parseJson<T>(res: Response): Promise<T> {
 export function createWebPracticeApi(subjectId: string): PracticeApiAdapter {
   return {
     async getActiveSession() {
-      const res = await fetch(`/api/practice/subjects/${subjectId}`);
-      if (res.status === 401) throw new PracticeApiError("Vui lòng đăng nhập để luyện tập.");
+      const res = await webAuthFetch(`/api/practice/subjects/${subjectId}`);
       return parseJson(res);
     },
     async startSession(_subjectId, forceNew = false) {
-      const res = await fetch(`/api/practice/subjects/${subjectId}`, {
+      const res = await webAuthFetch(`/api/practice/subjects/${subjectId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ forceNew }),
       });
-      if (res.status === 401) throw new PracticeApiError("Vui lòng đăng nhập để luyện tập.");
       return parseJson(res);
     },
     async getQuestion(sessionId) {
-      const res = await fetch(`/api/practice/sessions/${sessionId}/question`);
+      const res = await webAuthFetch(`/api/practice/sessions/${sessionId}/question`);
       return parseJson(res);
     },
     async submitAnswer(sessionId, input) {
-      const res = await fetch(`/api/practice/sessions/${sessionId}/answer`, {
+      const res = await webAuthFetch(`/api/practice/sessions/${sessionId}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
@@ -47,11 +46,11 @@ export function createWebPracticeApi(subjectId: string): PracticeApiAdapter {
       return parseJson(res);
     },
     async endSession(sessionId) {
-      const res = await fetch(`/api/practice/sessions/${sessionId}/end`, { method: "POST" });
+      const res = await webAuthFetch(`/api/practice/sessions/${sessionId}/end`, { method: "POST" });
       return parseJson(res);
     },
     async flagQuestion(questionId, comment) {
-      const res = await fetch(`/api/questions/${questionId}/flag`, {
+      const res = await webAuthFetch(`/api/questions/${questionId}/flag`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comment }),

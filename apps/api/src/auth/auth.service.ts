@@ -21,6 +21,13 @@ export interface AuthUserView {
   identities: { provider: AuthProvider; externalId: string }[];
 }
 
+export interface AuthMeView {
+  id: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  identities: { provider: AuthProvider; linkedAt: string }[];
+}
+
 export interface AuthResult {
   user: AuthUserView;
   tokens: TokenPair;
@@ -321,6 +328,28 @@ export class AuthService {
       include: { identities: true },
     });
     return this.toUserView(user);
+  }
+
+  async getMe(userId: string): Promise<AuthMeView> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      include: { identities: true },
+    });
+    if (user.isSuspended) {
+      throw new UnauthorizedException({
+        code: "ACCOUNT_SUSPENDED",
+        message: AUTH_ERRORS_VI.ACCOUNT_SUSPENDED,
+      });
+    }
+    return {
+      id: user.id,
+      displayName: user.displayName,
+      avatarUrl: user.avatarUrl,
+      identities: user.identities.map((identity) => ({
+        provider: identity.provider,
+        linkedAt: identity.createdAt.toISOString(),
+      })),
+    };
   }
 
   private toUserView(user: {

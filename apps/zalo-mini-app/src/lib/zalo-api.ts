@@ -1,10 +1,12 @@
 import { createApiClient, queryKeys, SETTINGS_QUERY_STALE_MS } from "@practice-exam/api-client";
+import { zaloOnUnauthorized } from "./session";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
 export const zaloApi = createApiClient({
   baseUrl: API_URL,
   getAccessToken: () => localStorage.getItem("access_token") ?? undefined,
+  onUnauthorized: zaloOnUnauthorized,
 });
 
 type DisclaimerQueryOptions = {
@@ -36,3 +38,5 @@ export const maintenanceQueryOptions: MaintenanceQueryOptions = {
   refetchInterval: SETTINGS_QUERY_STALE_MS,
   retry: false,
 };
+
+export { zaloOnUnauthorized };

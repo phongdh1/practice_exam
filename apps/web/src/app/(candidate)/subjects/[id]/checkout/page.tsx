@@ -1,6 +1,7 @@
 "use client";
 
 import { createApiClient, queryKeys } from "@practice-exam/api-client";
+import { webAuthFetch } from "@/lib/auth-fetch";
 import { disclaimerQueryOptions } from "@/lib/web-api";
 import {
   CheckoutView,
@@ -41,7 +42,7 @@ export default function SubjectCheckoutPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/checkout/subscription", {
+      const res = await webAuthFetch("/api/checkout/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,7 +63,7 @@ export default function SubjectCheckoutPage() {
       const checkoutUrl = body.data.checkoutUrl as string;
 
       if (checkoutUrl.includes("/mock-checkout")) {
-        await fetch(`/api/payments/${paymentId}?provider=${provider}`, { method: "POST" });
+        await webAuthFetch(`/api/payments/${paymentId}?provider=${provider}`, { method: "POST" });
         router.push(`/checkout/pending?paymentId=${paymentId}&subjectId=${subjectId}`);
         return;
       }

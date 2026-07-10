@@ -1,9 +1,18 @@
 "use client";
 
-import { createApiClient, queryKeys, SETTINGS_QUERY_STALE_MS } from "@practice-exam/api-client";
+import { createApiClient, createUnauthorizedGuard, queryKeys, SETTINGS_QUERY_STALE_MS } from "@practice-exam/api-client";
+import { clearWebSession, getWebAccessToken } from "./session";
+
+const webOnUnauthorized = createUnauthorizedGuard({
+  loginPath: "/sign-in",
+  clearSession: clearWebSession,
+  shouldSkipRedirect: (path) => path.startsWith("/sign-in") || path.startsWith("/register"),
+});
 
 export const webApi = createApiClient({
   baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001",
+  getAccessToken: getWebAccessToken,
+  onUnauthorized: webOnUnauthorized,
 });
 
 type DisclaimerQueryOptions = {
@@ -35,3 +44,5 @@ export const maintenanceQueryOptions: MaintenanceQueryOptions = {
   refetchInterval: SETTINGS_QUERY_STALE_MS,
   retry: false,
 };
+
+export { webOnUnauthorized };

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UseGuards,
@@ -117,6 +118,12 @@ export class AuthController {
     @Body(new ValidationPipe({ whitelist: true })) dto: ZaloAuthDto,
   ) {
     return this.authService.linkZalo(req.user.sub, dto.accessToken);
+  }
+
+  @Get("me")
+  @UseGuards(JwtAuthGuard)
+  getMe(@Req() req: Request & { user: AuthUserPayload }) {
+    return this.authService.getMe(req.user.sub);
   }
 
   // TODO: re-enable when GOOGLE_CLIENT_ID is configured

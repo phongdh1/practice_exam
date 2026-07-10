@@ -2,6 +2,7 @@
 
 import { queryKeys } from "@practice-exam/api-client";
 import { disclaimerQueryOptions } from "@/lib/web-api";
+import { webAuthFetch } from "@/lib/auth-fetch";
 import {
   CatalogSkeleton,
   DisclaimerGate,
@@ -13,8 +14,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 async function fetchProgressSummary(days: 30 | 90) {
-  const res = await fetch(`/api/progress/subjects?days=${days}`);
-  if (res.status === 401) throw new Error("UNAUTHORIZED");
+  const res = await webAuthFetch(`/api/progress/subjects?days=${days}`);
   if (!res.ok) throw new Error("Failed to load progress");
   const body = await res.json();
   return body.data;
