@@ -1,0 +1,36 @@
+{
+  "name": "@practice-exam/zalo-mini-app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && vite build",
+    "dev": "vite",
+    "lint": "eslint src/",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@practice-exam/api-client": "workspace:*",
+    "@practice-exam/ui": "workspace:*",
+    "@practice-exam/utils": "workspace:*",
+    "@tanstack/react-query": "^5.80.7",
+    "@tanstack/react-router": "^1.120.15",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zmp-sdk": "^2.44.0"
+  },
+  "devDependencies": {
+    "@practice-exam/config": "workspace:*",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.2",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.28.0",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19",
+    "zmp-vite-plugin": "^1.1.6"
+  }
+}

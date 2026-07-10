@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chi tiết môn học - CNVCK Prep</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: "Be Vietnam Pro", Inter, system-ui, sans-serif;
+            background-color: #f9f9fc;
+        }
+        .bento-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 56, 87, 0.08);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "ink-muted": "#5D6D7E",
+                        "surface": "#f9f9fc",
+                        "on-background": "#1a1c1e",
+                        "secondary": "#556064",
+                        "outline-variant": "#c1c7cf",
+                        "surface-variant": "#e2e2e5",
+                        "surface-container-highest": "#e2e2e5",
+                        "surface-container": "#edeef1",
+                        "primary-container": "#1b4f72",
+                        "primary": "#003857",
+                        "surface-subtle": "#F7F9FB",
+                        "on-surface": "#1a1c1e",
+                        "disclaimer-bg": "#FEF9E7",
+                        "disclaimer-border": "#F4D03F",
+                        "success": "#0E7C4A",
+                        "warning": "#D68910",
+                        "error": "#C0392B",
+                        "accent": "#0E7C4A",
+                        "surface-container-low": "#f3f3f7",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f9f9fc",
+                        "on-surface-variant": "#41474e",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-desktop": "32px",
+                        "gutter-mobile": "16px",
+                        "section-gap": "32px",
+                        "question-padding": "20px",
+                    },
+                    "fontSize": {
+                        "body": ["16px", {"lineHeight": "1.55", "fontWeight": "400"}],
+                        "display-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "label": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "display-lg": ["28px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "heading": ["18px", {"lineHeight": "1.35", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<nav class="flex justify-between items-center px-gutter-desktop w-full h-16 sticky top-0 z-50 bg-surface shadow-sm">
+<div class="font-display-lg text-display-lg font-bold text-primary">CNVCK Prep</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-heading text-heading text-primary font-bold border-b-2 border-primary pb-1" href="#">Môn học</a>
+<a class="font-heading text-heading text-on-surface-variant hover:text-primary transition-colors" href="#">Tiến độ</a>
+<a class="font-heading text-heading text-on-surface-variant hover:text-primary transition-colors" href="#">Tài khoản</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer text-3xl">account_circle</span>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-gutter-mobile md:px-gutter-desktop py-8">
+<!-- Header Section: Title & Subscription Badge -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div class="space-y-2">
+<nav class="flex items-center gap-2 text-ink-muted mb-2">
+<span class="text-caption font-label">Môn học</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-caption font-label text-primary">Pháp luật về chứng khoán</span>
+</nav>
+<h1 class="font-display-lg text-display-lg text-primary max-w-2xl leading-tight">Pháp luật về chứng khoán và thị trường chứng khoán</h1>
+<div class="flex flex-wrap items-center gap-3 pt-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-label font-label border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+                        Chưa đăng ký
+                    </span>
+<span class="text-ink-muted text-label">•</span>
+<span class="text-ink-muted text-label font-label">Thời gian học ước tính: 45 giờ</span>
+</div>
+</div>
+<!-- Subscription Card (Mini) -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm w-full md:w-80">
+<div class="flex justify-between items-start mb-4">
+<span class="text-label font-label text-ink-muted uppercase tracking-wider">Gói học tập</span>
+<span class="text-primary font-bold">100.000 ₫/tháng</span>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-heading hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                    Đăng ký trọn bộ
+                </button>
+</div>
+</header>
+<!-- Bento Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Main Content Area (8 cols) -->
+<div class="md:col-span-8 space-y-6">
+<!-- Description Card -->
+<section class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant bento-card">
+<h2 class="font-heading text-display-sm text-primary mb-4">Mô tả môn học</h2>
+<div class="space-y-4 text-on-surface-variant font-body leading-relaxed">
+<p>Môn học cung cấp kiến thức nền tảng và chuyên sâu về hệ thống văn bản pháp luật điều chỉnh hoạt động chứng khoán và thị trường chứng khoán tại Việt Nam. Trọng tâm bao gồm Luật Chứng khoán 2019 và các Nghị định, Thông tư hướng dẫn thi hành.</p>
+<p>Học viên sẽ được tiếp cận các quy định về chào bán, niêm yết, giao dịch chứng khoán, cũng như các quy định về quản trị công ty đại chúng và chế tài xử phạt vi phạm hành chính trong lĩnh vực chứng khoán.</p>
+<ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Quy định chào bán chứng khoán</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Tổ chức thị trường giao dịch</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Đăng ký, lưu ký, thanh toán</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Thanh tra, kiểm tra và xử lý vi phạm</li>
+</ul>
+</div>
+</section>
+<!-- Free Tier Meter & Primary Actions -->
+<section class="bg-surface-subtle p-8 rounded-xl border-2 border-dashed border-outline-variant bento-card">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex-1">
+<h3 class="font-heading text-heading text-primary mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined">analytics</span>
+                                Hạn mức miễn phí
+                            </h3>
+<p class="text-on-surface-variant text-body mb-4">Đã dùng <span class="font-bold text-primary">0/20</span> câu miễn phí tháng này</p>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="w-0 h-full bg-primary-container rounded-full transition-all duration-1000" style="width: 5%"></div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-3">
+<button class="px-8 py-3 bg-primary text-on-primary rounded-lg font-heading hover:bg-opacity-90 transition-all shadow-md">
+                                Luyện tập miễn phí
+                            </button>
+<button class="px-8 py-3 bg-surface-container-highest text-primary rounded-lg font-heading border border-primary hover:bg-surface-container-low transition-all">
+                                Xem ngân hàng câu hỏi
+                            </button>
+</div>
+</div>
+</section>
+<!-- Curriculum Detail (Bento Sub-grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant bento-card">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary">menu_book</span>
+</div>
+<h4 class="font-heading text-heading text-primary mb-2">Chương trình chuẩn</h4>
+<p class="text-caption text-ink-muted">Bám sát khung nội dung thi của Ủy ban Chứng khoán Nhà nước (UBCKNN).</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant bento-card">
+<div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-success">quiz</span>
+</div>
+<h4 class="font-heading text-heading text-primary mb-2">800+ Câu hỏi</h4>
+<p class="text-caption text-ink-muted">Ngân hàng câu hỏi trắc nghiệm có giải thích chi tiết đáp án và căn cứ pháp lý.</p>
+</div>
+</div>
+</div>
+<!-- Sidebar Area (4 cols) -->
+<aside class="md:col-span-4 space-y-6">
+<!-- Mock Exam Unlock Card -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant relative overflow-hidden bento-card group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl">lock</span>
+</div>
+<h3 class="font-heading text-heading text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined">timer</span>
+                        Thi thử Mock Exam
+                    </h3>
+<p class="text-on-surface-variant text-body-sm mb-6 leading-relaxed">
+                        Trải nghiệm áp lực phòng thi thật với bộ đề 50 câu trong 60 phút. Tính năng tự động chấm điểm và xếp hạng.
+                    </p>
+<button class="w-full py-3 bg-secondary/20 text-secondary cursor-not-allowed rounded-lg font-heading flex items-center justify-center gap-2 border border-secondary/30">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+                        Mở khóa bằng Gói Pro
+                    </button>
+<p class="text-[11px] text-ink-muted mt-3 italic text-center">Yêu cầu đăng ký gói thành viên để truy cập</p>
+</div>
+<!-- Instructor Info -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant bento-card">
+<h3 class="font-heading text-label text-ink-muted mb-4 uppercase tracking-wider">Hỗ trợ học thuật</h3>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a Vietnamese legal academic expert, wearing a sharp navy blue blazer against a clean, minimal white background. The lighting is soft and studio-quality, conveying expertise and trust. The overall aesthetic is professional, academic, and modern, aligning with a high-stakes certification platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcfrQUbiAr8A-Cc8ewr-TBpmFsF2BjHxjrZGtLkculb5tbLQ6h8H18CB782rMWfSNjOIrpXJ2LnBhvR7H33K-bL283IepxvujkmwdBOJtOVfElFlEVRAQvRcTSK51rlCIKy01dkJVJ8KYo2xDuvF5YjYdSfU5s-uiDZlR6VdsfaJHOm8O7arlarkBgPWcxcTWjC9WKut0o1S6Hn6GwhIJuhVnjK9NYBGHAN4aVCNlqxH5nZeMJwGM2iEMv6Yy3bmQMegNH2zRHWiVL"/>
+</div>
+<div>
+<p class="font-heading text-primary">Ban Chuyên môn</p>
+<p class="text-caption text-ink-muted">Hỗ trợ giải đáp 24/7</p>
+</div>
+</div>
+<button class="w-full py-2 text-primary font-label hover:underline text-center">
+                        Liên hệ tư vấn lộ trình
+                    </button>
+</div>
+<!-- Legal Disclaimer Banner -->
+<div class="bg-disclaimer-bg border border-disclaimer-border p-5 rounded-xl">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-warning">warning</span>
+<div class="text-caption text-on-surface leading-relaxed">
+<strong>Lưu ý:</strong> Nội dung học tập được cập nhật theo Luật Chứng khoán 2019. Luôn kiểm tra các văn bản mới nhất từ Cổng thông tin điện tử UBCKNN.
+                        </div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full py-12 px-gutter-desktop mt-section-gap flex flex-col gap-6 bg-surface-container-low border-t-2 border-disclaimer-border">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<div class="font-heading text-heading text-primary mb-2">CNVCK Prep</div>
+<p class="font-caption text-caption text-ink-muted max-w-sm">© 2024 CNVCK Certification Prep. Không trực thuộc UBCKNN.</p>
+</div>
+<div class="flex flex-wrap gap-8">
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary" href="#">Cài đặt</a>
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary" href="#">Chính sách bảo mật</a>
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary" href="#">Liên hệ hỗ trợ</a>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only Shared Component) -->
+<div class="fixed bottom-0 left-0 w-full z-50 flex justify-between md:hidden px-gutter-mobile py-3 bg-surface-container-lowest shadow-lg border-t border-outline-variant rounded-t-xl">
+<div class="flex items-center gap-2 px-4 text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_left</span>
+<span class="font-label text-label">Câu trước</span>
+</div>
+<div class="flex items-center gap-2 px-4 text-on-surface-variant">
+<span class="font-label text-label">Câu tiếp</span>
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = 'var(--tw-color-primary)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = '';
+            });
+        });
+    </script>
+</body></html>

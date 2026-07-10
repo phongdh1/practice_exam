@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CNVCK Admin - Subject Editor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#72787f",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f0f0f4",
+                    "surface-container-high": "#e7e8eb",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f9f9fc",
+                    "primary-fixed-dim": "#9dcbf4",
+                    "on-surface": "#1a1c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffddb2",
+                    "surface-subtle": "#F7F9FB",
+                    "surface-container-highest": "#e2e2e5",
+                    "primary-container": "#1b4f72",
+                    "on-secondary-fixed-variant": "#3d494c",
+                    "disclaimer-border": "#F4D03F",
+                    "surface": "#f9f9fc",
+                    "outline-variant": "#c1c7cf",
+                    "secondary": "#556064",
+                    "ink-disabled": "#AEB6BF",
+                    "surface-tint": "#326286",
+                    "tertiary-fixed-dim": "#f1be76",
+                    "on-primary-fixed": "#001e31",
+                    "primary": "#003857",
+                    "on-primary": "#ffffff",
+                    "price-highlight": "#1B4F72",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "success-muted": "#E6F4ED",
+                    "error-muted": "#FDECEA",
+                    "tertiary-container": "#674404",
+                    "secondary-fixed-dim": "#bdc9cc",
+                    "inverse-primary": "#9dcbf4",
+                    "success": "#0E7C4A",
+                    "secondary-fixed": "#d9e5e8",
+                    "ink-muted": "#5D6D7E",
+                    "disclaimer-bg": "#FEF9E7",
+                    "on-surface-variant": "#41474e",
+                    "on-background": "#1a1c1e",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#121d20",
+                    "inverse-surface": "#2e3133",
+                    "surface-dim": "#d9dadd",
+                    "secondary-container": "#d6e2e6",
+                    "tertiary": "#4a2f00",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f9f9fc",
+                    "on-secondary-container": "#596568",
+                    "on-primary-container": "#92c0e9",
+                    "on-primary-fixed-variant": "#154b6d",
+                    "surface-variant": "#e2e2e5",
+                    "primary-fixed": "#cce5ff",
+                    "on-tertiary-container": "#e4b36c",
+                    "error": "#C0392B",
+                    "warning-muted": "#FEF5E7",
+                    "warning": "#D68910",
+                    "surface-container-low": "#f3f3f7",
+                    "accent": "#0E7C4A",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#edeef1",
+                    "on-tertiary-fixed": "#291800"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "2": "8px",
+                    "8": "32px",
+                    "3": "12px",
+                    "question-padding": "20px",
+                    "base": "4px",
+                    "md": "16px",
+                    "1": "4px",
+                    "sm": "8px",
+                    "4": "16px",
+                    "section-gap": "32px",
+                    "xl": "32px",
+                    "gutter-desktop": "32px",
+                    "6": "24px",
+                    "10": "40px",
+                    "gutter-tablet": "24px",
+                    "5": "20px",
+                    "lg": "24px",
+                    "12": "48px",
+                    "xs": "4px",
+                    "gutter-mobile": "16px"
+            },
+            "fontFamily": {
+                    "heading": ["\"Be Vietnam Pro\", sans-serif"],
+                    "label": ["\"Be Vietnam Pro\", sans-serif"],
+                    "display": ["\"Be Vietnam Pro\", sans-serif"],
+                    "body": ["\"Be Vietnam Pro\", sans-serif"],
+                    "display-sm": ["\"Be Vietnam Pro\", sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c7cf; border-radius: 10px; }
+        
+        .toggle-checkbox:checked + .toggle-label { background-color: #0E7C4A; }
+        .toggle-checkbox:checked + .toggle-label::after { transform: translateX(1.5rem); }
+    </style>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- Layout Wrapper -->
+<div class="flex min-h-screen">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 gap-4 bg-primary dark:bg-primary-container h-screen w-64 z-50 shadow-sm">
+<div class="flex flex-col gap-1 mb-6 px-2">
+<h1 class="font-display-sm text-display-sm text-on-primary dark:text-on-primary-container font-bold">CNVCK Back-Office</h1>
+<p class="text-xs text-on-primary/60 uppercase tracking-widest font-bold">Certification Management</p>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<!-- Catalog is Active for Subject Editor -->
+<a class="bg-primary-container text-on-primary-container rounded-lg font-bold flex items-center gap-3 p-3 cursor-pointer transition-transform duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="font-label text-label">Catalog</span>
+</a>
+<a class="text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg flex items-center gap-3 p-3 cursor-pointer transition-transform duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label text-label">Content</span>
+</a>
+<a class="text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg flex items-center gap-3 p-3 cursor-pointer transition-transform duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label text-label">Users</span>
+</a>
+<a class="text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg flex items-center gap-3 p-3 cursor-pointer transition-transform duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label text-label">Payments</span>
+</a>
+<div class="mt-6 pt-6 border-t border-on-primary/10">
+<button class="w-full bg-white text-primary rounded-lg p-3 font-bold text-sm shadow-sm flex items-center justify-center gap-2 hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                        New Subject
+                    </button>
+</div>
+</nav>
+<div class="mt-auto flex flex-col gap-2">
+<a class="text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg flex items-center gap-3 p-3 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="font-label text-label">Support</span>
+</a>
+<a class="text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg flex items-center gap-3 p-3 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label text-label">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar (Shared Component) -->
+<header class="flex justify-between items-center px-8 w-full sticky top-0 z-40 bg-surface-container-lowest dark:bg-surface-container-lowest h-16 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4">
+<h2 class="font-display-sm text-display-sm font-bold text-primary">Subject Editor</h2>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant font-medium">Bất Động Sản Cơ Bản</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="notifications">notifications</span>
+<div class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="settings">settings</span>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right hidden xl:block">
+<p class="text-xs font-bold text-primary">Quản trị viên</p>
+<p class="text-[10px] text-ink-muted">admin@cnvck.edu.vn</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of a corporate administrator in formal attire, clean professional background, sharp focus, high-quality photography, lighting is warm and authoritative, aligning with a premium educational institution brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBQgdGNL0vQkglk31IsEo43_TiiPQNxQud5nh5ybjQADhdJnHIWxgqoL6vNwB3ogLf2AJ0cqJ5NxfmDFyllIHEgWwArhPmWNTmBJ3ad9S_DUMZ013lxUIEiniFQxw99BRn_NkGil0oQgvEcxHmfB6e369MJ-79_Mt2fIgg1C1ta97jby0IPKfr5JZXV_g1qpEB99GncVyy7z2evCSNGI-hB9QyPDllfVT_9utPrQ2iJxOov9E0K4hrakX2xHslGeYCFEzugIpo5i4D"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Editor Content -->
+<div class="flex-1 p-8 overflow-y-auto custom-scrollbar">
+<form class="max-w-6xl mx-auto flex flex-col gap-8 pb-12">
+<!-- Form Header & Actions -->
+<div class="flex justify-between items-end border-b border-outline-variant pb-6">
+<div class="flex flex-col gap-1">
+<h3 class="font-heading text-heading text-primary">Thông tin môn học</h3>
+<p class="text-sm text-on-surface-variant">Vui lòng điền đầy đủ các thông tin bắt buộc để thiết lập môn học mới.</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2 rounded-lg text-primary font-bold border border-primary hover:bg-primary-fixed transition-colors text-sm" type="button">
+                                Hủy bỏ
+                            </button>
+<button class="px-8 py-2 rounded-lg bg-primary text-on-primary font-bold shadow-sm hover:shadow-md active:scale-95 duration-150 transition-all text-sm flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-base" data-icon="save">save</span>
+                                Lưu thay đổi
+                            </button>
+</div>
+</div>
+<!-- Bento Grid Content -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Main Settings (Left Column) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-8">
+<!-- Primary Identity Card -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline-variant flex flex-col gap-6">
+<div class="grid grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label text-label text-primary">Tên môn học <span class="text-error">*</span></label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="VD: Pháp luật đất đai" type="text" value="Bất Động Sản Cơ Bản"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label text-label text-primary">Mã môn học <span class="text-error">*</span></label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all uppercase" placeholder="VD: PLDD-01" type="text" value="RE-101"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label text-label text-primary">Mô tả chi tiết</label>
+<textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none" placeholder="Nhập mô tả về mục tiêu và nội dung chính của môn học..." rows="4">Khóa học cung cấp kiến thức nền tảng về thị trường bất động sản, các quy định pháp lý cơ bản và kỹ năng định giá sơ bộ dành cho người mới bắt đầu hoặc cá nhân chuẩn bị thi chứng chỉ hành nghề.</textarea>
+</div>
+</div>
+<!-- Pricing & Limits Card -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline-variant">
+<h4 class="font-heading text-heading text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+                                    Cấu hình Gói học &amp; Giới hạn
+                                </h4>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<label class="font-label text-label text-primary">Học phí hàng tháng (VND)</label>
+<div class="relative">
+<input class="w-full pl-4 pr-16 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-price-highlight" placeholder="0" type="number" value="250000"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold text-sm">VND</span>
+</div>
+<p class="text-xs text-ink-muted">Giá niêm yết sẽ được hiển thị cho người dùng cuối trên Landing Page.</p>
+</div>
+<div class="flex flex-col gap-4">
+<label class="font-label text-label text-primary">Giới hạn câu hỏi Miễn phí</label>
+<div class="flex items-center gap-3">
+<input class="flex-1 px-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="0" type="number" value="50"/>
+<span class="text-on-surface-variant font-medium text-sm">Câu</span>
+</div>
+<p class="text-xs text-ink-muted">Số lượng câu hỏi tối đa người dùng chưa đăng ký được phép ôn tập.</p>
+</div>
+</div>
+<!-- Free Tier Perks -->
+<div class="mt-8 p-4 bg-disclaimer-bg border border-disclaimer-border rounded-lg flex gap-4">
+<span class="material-symbols-outlined text-warning" data-icon="info">info</span>
+<div class="flex flex-col gap-1">
+<p class="text-sm font-bold text-tertiary">Lưu ý về Gói Miễn Phí</p>
+<p class="text-xs text-on-tertiary-fixed-variant leading-relaxed">Người dùng đạt đến giới hạn này sẽ nhận được thông báo yêu cầu nâng cấp gói hội viên để tiếp tục học tập. Việc đặt giới hạn bằng 0 sẽ khóa hoàn toàn môn học với người dùng không trả phí.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Settings (Right Column) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-8">
+<!-- Thumbnail Upload -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline-variant">
+<h4 class="font-heading text-heading text-primary mb-4">Ảnh bìa môn học</h4>
+<div class="group relative aspect-video rounded-lg overflow-hidden border-2 border-dashed border-outline-variant bg-surface-subtle flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors">
+<div class="absolute inset-0 bg-cover bg-center opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A professional, clean, and high-quality educational subject cover image for a real estate course. Features minimalist architectural silhouettes, blueprint patterns, and a scholarly deep navy and white color scheme. Modern, institutional, and high-end aesthetics, suitable for a certification platform." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDmkYjN1kZTuYV9DkUVukzHFXeXE6Npb7PFGv_4fdPA1zYbtojIxsLR6LSQxPlgmC2uuCicxinLwKm9IqVid5XQQtbSGr7GBdQPZu0IYH64NN8hl6BWdYvr3UvUfugKthJSxDmovaj_sWZFHxzquRUm_Ed7_G-kKPKSRNqz8oJbcmKXAI0OAKB8w0izmAYtWhvERNs0uE1ndj4cmEqso5yIJPLAbzI9CVPLodszh_8nEzobbspUfYDkKZXJobX_HhH-HyZ4W-H9Cbo-')"></div>
+<div class="z-10 flex flex-col items-center gap-2 bg-white/90 p-4 rounded-lg shadow-sm border border-outline-variant">
+<span class="material-symbols-outlined text-primary" data-icon="cloud_upload">cloud_upload</span>
+<span class="text-xs font-bold text-primary">Thay đổi ảnh</span>
+</div>
+</div>
+<p class="text-[10px] text-ink-muted mt-3 italic text-center">Tỷ lệ khuyến nghị 16:9. Định dạng .JPG hoặc .PNG (Tối đa 2MB)</p>
+</div>
+<!-- Visibility Toggles -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline-variant flex flex-col gap-6">
+<h4 class="font-heading text-heading text-primary">Trạng thái hiển thị</h4>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-subtle">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Công khai</span>
+<span class="text-xs text-ink-muted">Cho phép học viên nhìn thấy</span>
+</div>
+<div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform" id="toggle-visibility" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer transition-colors duration-200" for="toggle-visibility"></label>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-subtle">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Gắn nhãn "Hot"</span>
+<span class="text-xs text-ink-muted">Ưu tiên xuất hiện đầu bảng</span>
+</div>
+<div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform" id="toggle-hot" name="toggle-hot" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer transition-colors duration-200" for="toggle-hot"></label>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant flex flex-col gap-4">
+<div class="flex items-center gap-2 text-sm text-ink-muted">
+<span class="material-symbols-outlined text-base" data-icon="event">event</span>
+                                        Cập nhật lần cuối: 12/10/2023
+                                    </div>
+<button class="flex items-center justify-center gap-2 py-3 rounded-lg text-error font-bold border border-error-muted hover:bg-error-muted transition-colors text-xs uppercase tracking-wide" type="button">
+<span class="material-symbols-outlined text-base" data-icon="delete">delete</span>
+                                        Xóa môn học này
+                                    </button>
+</div>
+</div>
+<!-- Analytics Quick View (Micro-interaction) -->
+<div class="bg-primary text-on-primary rounded-xl p-6 shadow-lg overflow-hidden relative group">
+<div class="absolute -right-4 -bottom-4 opacity-10 transform group-hover:scale-125 transition-transform duration-500">
+<span class="material-symbols-outlined text-[120px]" data-icon="trending_up">trending_up</span>
+</div>
+<h5 class="text-xs font-bold uppercase tracking-widest text-on-primary/60 mb-4">Hiệu suất môn học</h5>
+<div class="flex flex-col gap-1">
+<p class="text-3xl font-bold">1,284</p>
+<p class="text-xs text-on-primary/80">Học viên đang đăng ký</p>
+</div>
+<div class="mt-6 h-2 w-full bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-accent w-[72%] rounded-full shadow-[0_0_8px_rgba(14,124,74,0.5)]"></div>
+</div>
+<p class="mt-2 text-[10px] text-on-primary/60">Tăng trưởng 12% so với tháng trước</p>
+</div>
+</div>
+</div>
+</form>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple ripple-like effect on primary buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', function(e) {
+                this.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', function(e) {
+                this.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', function(e) {
+                this.classList.remove('scale-95');
+            });
+        });
+
+        // Toggle logic (Visual only for prototype)
+        const toggles = document.querySelectorAll('.toggle-checkbox');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if(this.checked) {
+                    label.classList.remove('bg-outline-variant');
+                    label.classList.add('bg-success');
+                } else {
+                    label.classList.add('bg-outline-variant');
+                    label.classList.remove('bg-success');
+                }
+            });
+        });
+
+        // Price formatting simulation
+        const priceInput = document.querySelector('input[type="number"]');
+        priceInput.addEventListener('blur', function() {
+            if (this.value) {
+                // Formatting could be added here if this were text
+            }
+        });
+    </script>
+</body></html>

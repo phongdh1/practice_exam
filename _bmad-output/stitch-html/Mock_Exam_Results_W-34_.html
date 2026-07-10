@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kết quả Thi thử - CNVCK Prep</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+            animation: fade-in-up 0.6s ease-out forwards;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "ink-muted": "#5D6D7E",
+                        "surface": "#f9f9fc",
+                        "on-background": "#1a1c1e",
+                        "secondary": "#556064",
+                        "on-tertiary-fixed-variant": "#624000",
+                        "outline-variant": "#c1c7cf",
+                        "tertiary-fixed-dim": "#f1be76",
+                        "surface-variant": "#e2e2e5",
+                        "on-secondary-fixed-variant": "#3d494c",
+                        "on-tertiary-container": "#e4b36c",
+                        "warning-muted": "#FEF5E7",
+                        "price-highlight": "#1B4F72",
+                        "surface-container-highest": "#e2e2e5",
+                        "on-secondary-fixed": "#121d20",
+                        "tertiary-container": "#674404",
+                        "surface-dim": "#d9dadd",
+                        "ink-disabled": "#AEB6BF",
+                        "secondary-fixed-dim": "#bdc9cc",
+                        "surface-container": "#edeef1",
+                        "primary-container": "#1b4f72",
+                        "inverse-on-surface": "#f0f0f4",
+                        "primary": "#003857",
+                        "on-primary-fixed": "#001e31",
+                        "primary-fixed": "#cce5ff",
+                        "tertiary-fixed": "#ffddb2",
+                        "primary-fixed-dim": "#9dcbf4",
+                        "surface-subtle": "#F7F9FB",
+                        "tertiary": "#4a2f00",
+                        "disclaimer-bg": "#FEF9E7",
+                        "on-surface": "#1a1c1e",
+                        "disclaimer-border": "#F4D03F",
+                        "success": "#0E7C4A",
+                        "surface-tint": "#326286",
+                        "on-primary-fixed-variant": "#154b6d",
+                        "warning": "#D68910",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#92c0e9",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e7e8eb",
+                        "error-muted": "#FDECEA",
+                        "secondary-container": "#d6e2e6",
+                        "secondary-fixed": "#d9e5e8",
+                        "inverse-primary": "#9dcbf4",
+                        "on-tertiary-fixed": "#291800",
+                        "error": "#C0392B",
+                        "accent": "#0E7C4A",
+                        "surface-container-low": "#f3f3f7",
+                        "outline": "#72787f",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f9f9fc",
+                        "inverse-surface": "#2e3133",
+                        "success-muted": "#E6F4ED",
+                        "surface-bright": "#f9f9fc",
+                        "on-surface-variant": "#41474e",
+                        "on-secondary-container": "#596568"
+                    },
+                    "spacing": {
+                        "gutter-desktop": "32px",
+                        "gutter-mobile": "16px",
+                        "section-gap": "32px",
+                        "question-padding": "20px",
+                    },
+                    "fontFamily": {
+                        "body": ["\"Be Vietnam Pro\", sans-serif"],
+                        "heading": ["\"Be Vietnam Pro\", sans-serif"],
+                        "display-lg": ["\"Be Vietnam Pro\", sans-serif"],
+                        "label": ["\"Be Vietnam Pro\", sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface shadow-sm sticky top-0 z-50 flex justify-between items-center px-gutter-desktop w-full h-16">
+<div class="flex items-center gap-2">
+<span class="font-display-lg text-display-lg font-bold text-primary">CNVCK Prep</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-heading text-heading text-on-surface-variant hover:text-primary transition-colors" href="#">Môn học</a>
+<a class="font-heading text-heading text-primary font-bold border-b-2 border-primary pb-1" href="#">Tiến độ</a>
+<a class="font-heading text-heading text-on-surface-variant hover:text-primary transition-colors" href="#">Tài khoản</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">account_circle</span>
+</div>
+</header>
+<!-- TopAppBar (Session Header - Shared Component Logic) -->
+<div class="sticky top-16 bg-primary flex justify-between items-center w-full px-gutter-desktop h-12 z-40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary">timer</span>
+<span class="font-heading text-heading text-on-primary">Practice Session</span>
+</div>
+<button class="text-on-primary font-label text-label hover:bg-primary-fixed-variant px-3 py-1 rounded-lg transition-colors">Kết thúc</button>
+</div>
+<main class="max-w-6xl mx-auto px-gutter-mobile md:px-gutter-desktop py-8 animate-fade-up">
+<!-- Result Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Overall Score Card -->
+<div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant flex flex-col items-center justify-center text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4">
+<span class="bg-success-muted text-success font-bold px-4 py-1 rounded-full border border-success/20">ĐẠT</span>
+</div>
+<h2 class="text-ink-muted font-label text-label uppercase tracking-widest mb-6">Kết quả tổng quát</h2>
+<div class="relative w-48 h-48 mb-6">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<circle class="text-surface-container stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="8"></circle>
+<circle class="text-success stroke-current progress-ring__circle" cx="50" cy="50" fill="transparent" r="40" stroke-linecap="round" stroke-width="8" style="stroke-dasharray: 251.2; stroke-dashoffset: 70.3;"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-5xl font-bold text-primary">72</span>
+<span class="text-ink-muted text-lg">/ 100</span>
+</div>
+</div>
+<div class="w-full space-y-2 mt-4">
+<div class="flex justify-between text-sm text-ink-muted mb-1 px-1">
+<span>0</span>
+<span>Đạt: 60</span>
+<span>100</span>
+</div>
+<div class="relative h-4 bg-surface-container rounded-full overflow-hidden">
+<!-- Pass Threshold Line -->
+<div class="absolute left-[60%] top-0 bottom-0 w-0.5 bg-error z-10 opacity-50"></div>
+<!-- Score Bar -->
+<div class="absolute top-0 left-0 h-full bg-success rounded-full" style="width: 72%"></div>
+</div>
+<p class="text-body-sm text-ink-muted mt-2">Bạn đã vượt qua ngưỡng yêu cầu (60/100). Chúc mừng!</p>
+</div>
+</div>
+<!-- Subject Breakdown & Progress Chart -->
+<div class="md:col-span-7 space-y-6">
+<!-- Section Breakdown -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant">
+<h3 class="font-heading text-heading mb-4 text-primary">Chi tiết theo phần</h3>
+<div class="space-y-4">
+<div class="group">
+<div class="flex justify-between mb-2">
+<span class="font-medium">Pháp luật</span>
+<span class="text-success font-bold">85%</span>
+</div>
+<div class="h-2 bg-surface-container rounded-full">
+<div class="h-full bg-success rounded-full transition-all duration-1000" style="width: 85%"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between mb-2">
+<span class="font-medium">Phân tích BCTC</span>
+<span class="text-warning font-bold">68%</span>
+</div>
+<div class="h-2 bg-surface-container rounded-full">
+<div class="h-full bg-warning rounded-full transition-all duration-1000" style="width: 68%"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between mb-2">
+<span class="font-medium">Đạo đức nghề nghiệp</span>
+<span class="text-error font-bold">52%</span>
+</div>
+<div class="h-2 bg-surface-container rounded-full">
+<div class="h-full bg-error rounded-full transition-all duration-1000" style="width: 52%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Progress Chart -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant">
+<h3 class="font-heading text-heading mb-4 text-primary">Lịch sử tiến độ</h3>
+<div class="h-40 flex items-end justify-between gap-2 pt-4">
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container rounded-t-lg relative" style="height: 45%">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-ink-muted">45</span>
+</div>
+<span class="text-[10px] text-ink-muted uppercase">01/11</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container rounded-t-lg relative" style="height: 58%">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-ink-muted">58</span>
+</div>
+<span class="text-[10px] text-ink-muted uppercase">05/11</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container rounded-t-lg relative" style="height: 62%">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-ink-muted">62</span>
+</div>
+<span class="text-[10px] text-ink-muted uppercase">12/11</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 rounded-t-lg relative border-t-2 border-primary" style="height: 72%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">72</div>
+</div>
+<span class="text-[10px] text-primary font-bold uppercase">HÔM NAY</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Feedback Banner -->
+<div class="mt-8 bg-disclaimer-bg border border-disclaimer-border rounded-xl p-6 flex items-start gap-4">
+<span class="material-symbols-outlined text-warning text-3xl">lightbulb</span>
+<div>
+<h4 class="font-bold text-primary">Phân tích chuyên gia</h4>
+<p class="text-on-surface-variant text-body-sm leading-relaxed">
+                    Kết quả của bạn rất khả quan, đặc biệt ở phần <strong>Pháp luật</strong>. Tuy nhiên, phần <strong>Đạo đức nghề nghiệp</strong> đang dưới mức an toàn. Hãy dành thêm 15-20 phút mỗi ngày để xem lại các tình huống thực tế trong chương này để tối ưu hóa điểm số.
+                </p>
+</div>
+</div>
+<!-- Actions -->
+<div class="mt-10 flex flex-col md:flex-row items-center justify-center gap-4">
+<button class="w-full md:w-auto px-10 h-12 bg-primary text-on-primary font-bold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">analytics</span>
+                Xem đáp án chi tiết
+            </button>
+<button class="w-full md:w-auto px-10 h-12 bg-surface-container-high text-primary font-bold rounded-lg hover:bg-surface-dim active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">restart_alt</span>
+                Luyện tập thêm
+            </button>
+</div>
+<!-- Featured Resource Card (Asymmetric Layout) -->
+<div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-primary-container/10 rounded-2xl overflow-hidden p-0 border border-primary-container/20">
+<div class="p-8 md:p-12 order-2 md:order-1">
+<span class="text-xs font-bold text-primary-container uppercase tracking-widest mb-2 block">Dành cho bạn</span>
+<h3 class="text-2xl md:text-3xl font-bold text-primary mb-4">Khóa học Chuyên sâu Phân tích BCTC</h3>
+<p class="text-on-surface-variant mb-6 leading-relaxed">Nâng cao kỹ năng đọc hiểu báo cáo tài chính với bộ tài liệu độc quyền từ các chuyên gia đầu ngành. Cải thiện điểm số từ 68% lên 90% chỉ sau 7 ngày luyện tập.</p>
+<div class="flex items-center gap-4">
+<span class="text-2xl font-bold text-price-highlight">1.200.000đ</span>
+<span class="text-sm line-through text-ink-disabled">1.800.000đ</span>
+</div>
+<button class="mt-8 px-8 py-3 bg-primary text-on-primary font-bold rounded-lg hover:shadow-lg transition-shadow">Đăng ký ngay</button>
+</div>
+<div class="h-64 md:h-full min-h-[300px] order-1 md:order-2">
+<div class="w-full h-full bg-cover bg-center" data-alt="A professional workspace featuring a sleek laptop displaying complex financial charts and spreadsheets, set against a blurred modern office background with warm wooden accents. The lighting is bright and natural, creating an atmosphere of focus and academic excellence. The overall color palette uses deep navy and emerald green tones to align with a corporate professional aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAozfMXi63G4X2izhA3zy3-eV8G3JAeky-ZbpXzLbPwp3fgaOvczVasrEGLSG-9464mduWZH6kV8i0M6GWYAPh234sEn9fJ0hHMZC4j3C7RnCp3nGkxBQxIUQpF_Go-NbfvLaIvfozaTxW-O9IMsJ3pYOBzX6rxYxJBM74GeQDPzHOAdUtY4kVgcqZOAqAwjaf4tUpDMyonSE4LLJcsNJOYRpnDwG1aD6guQouWjuDRmBTNQ4Wg9CVwYiXH54eQWmi08Sb91_EchzT4')"></div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full py-12 px-gutter-desktop mt-section-gap flex flex-col gap-6 bg-surface-container-low border-t-2 border-disclaimer-border">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<span class="font-heading text-heading text-primary block mb-2">CNVCK Prep</span>
+<p class="font-caption text-caption text-ink-muted max-w-md">© 2024 CNVCK Certification Prep. Không trực thuộc UBCKNN.</p>
+</div>
+<div class="flex flex-wrap gap-6">
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary" href="#">Cài đặt</a>
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary" href="#">Chính sách bảo mật</a>
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary" href="#">Liên hệ hỗ trợ</a>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only - Shared Component) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-between md:hidden px-gutter-mobile py-3 bg-surface-container-lowest shadow-lg border-t border-outline-variant">
+<button class="text-on-surface-variant flex items-center gap-2 px-4 py-2">
+<span class="material-symbols-outlined">chevron_left</span>
+<span class="font-label text-label">Câu trước</span>
+</button>
+<button class="bg-primary-container text-on-primary-container rounded-full px-6 py-2 flex items-center gap-2">
+<span class="font-label text-label">Câu tiếp</span>
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</nav>
+<script>
+        // Simple micro-interaction for result rings
+        document.addEventListener('DOMContentLoaded', () => {
+            const circle = document.querySelector('.progress-ring__circle');
+            if (circle) {
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                
+                // Animate to 72%
+                const offset = circumference - (72 / 100 * circumference);
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                }, 300);
+            }
+        });
+    </script>
+</body></html>

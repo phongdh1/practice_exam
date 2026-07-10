@@ -1,0 +1,123 @@
+# Deferred Work
+
+## Deferred from: code review of STORY-66 (2026-07-09)
+
+- **STORY-66** — Server-side answer gating enforced by STORY-65; client lock icons are UX-only.
+- **STORY-66** — Web pull-to-refresh omitted; AC-1 requires pull-to-refresh on Zalo only.
+
+## Deferred from: code review of STORY-68 (2026-07-09)
+
+- **STORY-68** — Partial-update preservation of `studyTierLimit` relies on existing upsert pattern; dedicated PATCH test not added.
+
+## Deferred from: code review of STORY-65 (2026-07-09)
+
+- **STORY-65** — `study_tier_usage.subject_id` has no FK to `subjects` (mirrors `free_tier_usage` pattern) — pre-existing schema convention.
+
+## Deferred from: code review of EPIC-1 + EPIC-2 (2026-06-30)
+
+- **STORY-1** — No git repository initialized (`baseline_commit: NO_VCS`); known project state, version control setup deferred.
+- **STORY-8** — `zmp-sdk` not integrated; hardcoded test token used for dev scaffold phase.
+- **STORY-9** — Cross-channel Subscription/Attempt History sync not covered by integration tests; no test infra yet.
+- **STORY-9** — Link/merge audit log not covered by unit tests; test gap deferred.
+
+## Deferred from: code review of EPIC-3 (2026-06-30)
+
+- **STORY-12** — Subject detail resolves subject by scanning the full catalog list rather than a dedicated endpoint — performance-only defer.
+- **STORY-13** — `Subscription.subjectId` is an untyped String without FK to `subjects.id` — pre-existing schema.
+- **STORY-14** — Question text compliance not implemented — no Question model in codebase yet; deferred until Question content epic.
+
+## Deferred from: spec-init-shadcn-ui-primitives (2026-06-30)
+
+- Mount `<Toaster />` in web/admin/zalo app root providers — apps need one client mount for imperative `toast()` to render.
+- Move `react-hook-form` to `peerDependencies` if consumers adopt their own `useForm` alongside `@practice-exam/ui` Form.
+- Remove unused `zod` / `@hookform/resolvers` from `packages/ui` if no shared resolver helper is added.
+- Add `"use client"` to remaining legacy ui primitives (dialog, button, card, etc.) for consistent Next.js RSC boundaries.
+- Exclude `*.test.ts` from `packages/ui` tsc emit to avoid polluting `dist/`.
+
+## Deferred from: code review of EPIC-5 (2026-07-01)
+
+- **STORY-21** — `selectNextQuestion` loads full published pool per request — scale defer until question bank grows.
+- **STORY-21** — Migration `DELETE` on NULL `subject_id` practice_sessions — acceptable for greenfield; archive if prod data exists.
+- **STORY-22** — Answer option a11y: color-heavy states, missing `aria-label` on option icons — polish defer.
+- **STORY-23** — Manual **Kết thúc** at cap routes to summary subscribe CTA instead of paywall sheet — minor UX defer.
+- **Pre-existing** — `POST /entitlements/:subjectId/consume` allows quota burn outside practice flow (STORY-13 surface).
+
+## Deferred from: code review of EPIC-6 (2026-07-01)
+
+- **STORY-28** — Attempt history **UI** (W-41/Z-41) — no candidate history screen in EPIC-6; defer to progress epic.
+- **STORY-26/28** — Thin test coverage for scoring/submit/review/timer paths — `mock-exam-attempts.service.spec.ts` has 4 tests; expand when patching.
+- **STORY-26** — `expired` attempt status in schema never set by service — lifecycle gap defer.
+- **STORY-29** — Zalo mini-app mock-exam routes not wired — shared UI supports Z-* screen IDs; app integration defer.
+
+## Deferred from: code review of EPIC-6 post-patch (2026-07-01)
+
+## Deferred from: code review of EPIC-10 (2026-07-01)
+
+- **STORY-46** — Support role can force-delete via merge; matches UX A-63 support access; asymmetric vs super_admin-only unsuspend — by design for MVP.
+- **STORY-48** — `manualRevoke` on already-revoked/expired subscription rows still succeeds — low impact policy gap.
+
+- **STORY-26** — `syncTimer` auto-advances on section expiry without `SECTION_INCOMPLETE` validation — intentional timed auto-submit behavior.
+- **STORY-27** — Submit allowed with unanswered questions — review grid warns only; no server-side block.
+
+## Deferred from: code review of EPIC-12 (2026-07-01)
+
+- **STORY-54** — `callbackUrl` stored in Zalo config but not wired into OAuth redirect flow; future enhancement.
+- **STORY-55** — Full PayOS/SePay SDK adapter wiring deferred; mock adapters acceptable for current scaffold; admin config surface is in place.
+- **STORY-56** — Zalo OAuth events not manually retryable; AC only mandates payment webhook retry.
+
+## Deferred from: code review of STORY-64 (2026-07-02)
+
+- **STORY-64** — Unbounded parallel bulk API requests on A-30 (`Promise.allSettled` over N single-item endpoints); acceptable for MVP per story scope; revisit with server-side bulk endpoints or client concurrency cap when bank scale grows.
+
+## Deferred from: code review of 13-60-admin-dashboard-kpis (2026-07-02)
+
+- **M3** — No controller integration test for `/admin/dashboard/kpis` RBAC boundaries; story scoped unit tests only.
+- **M4** — In-memory KPI cache not shared across API instances; acceptable for MVP single-instance deploy.
+
+## Deferred from: code review of 13-59-system-settings (2026-07-02)
+
+- **M3** — No controller integration test for maintenance 503 on practice/mock paths; story scoped unit tests only.
+- **M4** — Email templates persisted but not wired to notification sender; AC-3 requires storage/API only.
+
+## Deferred from: code review of 13-58-admin-user-management (2026-07-02)
+
+- **M4** — `logLoginEvent` on `AdminUsersService` is unused dead code; login audit lives in `AdminAuthService`.
+- **M5** — No controller-level integration test for disabled-login 403 path; story scoped to unit tests only.
+
+## Deferred from: code review of 13-57-rbac-enforcement (2026-07-01)
+
+- **M3** — `AdminRolesGuard` fail-open when `@Roles` omitted — pre-existing pattern; default-deny refactor deferred.
+- **M4** — No controller-level integration tests for RBAC 403 boundaries; story scoped to unit tests only.
+
+## Deferred from: code review EPIC-12 re-review (2026-07-01)
+
+- **STORY-54** — `callbackUrl` stored in Zalo config but not wired into OAuth redirect flow; future enhancement.
+- **STORY-55** — Full PayOS/SePay SDK adapter wiring deferred; mock adapters acceptable for current scaffold; admin config surface is in place.
+- **STORY-56** — Zalo OAuth events not manually retryable; AC only mandates payment webhook retry.
+
+## Deferred from: code review of story STORY-63 (2026-07-02)
+
+- Import `validateRow` logic duplicated from `QuestionsService.validateOptions` — extract shared helper in follow-up to prevent drift.
+
+## Deferred from: code review EPIC-9 (2026-07-02)
+
+- **STORY-42/43** — Cross-subject mock exam entitlement bypass: `MockExamSectionDto.subjectId` not required to match template `subjectId`; `startAttempt` only checks template subject entitlement — security fix needed in `mock-exams.service.ts` + `mock-exam-attempts.service.ts`.
+- **STORY-43** — Monthly attempt limit race: concurrent `startAttempt` can exceed `monthlyAttemptLimit` without serializable transaction/advisory lock.
+- **STORY-43** — `getActiveAttempt`/`startAttempt` do not scope `in_progress` by `periodKey` — stale prior-month attempts block new monthly starts.
+- **STORY-42/43** — `listBySubject` ignores `Subject.visibility` and parent `Course.visibility` — archived subjects still expose approved templates.
+- **STORY-41/42** — `validatePoolForTemplate` counts total pool only; difficulty-split sections can pass approve then fail at generation.
+- **STORY-41** — `selectByDifficulty` rounding can under-fill sections below `questionCount` when easy+medium rounds consume full count.
+- **STORY-26/43** — `expired` attempt status in schema never written by any service — lifecycle gap from EPIC-6; attempt counting semantics undefined until implemented.
+- **STORY-26** — `syncTimer` auto-advances sections on timeout without answer enforcement — may be intentional timed-exam behavior; confirm product intent before changing.
+- **STORY-39** — Admin subject create/update returns raw Prisma shape vs `AdminSubjectView` from list endpoint — minor contract drift.
+
+## Deferred from: spec-mock-exam-template-admin-ui draft (2026-07-02)
+
+- **Mock Exam Template Admin UI** — list/create/edit/approve/archive pages at `/mock-exams` (STORY-42 API exists; no admin UI). Superseded in current quick-dev run by go-live threshold config request; resume from `_bmad-output/implementation-artifacts/spec-mock-exam-template-admin-ui.md`.
+
+## Deferred from: spec-subject-go-live-config review (2026-07-02)
+
+- **Go-live threshold audit trail** — no record of who changed mins or prior values.
+- **Active subject re-validation** — raising mins on an already-active subject does not auto-archive or warn beyond edit banner.
+- **minsBySubject fallback** — missing subject ID in map silently uses DEFAULT_* constants.
+- **Pre-existing active subjects below 200/1** — migration adds defaults but does not re-check catalog readiness.

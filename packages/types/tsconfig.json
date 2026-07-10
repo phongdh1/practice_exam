@@ -1,0 +1,10 @@
+{
+  "extends": "@practice-exam/config/typescript/base",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "noEmit": false,
+    "declaration": true
+  },
+  "include": ["src"]
+}

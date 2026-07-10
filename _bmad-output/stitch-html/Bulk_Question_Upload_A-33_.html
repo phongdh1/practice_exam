@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CNVCK Admin Portal - Bulk Upload (A-33)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#72787f",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f0f0f4",
+                    "surface-container-high": "#e7e8eb",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f9f9fc",
+                    "primary-fixed-dim": "#9dcbf4",
+                    "on-surface": "#1a1c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffddb2",
+                    "surface-subtle": "#F7F9FB",
+                    "surface-container-highest": "#e2e2e5",
+                    "primary-container": "#1b4f72",
+                    "on-secondary-fixed-variant": "#3d494c",
+                    "disclaimer-border": "#F4D03F",
+                    "surface": "#f9f9fc",
+                    "outline-variant": "#c1c7cf",
+                    "secondary": "#556064",
+                    "ink-disabled": "#AEB6BF",
+                    "surface-tint": "#326286",
+                    "tertiary-fixed-dim": "#f1be76",
+                    "on-primary-fixed": "#001e31",
+                    "primary": "#003857",
+                    "on-primary": "#ffffff",
+                    "price-highlight": "#1B4F72",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "success-muted": "#E6F4ED",
+                    "error-muted": "#FDECEA",
+                    "tertiary-container": "#674404",
+                    "secondary-fixed-dim": "#bdc9cc",
+                    "inverse-primary": "#9dcbf4",
+                    "success": "#0E7C4A",
+                    "secondary-fixed": "#d9e5e8",
+                    "ink-muted": "#5D6D7E",
+                    "disclaimer-bg": "#FEF9E7",
+                    "on-surface-variant": "#41474e",
+                    "on-background": "#1a1c1e",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#121d20",
+                    "inverse-surface": "#2e3133",
+                    "surface-dim": "#d9dadd",
+                    "secondary-container": "#d6e2e6",
+                    "tertiary": "#4a2f00",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f9f9fc",
+                    "on-secondary-container": "#596568",
+                    "on-primary-container": "#92c0e9",
+                    "on-primary-fixed-variant": "#154b6d",
+                    "surface-variant": "#e2e2e5",
+                    "primary-fixed": "#cce5ff",
+                    "on-tertiary-container": "#e4b36c",
+                    "error": "#C0392B",
+                    "warning-muted": "#FEF5E7",
+                    "warning": "#D68910",
+                    "surface-container-low": "#f3f3f7",
+                    "accent": "#0E7C4A",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#edeef1",
+                    "on-tertiary-fixed": "#291800"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "2": "8px",
+                    "8": "32px",
+                    "3": "12px",
+                    "question-padding": "20px",
+                    "base": "4px",
+                    "md": "16px",
+                    "1": "4px",
+                    "sm": "8px",
+                    "4": "16px",
+                    "section-gap": "32px",
+                    "xl": "32px",
+                    "gutter-desktop": "32px",
+                    "6": "24px",
+                    "10": "40px",
+                    "gutter-tablet": "24px",
+                    "5": "20px",
+                    "lg": "24px",
+                    "12": "48px",
+                    "xs": "4px",
+                    "gutter-mobile": "16px"
+            },
+            "fontFamily": {
+                    "heading": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "caption": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "label": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "display": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "body-sm": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "question-stem": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "body-md": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "body": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "mono": ["JetBrains Mono, ui-monospace, monospace"],
+                    "display-lg": ["Be Vietnam Pro, Inter, system-ui, sans-serif"],
+                    "display-sm": ["Be Vietnam Pro, Inter, system-ui, sans-serif"]
+            },
+            "fontSize": {
+                    "heading": ["18px", {"lineHeight": "1.35", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "label": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "display": ["28px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "question-stem": ["17px", {"lineHeight": "1.6", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.55", "fontWeight": "400"}],
+                    "body": ["16px", {"lineHeight": "1.55", "fontWeight": "400"}],
+                    "mono": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["28px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c1c7cf; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #72787f; }
+        
+        .upload-dashed {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23C1C7CFFF' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="bg-surface-subtle font-body text-on-surface antialiased">
+<!-- TopNavBar Shell -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline w-full h-16 flex justify-between items-center px-8 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<span class="font-display-sm text-display-sm font-bold text-primary dark:text-primary-fixed-dim">CNVCK Admin Portal</span>
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-label focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="Tìm kiếm tài liệu..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a corporate administrator in a modern office, soft high-key lighting, focused look, navy and white professional attire, scholarly and authoritative atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVdB80vTC-3OWqKJIMzQi9aTGpVUnouNqxOFfmlficroBUGjmedb9j4ReomQ_-ZnR4QcADsyi9o_RQfiFjuDT3wKn7eqYdieSYAKw1NEE57_0y3DWEXAPiHK9UIHv8nNrcJgWPangbAtx6NyLFu6mlX5A1YefXQsIhGW3TM1LKUIJKYy607x5Hj2rx4xY0hg0tw5ExK6jyCKnrg2ePK4QEE8hcCU0HQXKUVlsUvMFH3BEjZQXAB5jj_VgCMMViriRJI3YciuJ_3n-k"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-64px)]">
+<!-- SideNavBar Shell -->
+<aside class="bg-primary dark:bg-primary-container h-screen w-64 flex-col fixed left-0 top-16 hidden md:flex p-4 gap-4">
+<div class="flex flex-col gap-1 mb-4 px-2">
+<span class="font-display-sm text-display-sm text-on-primary dark:text-on-primary-container">CNVCK Back-Office</span>
+<span class="font-label text-caption text-on-primary/70">Certification Management</span>
+</div>
+<nav class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold cursor-pointer transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-label">Catalog</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg cursor-pointer transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label">Content</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg cursor-pointer transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label">Users</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg cursor-pointer transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label">Payments</span>
+</a>
+</nav>
+<button class="w-full py-3 bg-on-primary text-primary rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all mb-4">
+<span class="material-symbols-outlined">add</span>
+<span class="font-label">New Subject</span>
+</button>
+<div class="mt-auto border-t border-on-primary/10 pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-label">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-8">
+<div class="max-w-6xl mx-auto">
+<header class="mb-10">
+<div class="flex items-center gap-2 text-ink-muted mb-2">
+<span class="text-label">Dashboard</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-label">Catalog</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-label font-bold text-primary">Bulk Upload</span>
+</div>
+<h1 class="font-display text-display text-primary">Tải lên danh sách câu hỏi</h1>
+<p class="text-body text-ink-muted mt-2">Hệ thống hỗ trợ nhập dữ liệu hàng loạt từ định dạng .csv hoặc .xlsx</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Upload Section -->
+<section class="lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+<h2 class="font-heading text-heading mb-4 text-primary">Bước 1: Chọn tệp tin</h2>
+<div class="upload-dashed p-8 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-surface-container-low transition-all" onclick="document.getElementById('file-input').click()">
+<input class="hidden" id="file-input" type="file"/>
+<div class="w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">upload_file</span>
+</div>
+<span class="font-label text-primary">Nhấp để tải lên hoặc kéo thả</span>
+<span class="text-caption text-ink-muted mt-1">Hỗ trợ CSV, Excel (Tối đa 10MB)</span>
+</div>
+<div class="mt-6 flex flex-col gap-3">
+<div class="bg-disclaimer-bg border border-disclaimer-border p-4 rounded-lg flex gap-3">
+<span class="material-symbols-outlined text-warning">info</span>
+<div class="text-caption text-on-surface">
+                                        Vui lòng sử dụng tệp mẫu tiêu chuẩn để tránh lỗi định dạng.
+                                        <a class="text-primary font-bold block mt-1 hover:underline" href="#">Tải xuống tệp mẫu (.xlsx)</a>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+<h2 class="font-heading text-heading mb-4 text-primary">Trạng thái xử lý</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-label">
+<span class="text-ink-muted">Tệp tin:</span>
+<span class="text-primary font-mono">questions_v2_final.csv</span>
+</div>
+<div class="flex justify-between items-center text-label">
+<span class="text-ink-muted">Dung lượng:</span>
+<span class="text-primary">1.2 MB</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-accent w-[85%] transition-all duration-500"></div>
+</div>
+<div class="flex justify-between items-center text-caption font-bold">
+<span class="text-accent">Sẵn sàng để nhập (85%)</span>
+<span class="text-error">15 lỗi cần sửa</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Preview Section -->
+<section class="lg:col-span-8">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden h-full flex flex-col">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-white">
+<div>
+<h2 class="font-heading text-heading text-primary">Bước 2: Xem trước &amp; Kiểm tra</h2>
+<span class="text-caption text-ink-muted">Hiển thị 10 dòng đầu tiên của tệp</span>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-lg font-label hover:bg-outline-variant transition-colors">Hủy bỏ</button>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label hover:shadow-lg active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+                                        Bắt đầu nhập
+                                    </button>
+</div>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-4 py-3 font-label text-ink-muted whitespace-nowrap">Dòng</th>
+<th class="px-4 py-3 font-label text-ink-muted whitespace-nowrap">Nội dung câu hỏi</th>
+<th class="px-4 py-3 font-label text-ink-muted whitespace-nowrap">Loại câu hỏi</th>
+<th class="px-4 py-3 font-label text-ink-muted whitespace-nowrap">Đáp án đúng</th>
+<th class="px-4 py-3 font-label text-ink-muted whitespace-nowrap">Trạng thái</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1: Normal -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-4 py-4 font-mono text-caption text-ink-muted">01</td>
+<td class="px-4 py-4 text-body-sm text-on-surface line-clamp-1 max-w-xs">Hợp đồng bảo hiểm nhân thọ là gì?</td>
+<td class="px-4 py-4 text-body-sm">Multiple Choice</td>
+<td class="px-4 py-4 text-body-sm font-bold text-accent">A</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-success-muted text-success text-[10px] uppercase font-bold rounded">Hợp lệ</span>
+</td>
+</tr>
+<!-- Row 2: Error -->
+<tr class="bg-error-muted/30 hover:bg-error-muted/50 transition-colors">
+<td class="px-4 py-4 font-mono text-caption text-error">02</td>
+<td class="px-4 py-4 text-body-sm text-on-surface">Cấu trúc của một doanh nghiệp bảo hiểm...</td>
+<td class="px-4 py-4 text-body-sm text-error">N/A</td>
+<td class="px-4 py-4 text-body-sm font-bold text-on-surface">E</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1 text-error text-[10px] font-bold">
+<span class="material-symbols-outlined text-[14px]">error</span>
+                                                    LOẠI CÂU HỎI SAI
+                                                </div>
+</td>
+</tr>
+<!-- Row 3: Normal -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-4 py-4 font-mono text-caption text-ink-muted">03</td>
+<td class="px-4 py-4 text-body-sm text-on-surface line-clamp-1 max-w-xs">Thời gian chờ trong bảo hiểm sức khỏe thông thường là bao lâu?</td>
+<td class="px-4 py-4 text-body-sm">Single Choice</td>
+<td class="px-4 py-4 text-body-sm font-bold text-accent">30 Ngày</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-success-muted text-success text-[10px] uppercase font-bold rounded">Hợp lệ</span>
+</td>
+</tr>
+<!-- Row 4: Error -->
+<tr class="bg-error-muted/30 hover:bg-error-muted/50 transition-colors">
+<td class="px-4 py-4 font-mono text-caption text-error">04</td>
+<td class="px-4 py-4 text-body-sm text-on-surface">--- Trống ---</td>
+<td class="px-4 py-4 text-body-sm">Single Choice</td>
+<td class="px-4 py-4 text-body-sm font-bold text-on-surface">-</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1 text-error text-[10px] font-bold">
+<span class="material-symbols-outlined text-[14px]">error</span>
+                                                    THIẾU NỘI DUNG
+                                                </div>
+</td>
+</tr>
+<!-- Row 5: Normal -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-4 py-4 font-mono text-caption text-ink-muted">05</td>
+<td class="px-4 py-4 text-body-sm text-on-surface line-clamp-1 max-w-xs">Quy trình giải quyết quyền lợi bảo hiểm bao gồm mấy bước?</td>
+<td class="px-4 py-4 text-body-sm">Multiple Choice</td>
+<td class="px-4 py-4 text-body-sm font-bold text-accent">B, C</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-success-muted text-success text-[10px] uppercase font-bold rounded">Hợp lệ</span>
+</td>
+</tr>
+<!-- Row 6: Normal -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-4 py-4 font-mono text-caption text-ink-muted">06</td>
+<td class="px-4 py-4 text-body-sm text-on-surface line-clamp-1 max-w-xs">Luật kinh doanh bảo hiểm mới nhất được ban hành năm nào?</td>
+<td class="px-4 py-4 text-body-sm">True/False</td>
+<td class="px-4 py-4 text-body-sm font-bold text-accent">2022</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 bg-success-muted text-success text-[10px] uppercase font-bold rounded">Hợp lệ</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Bottom Footer Action area inside Preview -->
+<div class="p-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-success"></div>
+<span class="text-caption font-bold text-on-surface">142 Hợp lệ</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<span class="text-caption font-bold text-on-surface">15 Lỗi</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-caption text-ink-muted">Trang 1 / 15</span>
+<div class="flex border border-outline-variant rounded-lg overflow-hidden">
+<button class="p-1 px-2 hover:bg-surface-container-high transition-colors border-r border-outline-variant"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-1 px-2 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Warning Banner -->
+<div class="mt-8 bg-warning-muted border border-warning rounded-xl p-4 flex gap-4 items-start shadow-sm">
+<span class="material-symbols-outlined text-warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<h4 class="font-bold text-on-surface text-label">Cảnh báo: 15 lỗi phát hiện</h4>
+<p class="text-body-sm text-ink-muted mt-1">Hệ thống sẽ chỉ nhập 142 câu hỏi hợp lệ. Những câu hỏi có lỗi sẽ bị bỏ qua. Bạn có thể tải về tệp chứa danh sách lỗi để chỉnh sửa và tải lên lại.</p>
+<button class="mt-3 text-warning font-bold text-label hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Tải báo cáo lỗi (.csv)
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Tab highlight simulation
+        const navLinks = document.querySelectorAll('aside nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                navLinks.forEach(l => {
+                    l.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    l.classList.add('text-on-primary/80');
+                });
+                link.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                link.classList.remove('text-on-primary/80');
+            });
+        });
+
+        // Simple progress bar animation simulation
+        window.addEventListener('DOMContentLoaded', () => {
+            const progressBar = document.querySelector('.bg-accent');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = '85%';
+                }, 500);
+            }
+        });
+    </script>
+</body></html>

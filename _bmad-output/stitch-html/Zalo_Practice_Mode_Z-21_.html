@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#624000",
+                    "disclaimer-bg": "#FEF9E7",
+                    "surface-container-highest": "#e2e2e5",
+                    "secondary-fixed": "#d9e5e8",
+                    "outline": "#72787f",
+                    "secondary-container": "#d6e2e6",
+                    "on-primary-fixed-variant": "#154b6d",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#121d20",
+                    "on-surface": "#1a1c1e",
+                    "on-background": "#1a1c1e",
+                    "accent": "#0E7C4A",
+                    "on-tertiary": "#ffffff",
+                    "disclaimer-border": "#F4D03F",
+                    "ink-muted": "#5D6D7E",
+                    "primary": "#003857",
+                    "warning-muted": "#FEF5E7",
+                    "on-secondary-fixed-variant": "#3d494c",
+                    "on-primary": "#ffffff",
+                    "secondary": "#556064",
+                    "ink-disabled": "#AEB6BF",
+                    "success": "#0E7C4A",
+                    "primary-container": "#1b4f72",
+                    "surface-subtle": "#F7F9FB",
+                    "inverse-on-surface": "#f0f0f4",
+                    "surface-container-low": "#f3f3f7",
+                    "inverse-surface": "#2e3133",
+                    "on-secondary-container": "#596568",
+                    "error": "#C0392B",
+                    "primary-fixed": "#cce5ff",
+                    "success-muted": "#E6F4ED",
+                    "surface-dim": "#d9dadd",
+                    "warning": "#D68910",
+                    "on-primary-container": "#92c0e9",
+                    "outline-variant": "#c1c7cf",
+                    "surface-container": "#edeef1",
+                    "tertiary-container": "#674404",
+                    "error-muted": "#FDECEA",
+                    "tertiary-fixed-dim": "#f1be76",
+                    "secondary-fixed-dim": "#bdc9cc",
+                    "background": "#f9f9fc",
+                    "surface-tint": "#326286",
+                    "tertiary-fixed": "#ffddb2",
+                    "on-tertiary-fixed": "#291800",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#e4b36c",
+                    "inverse-primary": "#9dcbf4",
+                    "price-highlight": "#1B4F72",
+                    "tertiary": "#4a2f00",
+                    "surface": "#f9f9fc",
+                    "primary-fixed-dim": "#9dcbf4",
+                    "surface-variant": "#e2e2e5",
+                    "on-primary-fixed": "#001e31",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#41474e",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f9f9fc",
+                    "surface-container-high": "#e7e8eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-desktop": "32px",
+                    "2": "8px",
+                    "1": "4px",
+                    "xs": "4px",
+                    "section-gap": "32px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "gutter-tablet": "24px",
+                    "question-padding": "20px",
+                    "base": "4px",
+                    "5": "20px",
+                    "gutter-mobile": "16px",
+                    "3": "12px",
+                    "4": "16px",
+                    "sm": "8px",
+                    "8": "32px",
+                    "12": "48px",
+                    "10": "40px",
+                    "md": "16px",
+                    "6": "24px"
+            },
+            "fontFamily": {
+                    "display-sm": ["Be Vietnam Pro", "sans-serif"],
+                    "body-md": ["Be Vietnam Pro", "sans-serif"],
+                    "question-stem": ["Be Vietnam Pro", "sans-serif"],
+                    "body": ["Be Vietnam Pro", "sans-serif"],
+                    "label": ["Be Vietnam Pro", "sans-serif"],
+                    "display-lg": ["Be Vietnam Pro", "sans-serif"],
+                    "heading": ["Be Vietnam Pro", "sans-serif"],
+                    "caption": ["Be Vietnam Pro", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .option-selected {
+            border-color: #003857 !important;
+            background-color: #d6e2e6 !important;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center px-gutter-mobile w-full py-3">
+<div class="flex items-center gap-3">
+<button class="p-1 hover:bg-surface-container transition-colors duration-200 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="font-heading text-heading text-primary leading-tight">Pháp luật Chứng khoán</span>
+<span class="font-caption text-caption text-on-surface-variant">Câu 1 / 40</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1 hover:bg-surface-container transition-colors duration-200 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">timer</span>
+</button>
+<span class="font-label text-label font-bold text-primary">14:52</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col px-gutter-mobile pt-6 pb-24 overflow-y-auto">
+<!-- Progress Bar Indicator -->
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mb-8 overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 2.5%;"></div>
+</div>
+<!-- Question Section -->
+<div class="flex flex-col gap-6">
+<div class="bg-surface-container-lowest p-question-padding rounded-xl shadow-sm border border-outline-variant">
+<h2 class="font-question-stem text-question-stem text-on-surface leading-relaxed">
+                    Theo Luật Chứng khoán 2019, điều kiện để chào bán chứng khoán ra công chúng của công ty đại chúng bao gồm mức vốn điều lệ đã góp tại thời điểm đăng ký chào bán tối thiểu là bao nhiêu?
+                </h2>
+</div>
+<!-- Answer Options -->
+<div class="flex flex-col gap-3" id="options-container">
+<!-- Option A -->
+<button class="option-btn group w-full text-left p-lg bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm hover:border-primary transition-all duration-200 flex items-start gap-4" onclick="selectOption(this)">
+<span class="flex-shrink-0 w-8 h-8 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center font-bold text-on-surface-variant group-hover:text-primary transition-colors">A</span>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface mt-1">10 tỷ đồng Việt Nam</span>
+</button>
+<!-- Option B -->
+<button class="option-btn group w-full text-left p-lg bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm hover:border-primary transition-all duration-200 flex items-start gap-4" onclick="selectOption(this)">
+<span class="flex-shrink-0 w-8 h-8 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center font-bold text-on-surface-variant group-hover:text-primary transition-colors">B</span>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface mt-1">30 tỷ đồng Việt Nam</span>
+</button>
+<!-- Option C -->
+<button class="option-btn group w-full text-left p-lg bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm hover:border-primary transition-all duration-200 flex items-start gap-4" onclick="selectOption(this)">
+<span class="flex-shrink-0 w-8 h-8 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center font-bold text-on-surface-variant group-hover:text-primary transition-colors">C</span>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface mt-1">50 tỷ đồng Việt Nam</span>
+</button>
+<!-- Option D -->
+<button class="option-btn group w-full text-left p-lg bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm hover:border-primary transition-all duration-200 flex items-start gap-4" onclick="selectOption(this)">
+<span class="flex-shrink-0 w-8 h-8 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center font-bold text-on-surface-variant group-hover:text-primary transition-colors">D</span>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface mt-1">100 tỷ đồng Việt Nam</span>
+</button>
+</div>
+</div>
+<!-- Instructional Disclaimer -->
+<div class="mt-8 bg-disclaimer-bg border border-disclaimer-border p-4 rounded-lg flex gap-3">
+<span class="material-symbols-outlined text-warning shrink-0">info</span>
+<p class="font-caption text-caption text-on-surface-variant italic">
+                Lưu ý: Bạn phải chọn một đáp án trước khi nhấn "Câu tiếp". Kết quả sẽ được ghi lại sau khi nhấn "Kết thúc".
+            </p>
+</div>
+</main>
+<!-- Sticky Bottom Navigation Action Bar -->
+<footer class="fixed bottom-0 left-0 right-0 bg-surface px-gutter-mobile py-4 flex items-center justify-between gap-4 border-t border-outline-variant z-50">
+<button class="flex-1 flex items-center justify-center py-3 px-6 rounded-full border border-primary text-primary font-label text-label font-bold hover:bg-surface-container transition-colors duration-200">
+            Kết thúc
+        </button>
+<button class="flex-1 flex items-center justify-center py-3 px-6 rounded-full bg-primary text-on-primary font-label text-label font-bold opacity-40 cursor-not-allowed transition-all duration-200" disabled="" id="next-btn">
+            Câu tiếp
+            <span class="material-symbols-outlined ml-1 text-[20px]">chevron_right</span>
+</button>
+</footer>
+<!-- Selection Logic Script -->
+<script>
+        function selectOption(element) {
+            // Remove selection from all buttons
+            const allOptions = document.querySelectorAll('.option-btn');
+            allOptions.forEach(opt => {
+                opt.classList.remove('option-selected', 'border-primary');
+                opt.classList.add('border-outline-variant');
+                const circle = opt.querySelector('span:first-child');
+                circle.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+                circle.classList.add('border-outline-variant', 'text-on-surface-variant');
+            });
+
+            // Add selection to clicked button
+            element.classList.add('option-selected', 'border-primary');
+            element.classList.remove('border-outline-variant');
+            const activeCircle = element.querySelector('span:first-child');
+            activeCircle.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+            activeCircle.classList.remove('border-outline-variant', 'text-on-surface-variant');
+
+            // Enable next button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            nextBtn.classList.add('active:scale-95');
+        }
+    </script>
+</body></html>

@@ -1,0 +1,9 @@
+{
+  "extends": "@practice-exam/config/typescript/react-library",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}

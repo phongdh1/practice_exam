@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CNVCK Admin Portal - Question Editor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#72787f",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f0f0f4",
+                        "surface-container-high": "#e7e8eb",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f9f9fc",
+                        "primary-fixed-dim": "#9dcbf4",
+                        "on-surface": "#1a1c1e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#ffddb2",
+                        "surface-subtle": "#F7F9FB",
+                        "surface-container-highest": "#e2e2e5",
+                        "primary-container": "#1b4f72",
+                        "on-secondary-fixed-variant": "#3d494c",
+                        "disclaimer-border": "#F4D03F",
+                        "surface": "#f9f9fc",
+                        "outline-variant": "#c1c7cf",
+                        "secondary": "#556064",
+                        "ink-disabled": "#AEB6BF",
+                        "surface-tint": "#326286",
+                        "tertiary-fixed-dim": "#f1be76",
+                        "on-primary-fixed": "#001e31",
+                        "primary": "#003857",
+                        "on-primary": "#ffffff",
+                        "price-highlight": "#1B4F72",
+                        "on-tertiary-fixed-variant": "#624000",
+                        "success-muted": "#E6F4ED",
+                        "error-muted": "#FDECEA",
+                        "tertiary-container": "#674404",
+                        "secondary-fixed-dim": "#bdc9cc",
+                        "inverse-primary": "#9dcbf4",
+                        "success": "#0E7C4A",
+                        "secondary-fixed": "#d9e5e8",
+                        "ink-muted": "#5D6D7E",
+                        "disclaimer-bg": "#FEF9E7",
+                        "on-surface-variant": "#41474e",
+                        "on-background": "#1a1c1e",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#121d20",
+                        "inverse-surface": "#2e3133",
+                        "surface-dim": "#d9dadd",
+                        "secondary-container": "#d6e2e6",
+                        "tertiary": "#4a2f00",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f9f9fc",
+                        "on-secondary-container": "#596568",
+                        "on-primary-container": "#92c0e9",
+                        "on-primary-fixed-variant": "#154b6d",
+                        "surface-variant": "#e2e2e5",
+                        "primary-fixed": "#cce5ff",
+                        "on-tertiary-container": "#e4b36c",
+                        "error": "#C0392B",
+                        "warning-muted": "#FEF5E7",
+                        "warning": "#D68910",
+                        "surface-container-low": "#f3f3f7",
+                        "accent": "#0E7C4A",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#edeef1",
+                        "on-tertiary-fixed": "#291800"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "2": "8px",
+                        "8": "32px",
+                        "3": "12px",
+                        "question-padding": "20px",
+                        "base": "4px",
+                        "md": "16px",
+                        "1": "4px",
+                        "sm": "8px",
+                        "4": "16px",
+                        "section-gap": "32px",
+                        "xl": "32px",
+                        "gutter-desktop": "32px",
+                        "6": "24px",
+                        "10": "40px",
+                        "gutter-tablet": "24px",
+                        "5": "20px",
+                        "lg": "24px",
+                        "12": "48px",
+                        "xs": "4px",
+                        "gutter-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "heading": ["Be Vietnam Pro", "sans-serif"],
+                        "caption": ["Be Vietnam Pro", "sans-serif"],
+                        "label": ["Be Vietnam Pro", "sans-serif"],
+                        "display": ["Be Vietnam Pro", "sans-serif"],
+                        "body-sm": ["Be Vietnam Pro", "sans-serif"],
+                        "question-stem": ["Be Vietnam Pro", "sans-serif"],
+                        "body-md": ["Be Vietnam Pro", "sans-serif"],
+                        "body": ["Be Vietnam Pro", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "display-lg": ["Be Vietnam Pro", "sans-serif"],
+                        "display-sm": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "heading": ["18px", {"lineHeight": "1.35", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "label": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "display": ["28px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "question-stem": ["17px", {"lineHeight": "1.6", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.55", "fontWeight": "400"}],
+                        "body": ["16px", {"lineHeight": "1.55", "fontWeight": "400"}],
+                        "mono": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["28px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-radio:checked + label {
+            border-color: #003857;
+            background-color: #cce5ff;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f3f7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c7cf;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #72787f;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface flex min-h-screen">
+<!-- Predicted Component: SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 gap-4 bg-primary dark:bg-primary-container h-screen w-64 shadow-sm z-50">
+<div class="flex items-center gap-3 px-2 mb-6">
+<div class="w-10 h-10 bg-on-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+</div>
+<div>
+<h2 class="font-display-sm text-display-sm text-on-primary dark:text-on-primary-container leading-none">CNVCK</h2>
+<p class="font-caption text-caption text-on-primary/70">Back-Office</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="font-label text-label">Catalog</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 rounded-lg font-medium transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label text-label">Content</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 rounded-lg font-medium transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label text-label">Users</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 rounded-lg font-medium transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label text-label">Payments</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 border-t border-on-primary/10 pt-4">
+<button class="w-full bg-on-primary text-primary py-3 rounded-lg font-bold font-label text-label hover:bg-surface-bright transition-colors mb-4 active:scale-95 duration-150">
+                New Subject
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 rounded-lg font-medium transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="font-label text-label">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:text-on-primary hover:bg-on-primary/10 rounded-lg font-medium transition-all cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label text-label">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- Predicted Component: TopNavBar -->
+<header class="flex justify-between items-center px-8 w-full sticky top-0 z-40 bg-surface-container-lowest dark:bg-surface-container-lowest h-16 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4">
+<h1 class="font-display-sm text-display-sm font-bold text-primary dark:text-primary-fixed-dim">CNVCK Admin Portal</h1>
+<div class="h-6 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label text-label">
+<span>Catalog</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-bold">New Question</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="settings">settings</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help">help</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="Close-up professional portrait of a male administrator in a clean office setting, soft natural lighting, high-end photography style, representing expertise and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB35HH6p9uw5fwKLk2rjvwN49H7ynGDRFe1LOZJD5jjn__YkjR6dwNvY2-Bek9J2GHdnuUpahSBiq3cajpI0MClKonJlbc6SozHXHxiIqK10U7XtVdPC-vLLUnQO06IKzUaWq9nmLfJwKo7mW_DmW2AaNDewfoM8ZzNE-WMQUS8WQYN3CddR3SXmFIIa4lmblws6s81TY34udNnVPAB62JQZSLKQJg80GmjEREJmqc0DBaLBrZ64p4Duj-XBQfSym5cLZDgr2T7BM0-"/>
+<span class="font-label text-label font-bold text-primary">Admin_Tuan</span>
+</div>
+</div>
+</header>
+<!-- Question Editor Canvas -->
+<div class="p-8 max-w-6xl mx-auto w-full">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-display text-display text-primary mb-1">Editor Câu Hỏi (A-31)</h2>
+<p class="text-ink-muted font-body-sm">Thiết lập nội dung và đáp án cho câu hỏi mới trong hệ thống chứng chỉ.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 rounded-lg border-2 border-primary text-primary font-bold font-label text-label hover:bg-primary/5 transition-all active:scale-95">
+                        Lưu bản nháp
+                    </button>
+<button class="px-6 py-2.5 rounded-lg bg-primary text-on-primary font-bold font-label text-label shadow-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">
+                        Gửi duyệt
+                    </button>
+</div>
+</div>
+<!-- Bento Layout for Form -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Main Editor Column -->
+<div class="col-span-8 flex flex-col gap-6">
+<!-- Stem Field -->
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+<h3 class="font-heading text-heading text-primary">Nội dung câu hỏi (Stem)</h3>
+</div>
+<textarea class="w-full min-h-[160px] p-4 bg-surface-subtle border border-outline-variant rounded-lg font-question-stem text-question-stem focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none resize-none" placeholder="Nhập câu hỏi tại đây..."></textarea>
+<div class="mt-2 flex justify-end">
+<span class="text-caption font-caption text-ink-muted">Tối thiểu 20 ký tự</span>
+</div>
+</section>
+<!-- Answer Options -->
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="checklist">checklist</span>
+<h3 class="font-heading text-heading text-primary">Các phương án trả lời</h3>
+</div>
+<span class="text-caption font-caption bg-secondary-container text-on-secondary-container px-2 py-1 rounded">Chọn 1 đáp án đúng</span>
+</div>
+<div class="space-y-4">
+<!-- Option A -->
+<div class="flex items-start gap-4">
+<div class="mt-3">
+<input checked="" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant active-radio hidden" id="opt-a" name="correct-answer" type="radio"/>
+<label class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-outline-variant text-ink-muted font-bold cursor-pointer hover:border-primary transition-all" for="opt-a">A</label>
+</div>
+<div class="flex-1">
+<input class="w-full p-4 bg-white border border-outline-variant rounded-lg font-body-md focus:border-primary outline-none transition-all" placeholder="Phương án A" type="text"/>
+</div>
+</div>
+<!-- Option B -->
+<div class="flex items-start gap-4">
+<div class="mt-3">
+<input class="w-5 h-5 text-primary focus:ring-primary border-outline-variant active-radio hidden" id="opt-b" name="correct-answer" type="radio"/>
+<label class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-outline-variant text-ink-muted font-bold cursor-pointer hover:border-primary transition-all" for="opt-b">B</label>
+</div>
+<div class="flex-1">
+<input class="w-full p-4 bg-white border border-outline-variant rounded-lg font-body-md focus:border-primary outline-none transition-all" placeholder="Phương án B" type="text"/>
+</div>
+</div>
+<!-- Option C -->
+<div class="flex items-start gap-4">
+<div class="mt-3">
+<input class="w-5 h-5 text-primary focus:ring-primary border-outline-variant active-radio hidden" id="opt-c" name="correct-answer" type="radio"/>
+<label class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-outline-variant text-ink-muted font-bold cursor-pointer hover:border-primary transition-all" for="opt-c">C</label>
+</div>
+<div class="flex-1">
+<input class="w-full p-4 bg-white border border-outline-variant rounded-lg font-body-md focus:border-primary outline-none transition-all" placeholder="Phương án C" type="text"/>
+</div>
+</div>
+<!-- Option D -->
+<div class="flex items-start gap-4">
+<div class="mt-3">
+<input class="w-5 h-5 text-primary focus:ring-primary border-outline-variant active-radio hidden" id="opt-d" name="correct-answer" type="radio"/>
+<label class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-outline-variant text-ink-muted font-bold cursor-pointer hover:border-primary transition-all" for="opt-d">D</label>
+</div>
+<div class="flex-1">
+<input class="w-full p-4 bg-white border border-outline-variant rounded-lg font-body-md focus:border-primary outline-none transition-all" placeholder="Phương án D" type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Explanation Field -->
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm mb-12">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent" data-icon="lightbulb">lightbulb</span>
+<h3 class="font-heading text-heading text-primary">Giải thích đáp án</h3>
+</div>
+<textarea class="w-full min-h-[120px] p-4 bg-surface-subtle border border-outline-variant rounded-lg font-body text-body focus:ring-2 focus:ring-accent focus:border-transparent transition-all outline-none resize-none" placeholder="Giải thích tại sao đáp án trên là đúng (Trích dẫn luật, nghị định, công thức...)"></textarea>
+</section>
+</div>
+<!-- Sidebar Metadata Column -->
+<div class="col-span-4 flex flex-col gap-6">
+<!-- Metadata Tags -->
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="label">label</span>
+<h3 class="font-heading text-heading text-primary">Phân loại &amp; Tagging</h3>
+</div>
+<div class="space-y-6">
+<!-- Subject -->
+<div>
+<label class="block font-label text-label text-on-surface-variant mb-2">Chủ đề (Subject)</label>
+<select class="w-full p-3 bg-white border border-outline-variant rounded-lg font-body focus:border-primary outline-none">
+<option value="phap-luat">Pháp luật chuyên ngành</option>
+<option value="tai-chinh">Quản trị tài chính</option>
+<option value="dao-duc">Đạo đức nghề nghiệp</option>
+</select>
+</div>
+<!-- Topic -->
+<div>
+<label class="block font-label text-label text-on-surface-variant mb-2">Lĩnh vực (Topic)</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full font-caption text-caption hover:bg-primary/20">Luật chứng khoán 2019</button>
+<button class="px-3 py-1.5 bg-surface-container text-on-surface-variant border border-outline-variant rounded-full font-caption text-caption hover:border-primary">Thông tư 121</button>
+<button class="px-3 py-1.5 bg-surface-container text-on-surface-variant border border-outline-variant rounded-full font-caption text-caption hover:border-primary">Niêm yết</button>
+<button class="px-2 py-1.5 border border-dashed border-outline-variant rounded-full text-ink-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span class="text-caption font-caption">Thêm</span>
+</button>
+</div>
+</div>
+<!-- Difficulty -->
+<div>
+<label class="block font-label text-label text-on-surface-variant mb-2">Độ khó (Difficulty)</label>
+<div class="grid grid-cols-3 gap-2">
+<button class="p-2 border border-outline-variant rounded-lg font-label text-label text-ink-muted hover:border-success hover:text-success hover:bg-success-muted transition-all">Dễ</button>
+<button class="p-2 border-2 border-warning text-warning bg-warning-muted rounded-lg font-label text-label font-bold">Vừa</button>
+<button class="p-2 border border-outline-variant rounded-lg font-label text-label text-ink-muted hover:border-error hover:text-error hover:bg-error-muted transition-all">Khó</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Preview Card -->
+<section class="bg-primary p-6 rounded-xl shadow-lg text-on-primary">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<h3 class="font-heading text-heading">Xem trước thẻ</h3>
+</div>
+<div class="bg-white/10 p-4 rounded-lg border border-white/20">
+<p class="font-caption text-caption text-white/70 mb-2">#ID-48293 | Pháp luật</p>
+<p class="font-body-sm line-clamp-3 mb-4 italic text-white/90">"Cơ quan nào có thẩm quyền cấp giấy phép hoạt động cho công ty chứng khoán theo quy định hiện hành?"</p>
+<div class="flex items-center justify-between">
+<span class="bg-success text-on-primary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Đang soạn</span>
+<span class="material-symbols-outlined text-sm" data-icon="more_horiz">more_horiz</span>
+</div>
+</div>
+</section>
+<!-- Feedback Banner -->
+<div class="bg-disclaimer-bg border border-disclaimer-border p-4 rounded-lg flex gap-3">
+<span class="material-symbols-outlined text-warning" data-icon="warning">warning</span>
+<div class="font-caption text-caption text-on-tertiary-fixed-variant leading-tight">
+                            Vui lòng kiểm tra kỹ nội dung và đáp án trước khi gửi duyệt. Câu hỏi sau khi duyệt sẽ được đưa vào ngân hàng đề thi chính thức.
+                        </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Info -->
+<footer class="mt-auto px-8 py-4 border-t border-outline-variant bg-surface-container-low flex justify-between items-center">
+<p class="text-caption font-caption text-ink-muted">© 2024 CNVCK Learning Platform. Hệ thống quản trị nội dung v2.4.1</p>
+<div class="flex gap-4">
+<a class="text-caption font-caption text-primary hover:underline" href="#">Hướng dẫn biên soạn</a>
+<a class="text-caption font-caption text-primary hover:underline" href="#">Quy chuẩn dữ liệu</a>
+</div>
+</footer>
+</main>
+<script>
+        // Micro-interactions for radio buttons
+        const radioButtons = document.querySelectorAll('input[name="correct-answer"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                // Reset all labels
+                document.querySelectorAll('label[for^="opt-"]').forEach(label => {
+                    label.classList.remove('border-primary', 'bg-primary-fixed', 'text-primary');
+                    label.classList.add('border-outline-variant', 'text-ink-muted');
+                });
+                
+                // Style the active label
+                if (e.target.checked) {
+                    const label = document.querySelector(`label[for="${e.target.id}"]`);
+                    label.classList.remove('border-outline-variant', 'text-ink-muted');
+                    label.classList.add('border-primary', 'bg-primary-fixed', 'text-primary');
+                    
+                    // Simple animation effect
+                    label.classList.add('scale-110');
+                    setTimeout(() => label.classList.remove('scale-110'), 200);
+                }
+            });
+        });
+
+        // Toggle Difficulty Selection
+        const difficultyButtons = document.querySelectorAll('button[class*="Difficulty"] + div button');
+        // (Note: The selector above is just illustrative for the concept)
+        // Correct way for this specific implementation:
+        const diffBtns = document.querySelectorAll('.grid-cols-3 button');
+        diffBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                diffBtns.forEach(b => {
+                    b.classList.remove('border-2', 'border-warning', 'text-warning', 'bg-warning-muted', 'font-bold', 'border-success', 'text-success', 'bg-success-muted', 'border-error', 'text-error', 'bg-error-muted');
+                    b.classList.add('border-outline-variant', 'text-ink-muted');
+                });
+                
+                btn.classList.remove('border-outline-variant', 'text-ink-muted');
+                const text = btn.innerText;
+                if (text === 'Dễ') {
+                    btn.classList.add('border-2', 'border-success', 'text-success', 'bg-success-muted', 'font-bold');
+                } else if (text === 'Vừa') {
+                    btn.classList.add('border-2', 'border-warning', 'text-warning', 'bg-warning-muted', 'font-bold');
+                } else {
+                    btn.classList.add('border-2', 'border-error', 'text-error', 'bg-error-muted', 'font-bold');
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,1 @@
+export const DEFAULT_MONTHLY_ATTEMPT_LIMIT = 3;

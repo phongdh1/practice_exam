@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CNVCK Prep - Danh mục môn học</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "ink-muted": "#5D6D7E",
+                    "surface": "#f9f9fc",
+                    "on-background": "#1a1c1e",
+                    "secondary": "#556064",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "outline-variant": "#c1c7cf",
+                    "tertiary-fixed-dim": "#f1be76",
+                    "surface-variant": "#e2e2e5",
+                    "on-secondary-fixed-variant": "#3d494c",
+                    "on-tertiary-container": "#e4b36c",
+                    "warning-muted": "#FEF5E7",
+                    "price-highlight": "#1B4F72",
+                    "surface-container-highest": "#e2e2e5",
+                    "on-secondary-fixed": "#121d20",
+                    "tertiary-container": "#674404",
+                    "surface-dim": "#d9dadd",
+                    "ink-disabled": "#AEB6BF",
+                    "secondary-fixed-dim": "#bdc9cc",
+                    "surface-container": "#edeef1",
+                    "primary-container": "#1b4f72",
+                    "inverse-on-surface": "#f0f0f4",
+                    "primary": "#003857",
+                    "on-primary-fixed": "#001e31",
+                    "primary-fixed": "#cce5ff",
+                    "tertiary-fixed": "#ffddb2",
+                    "primary-fixed-dim": "#9dcbf4",
+                    "surface-subtle": "#F7F9FB",
+                    "tertiary": "#4a2f00",
+                    "disclaimer-bg": "#FEF9E7",
+                    "on-surface": "#1a1c1e",
+                    "disclaimer-border": "#F4D03F",
+                    "success": "#0E7C4A",
+                    "surface-tint": "#326286",
+                    "on-primary-fixed-variant": "#154b6d",
+                    "warning": "#D68910",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#92c0e9",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#e7e8eb",
+                    "error-muted": "#FDECEA",
+                    "secondary-container": "#d6e2e6",
+                    "secondary-fixed": "#d9e5e8",
+                    "inverse-primary": "#9dcbf4",
+                    "on-tertiary-fixed": "#291800",
+                    "error": "#C0392B",
+                    "accent": "#0E7C4A",
+                    "surface-container-low": "#f3f3f7",
+                    "outline": "#72787f",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f9f9fc",
+                    "inverse-surface": "#2e3133",
+                    "success-muted": "#E6F4ED",
+                    "surface-bright": "#f9f9fc",
+                    "on-surface-variant": "#41474e",
+                    "on-secondary-container": "#596568"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "2": "8px",
+                    "gutter-desktop": "32px",
+                    "3": "12px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "10": "40px",
+                    "xs": "4px",
+                    "gutter-mobile": "16px",
+                    "6": "24px",
+                    "1": "4px",
+                    "4": "16px",
+                    "section-gap": "32px",
+                    "base": "4px",
+                    "8": "32px",
+                    "question-padding": "20px",
+                    "sm": "8px",
+                    "5": "20px",
+                    "12": "48px",
+                    "md": "16px",
+                    "gutter-tablet": "24px"
+            },
+            "fontFamily": {
+                    "body": ["Be Vietnam Pro, sans-serif"],
+                    "display": ["Be Vietnam Pro, sans-serif"],
+                    "heading": ["Be Vietnam Pro, sans-serif"],
+                    "label": ["Be Vietnam Pro, sans-serif"],
+                    "caption": ["Be Vietnam Pro, sans-serif"]
+            },
+            "fontSize": {
+                    "body": ["16px", {"lineHeight": "1.55", "fontWeight": "400"}],
+                    "display-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "display-lg": ["28px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "heading": ["18px", {"lineHeight": "1.35", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-20 md:pb-0">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface dark:bg-on-background flex justify-between items-center px-gutter-desktop w-full h-16 sticky top-0 z-50 bg-surface-container dark:bg-surface-container-highest shadow-sm">
+<div class="flex items-center gap-8">
+<span class="font-display-lg text-display-lg font-bold text-primary dark:text-primary-fixed">CNVCK Prep</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-heading text-heading text-primary dark:text-primary-fixed font-bold border-b-2 border-primary dark:border-primary-fixed pb-1 hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Môn học</a>
+<a class="font-heading text-heading text-on-surface-variant dark:text-ink-muted hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Tiến độ</a>
+<a class="font-heading text-heading text-on-surface-variant dark:text-ink-muted hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Tài khoản</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed scale-95 duration-100 hover:text-primary dark:hover:text-primary-fixed transition-colors" data-icon="account_circle">
+                account_circle
+            </button>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-gutter-mobile md:px-gutter-desktop py-8">
+<!-- Welcome Header -->
+<section class="mb-10">
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Chào mừng, Nguyễn Văn A</h1>
+<p class="font-body text-body text-ink-muted">Hôm nay bạn muốn luyện tập phần kiến thức nào?</p>
+</section>
+<!-- Bento Grid Content -->
+<div class="bento-grid flex flex-col md:grid md:grid-cols-12 gap-8">
+<!-- Left: Subject Cards -->
+<div class="md:col-span-8 flex flex-col gap-6">
+<div class="flex justify-between items-end mb-2">
+<h2 class="font-heading text-heading text-on-surface">Danh mục môn học</h2>
+<span class="font-caption text-caption text-ink-muted">7 môn học khả dụng</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<!-- Card 1: Free -->
+<div class="bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant p-6 card-hover flex flex-col justify-between min-h-[220px]">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-success-muted text-success px-3 py-1 rounded-full text-caption font-medium">Cơ bản</span>
+<span class="material-symbols-outlined text-ink-muted" data-icon="verified_user">verified_user</span>
+</div>
+<h3 class="font-heading text-heading text-primary mb-2">Pháp luật về chứng khoán</h3>
+<p class="font-caption text-caption text-ink-muted mb-4">Quy định pháp lý, nghị định và thông tư hướng dẫn về thị trường chứng khoán Việt Nam.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-container">
+<span class="font-label text-label text-success">Miễn phí: 0/20 câu</span>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label text-label hover:opacity-90 transition-opacity">Luyện tập</button>
+</div>
+</div>
+<!-- Card 2: Paid -->
+<div class="bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant p-6 card-hover flex flex-col justify-between min-h-[220px]">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 rounded-full text-caption font-medium">Chuyên sâu</span>
+<span class="material-symbols-outlined text-ink-muted" data-icon="finance_chip">finance_chip</span>
+</div>
+<h3 class="font-heading text-heading text-primary mb-2">Phân tích báo cáo tài chính</h3>
+<p class="font-caption text-caption text-ink-muted mb-4">Kỹ năng đọc hiểu bảng cân đối, kết quả kinh doanh và các chỉ số tài chính doanh nghiệp.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-container">
+<span class="font-label text-label text-price-highlight font-bold">100.000 ₫/tháng</span>
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-label text-label hover:bg-opacity-90 transition-all">Đăng ký</button>
+</div>
+</div>
+<!-- Card 3: Locked/General -->
+<div class="bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant p-6 card-hover flex flex-col justify-between min-h-[220px]">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-caption font-medium">Phổ thông</span>
+<span class="material-symbols-outlined text-ink-muted" data-icon="account_balance">account_balance</span>
+</div>
+<h3 class="font-heading text-heading text-primary mb-2">Thị trường chứng khoán</h3>
+<p class="font-caption text-caption text-ink-muted mb-4">Cấu trúc thị trường, các loại chứng khoán và cơ chế giao dịch tại Việt Nam.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-container">
+<span class="font-label text-label text-ink-muted">Chưa kích hoạt</span>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg font-label text-label opacity-50 cursor-not-allowed">Khóa</button>
+</div>
+</div>
+<!-- Card 4: Upcoming/Promo -->
+<div class="relative overflow-hidden bg-primary rounded-lg shadow-lg p-6 card-hover flex flex-col justify-between min-h-[220px] text-on-primary">
+
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-warning text-on-tertiary-fixed px-3 py-1 rounded-full text-caption font-bold">MỚI</span>
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="stars">stars</span>
+</div>
+<h3 class="font-heading text-heading text-on-primary mb-2">Phân tích kỹ thuật cơ bản</h3>
+<p class="font-caption text-caption text-on-primary-container mb-4">Hướng dẫn đọc đồ thị, các chỉ báo RSI, MACD và đường trung bình động.</p>
+</div>
+<div class="relative z-10 flex items-center justify-between mt-auto pt-4">
+<span class="font-label text-label text-on-primary-container">Đang cập nhật</span>
+<button class="bg-on-primary text-primary px-4 py-2 rounded-lg font-label text-label font-bold">Xem trước</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Progress Summary -->
+<aside class="md:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-low rounded-lg p-6 border border-outline-variant">
+<h2 class="font-heading text-heading text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+                        Tiến độ học tập
+                    </h2>
+<div class="space-y-6">
+<!-- Stat Item -->
+<div>
+<div class="flex justify-between mb-2">
+<span class="font-label text-label text-on-surface">Tổng số câu đã làm</span>
+<span class="font-label text-label font-bold text-primary">124/1,200</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 10%"></div>
+</div>
+</div>
+<!-- Stat Item -->
+<div>
+<div class="flex justify-between mb-2">
+<span class="font-label text-label text-on-surface">Tỉ lệ chính xác</span>
+<span class="font-label text-label font-bold text-success">78%</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-success h-2 rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Streak/Quick Info -->
+<div class="bg-warning-muted border border-disclaimer-border rounded-lg p-4 mt-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-warning" data-icon="local_fire_department">local_fire_department</span>
+<div>
+<p class="font-label text-label font-bold text-warning">Chuỗi học tập: 5 ngày</p>
+<p class="font-caption text-caption text-ink-muted">Bạn đang làm rất tốt, hãy duy trì nhé!</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recommended Action -->
+<div class="mt-8 pt-6 border-t border-outline-variant">
+<p class="font-caption text-caption text-ink-muted mb-4">Gợi ý luyện tập ngay:</p>
+<div class="flex flex-col gap-2">
+<a class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant hover:border-primary transition-colors group" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-ink-muted group-hover:text-primary" data-icon="history">history</span>
+<span class="font-label text-label">Câu sai gần đây</span>
+</div>
+<span class="material-symbols-outlined text-ink-muted" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Ad/Banner Section -->
+<div class="rounded-lg overflow-hidden relative h-48 bg-secondary-container flex flex-col justify-end p-6">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A sophisticated digital workspace background with subtle overlays of financial charts and professional office elements. The atmosphere is scholarly and quiet, dominated by deep navy blues and clean white surfaces. Perfect soft lighting enhances the academic focus of the scene." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAO0ZkFxBiht7yKNq4E7uFs8Tjo-ATnVa5GCpwTW2usMhYWymaWmzY1wrpkHD_hZtSqDjyghgS4nxf0RPKq8dnIEoOskP9oceZpF1JbqjMO1g-L3K4mKG2NnIs1SsakVA_kUUI6hrfb6cTMc_KUt2hpVFmnJ-vXKeKFhgc5uM7-UViU5i-Q_yPAoKhO8Z2zbajXyBQSq5udL-VHJ5IUb0r5uR7LrFt7GoCwnDGTHm-yoC7z1wwcDFNLS2zNEcH3qvnsaOO7BzxHUMi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
+<div class="relative z-10">
+<h4 class="font-heading text-heading text-on-primary">Nâng cấp VIP</h4>
+<p class="font-caption text-caption text-on-primary-container mb-2">Mở khóa toàn bộ ngân hàng 5000+ câu hỏi sát đề thi thật.</p>
+<button class="text-on-primary font-bold font-label underline">Tìm hiểu ngay</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar (Shared Component - Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-between md:hidden px-gutter-mobile py-3 bg-surface-container-lowest dark:bg-on-background border-t border-outline-variant dark:border-outline shadow-lg">
+<button class="bg-primary-container text-on-primary-container rounded-full px-6 py-2 flex items-center gap-2 scale-98 duration-200">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-label text-label">Môn học</span>
+</button>
+<button class="text-on-surface-variant dark:text-ink-muted flex items-center gap-2 px-4 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-label text-label">Tiến độ</span>
+</button>
+</nav>
+<!-- Footer (Shared Component) -->
+<footer class="w-full py-12 px-gutter-desktop mt-section-gap flex flex-col gap-6 bg-surface-container-low dark:bg-on-background border-t-2 border-disclaimer-border dark:border-warning">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<span class="font-heading text-heading text-primary">CNVCK Prep</span>
+<p class="font-caption text-caption text-ink-muted dark:text-ink-disabled mt-2">© 2024 CNVCK Certification Prep. Không trực thuộc UBCKNN.</p>
+</div>
+<div class="flex gap-6">
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary transition-colors" href="#">Cài đặt</a>
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary transition-colors" href="#">Chính sách bảo mật</a>
+<a class="font-caption text-caption text-ink-muted hover:underline hover:text-primary transition-colors" href="#">Liên hệ hỗ trợ</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('.card-hover').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = '';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+    </script>
+</body></html>

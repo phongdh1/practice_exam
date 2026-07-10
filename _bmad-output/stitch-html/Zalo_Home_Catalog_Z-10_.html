@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#624000",
+                    "disclaimer-bg": "#FEF9E7",
+                    "surface-container-highest": "#e2e2e5",
+                    "secondary-fixed": "#d9e5e8",
+                    "outline": "#72787f",
+                    "secondary-container": "#d6e2e6",
+                    "on-primary-fixed-variant": "#154b6d",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#121d20",
+                    "on-surface": "#1a1c1e",
+                    "on-background": "#1a1c1e",
+                    "accent": "#0E7C4A",
+                    "on-tertiary": "#ffffff",
+                    "disclaimer-border": "#F4D03F",
+                    "ink-muted": "#5D6D7E",
+                    "primary": "#003857",
+                    "warning-muted": "#FEF5E7",
+                    "on-secondary-fixed-variant": "#3d494c",
+                    "on-primary": "#ffffff",
+                    "secondary": "#556064",
+                    "ink-disabled": "#AEB6BF",
+                    "success": "#0E7C4A",
+                    "primary-container": "#1b4f72",
+                    "surface-subtle": "#F7F9FB",
+                    "inverse-on-surface": "#f0f0f4",
+                    "surface-container-low": "#f3f3f7",
+                    "inverse-surface": "#2e3133",
+                    "on-secondary-container": "#596568",
+                    "error": "#C0392B",
+                    "primary-fixed": "#cce5ff",
+                    "success-muted": "#E6F4ED",
+                    "surface-dim": "#d9dadd",
+                    "warning": "#D68910",
+                    "on-primary-container": "#92c0e9",
+                    "outline-variant": "#c1c7cf",
+                    "surface-container": "#edeef1",
+                    "tertiary-container": "#674404",
+                    "error-muted": "#FDECEA",
+                    "tertiary-fixed-dim": "#f1be76",
+                    "secondary-fixed-dim": "#bdc9cc",
+                    "background": "#f9f9fc",
+                    "surface-tint": "#326286",
+                    "tertiary-fixed": "#ffddb2",
+                    "on-tertiary-fixed": "#291800",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#e4b36c",
+                    "inverse-primary": "#9dcbf4",
+                    "price-highlight": "#1B4F72",
+                    "tertiary": "#4a2f00",
+                    "surface": "#f9f9fc",
+                    "primary-fixed-dim": "#9dcbf4",
+                    "surface-variant": "#e2e2e5",
+                    "on-primary-fixed": "#001e31",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#41474e",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f9f9fc",
+                    "surface-container-high": "#e7e8eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-desktop": "32px",
+                    "2": "8px",
+                    "1": "4px",
+                    "xs": "4px",
+                    "section-gap": "32px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "gutter-tablet": "24px",
+                    "question-padding": "20px",
+                    "base": "4px",
+                    "5": "20px",
+                    "gutter-mobile": "16px",
+                    "3": "12px",
+                    "4": "16px",
+                    "sm": "8px",
+                    "8": "32px",
+                    "12": "48px",
+                    "10": "40px",
+                    "md": "16px",
+                    "6": "24px"
+            },
+            "fontFamily": {
+                    "display-sm": ["Be Vietnam Pro", "sans-serif"],
+                    "body-md": ["Be Vietnam Pro", "sans-serif"],
+                    "question-stem": ["Be Vietnam Pro", "sans-serif"],
+                    "body": ["Be Vietnam Pro", "sans-serif"],
+                    "label": ["Be Vietnam Pro", "sans-serif"],
+                    "display-lg": ["Be Vietnam Pro", "sans-serif"],
+                    "heading": ["Be Vietnam Pro", "sans-serif"],
+                    "caption": ["Be Vietnam Pro", "sans-serif"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface flex flex-col min-h-screen">
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center px-gutter-mobile w-full py-3">
+<div class="flex items-center gap-3">
+<button class="text-primary p-1">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-sm text-display-sm font-bold text-primary">CNVCK Prep</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-primary p-1 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<main class="flex-grow pb-24">
+<!-- User Greeting Section -->
+<section class="px-gutter-mobile py-6 bg-surface-subtle">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-display-lg text-display-lg text-primary">Chào bạn, Linh</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Sẵn sàng cho bài học hôm nay chưa?</p>
+</div>
+<div class="w-12 h-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a young Vietnamese woman with a friendly smile, representing an academic student. She is wearing a smart-casual white blouse against a clean, soft-lit professional office background. The lighting is bright and modern, adhering to a high-end light-mode aesthetic with a palette of deep navy and soft greys." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0-uSk2VNctDlz0zBDnFdiFZVPOEqDybt_qzoUmlwRhw8MN8jR9A20DCXJUWX9O920Owj13SCJr4tVRjrrzEYeLjM8Ezpj3QqO99tMMKHMGCztqBGm0Iw_USOGqA-QjiL1PsfmBPgZLIxAsXcrLZ1c-vF2tVJmtjFZVyLoQg6R8cjIBT0JkFoySfdPRkBOxnHr9ZpF07eg3gvFfUg1o5K_S1NfkOGDB46VUfs-6Ua81muljd3oIoEiNMOW7EP6YaLIQwaEuK7DYhqg"/>
+</div>
+</div>
+</section>
+<!-- Search & Quick Filters -->
+<div class="px-gutter-mobile -mt-4">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-2 flex items-center gap-3">
+<span class="material-symbols-outlined text-outline ml-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full font-body-md text-on-surface-variant" placeholder="Tìm kiếm môn học..." type="text"/>
+</div>
+</div>
+<!-- UBCKNN Disclaimer Banner -->
+<div class="mx-gutter-mobile mt-6 p-4 bg-disclaimer-bg border border-disclaimer-border rounded-lg flex gap-3">
+<span class="material-symbols-outlined text-warning" data-icon="info" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="font-caption text-caption text-on-surface-variant">
+                Tài liệu và câu hỏi dựa trên ngân hàng đề thi chuẩn của UBCKNN. Chương trình học được cập nhật định kỳ theo quy định pháp luật hiện hành.
+            </p>
+</div>
+<!-- Subject Catalog (Bento Style Layout) -->
+<section class="px-gutter-mobile mt-8">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-heading text-heading text-primary">Danh mục môn học</h3>
+<button class="font-label text-label text-primary font-bold">Xem tất cả</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Subject Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-fixed-dim rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+</div>
+<span class="px-2 py-1 bg-success-muted text-success font-label text-[10px] uppercase font-bold rounded">Đang học</span>
+</div>
+<h4 class="font-heading text-heading text-primary mb-2">Pháp luật về chứng khoán</h4>
+<div class="flex items-center gap-2 mb-4">
+<span class="font-label text-label text-price-highlight font-bold">100.000 ₫/tháng</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between font-caption text-caption text-on-surface-variant">
+<span>Lượt dùng thử miễn phí</span>
+<span class="font-bold">5/20</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 25%"></div>
+</div>
+</div>
+<button class="mt-6 w-full py-3 bg-primary text-on-primary rounded-lg font-label text-label font-bold transition-transform active:scale-95">
+                        Tiếp tục học
+                    </button>
+</div>
+<!-- Subject Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-secondary-fixed rounded-lg text-secondary">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+</div>
+<span class="px-2 py-1 bg-surface-container-high text-on-surface-variant font-label text-[10px] uppercase font-bold rounded">Chưa bắt đầu</span>
+</div>
+<h4 class="font-heading text-heading text-primary mb-2">Phân tích báo cáo tài chính</h4>
+<div class="flex items-center gap-2 mb-4">
+<span class="font-label text-label text-price-highlight font-bold">100.000 ₫/tháng</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between font-caption text-caption text-on-surface-variant">
+<span>Lượt dùng thử miễn phí</span>
+<span class="font-bold">0/20</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-outline-variant h-full rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<button class="mt-6 w-full py-3 border-2 border-primary text-primary rounded-lg font-label text-label font-bold hover:bg-surface-container-high transition-colors">
+                        Đăng ký ngay
+                    </button>
+</div>
+</div>
+</section>
+<!-- Learning Guide Banner -->
+<section class="px-gutter-mobile mt-8">
+<div class="relative rounded-xl overflow-hidden aspect-[16/7] shadow-md group">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/90 to-transparent z-10 p-6 flex flex-col justify-center">
+<h4 class="text-white font-heading text-heading mb-1">Mẹo học hiệu quả</h4>
+<p class="text-primary-fixed-dim font-body-sm text-body-sm max-w-[60%]">Khám phá lộ trình học tập tối ưu cho kỳ thi UBCKNN năm 2024.</p>
+<button class="mt-3 flex items-center text-white font-label text-label gap-1 group-hover:gap-2 transition-all">
+                        Xem hướng dẫn <span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist educational flat-lay showing a professional leather-bound planner, a sleek fountain pen, and a laptop with a financial graph on the screen. The scene is illuminated with soft, natural morning light, creating a focused and studious atmosphere. The color palette follows a corporate aesthetic with navy blue, crisp white, and subtle metallic accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRB87m32cejU5m9bFt-PqtCs1xsWTzMoJeT4riXwhG4U0qh2ijPvs0TiNT2j-Ia_OvHCdLX66utW77vRg7LQiiU2rZ01wT2pXiEMqRwdl7xOj3WQ9h5XNcvocVjTIoQ6aZsmYd0cbozCYpVV13O4Hyy8tFOyozlLFZjeT3igz1QLXjPhqgc8VqtffvXPn0orOYIjppRkFHviy4KerGyv1PIBuIrbS36YCQ3R4V8X6ILfgcPolQzJxWgJGsOyluKRNt1azXNYt0ZhLc"/>
+</div>
+</section>
+</main>
+<!-- Footer Area -->
+<footer class="w-full px-gutter-mobile py-8 flex flex-col items-center gap-2 mb-20 bg-disclaimer-bg border-t-2 border-disclaimer-border p-question-padding">
+<h5 class="font-heading text-heading text-primary">CNVCK Prep</h5>
+<div class="flex gap-4">
+<a class="font-caption text-caption text-on-surface-variant hover:text-primary transition-colors" href="#">Điều khoản sử dụng</a>
+<span class="text-outline">|</span>
+<a class="font-caption text-caption text-on-surface-variant hover:text-primary transition-colors" href="#">Chính sách bảo mật</a>
+</div>
+<p class="font-caption text-caption text-on-surface-variant opacity-80 mt-2 text-center">
+            © 2024 CNVCK Prep. Tất cả quyền được bảo lưu.
+        </p>
+</footer>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container-lowest shadow-sm">
+<!-- Active: Trang chủ -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl px-5 py-1 transition-transform duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label text-label">Trang chủ</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 transition-transform duration-150 active:scale-95 hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label text-label">Tiến độ</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 transition-transform duration-150 active:scale-95 hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label text-label">Tài khoản</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions and simple state handling
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.style.position = 'absolute';
+                ripple.style.width = '10px';
+                ripple.style.height = '10px';
+                ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.transition = 'transform 0.4s ease-out, opacity 0.4s';
+                
+                btn.style.position = 'relative';
+                btn.style.overflow = 'hidden';
+                btn.appendChild(ripple);
+                
+                requestAnimationFrame(() => {
+                    ripple.style.transform = 'scale(20)';
+                    ripple.style.opacity = '0';
+                });
+                
+                setTimeout(() => ripple.remove(), 400);
+            });
+        });
+    </script>
+</body></html>

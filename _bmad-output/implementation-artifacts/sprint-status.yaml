@@ -1,0 +1,108 @@
+# Sprint Status — Practice Exam
+# STATUS DEFINITIONS:
+#   backlog: Story not yet ready for development
+#   ready-for-dev: Story validated and ready to implement
+#   in-progress: Currently being developed
+#   review: Implementation complete, awaiting code review
+#   done: Reviewed and merged/accepted
+
+last_updated: "2026-07-09"
+# STORY-65 code review fixes 2026-07-09: TOCTOU race fixed, subscribed + concurrency e2e added → review
+# EPIC-14 Study Mode added 2026-07-09: STORY-65..68 from sprint-change-proposal-2026-07-09-study-mode
+# STORY-64 (8-41) bulk actions on A-30 started 2026-07-02 → in-progress
+# STORY-63 added 2026-07-02: import UX + multi-type Excel template with DanhMuc dropdowns
+# STORY-61/STORY-62 code review 2026-07-02: all patch findings applied → done
+# 13-57 code review 2026-07-01: 5 patches applied and verified → done
+# EPIC-12 code review final pass 2026-07-01: Approved — all 3 stories → done
+# EPIC-11 re-code-review 2026-07-01: Approved — all 5 stories → done
+# EPIC-12 code review re-pass 2026-07-01: High fixes verified; Medium items remain → in-progress
+# EPIC-12 code review 2026-07-01: changes requested → in-progress
+# EPIC-7 code review second pass 2026-07-01: all stories approved → done
+project: Practice_Exam
+epic_in_focus: EPIC-14
+
+development_status:
+  epic-1: review
+  1-1-initialize-monorepo: review
+  1-2-configure-prisma: review
+  1-3-scaffold-nestjs-api: review
+  1-4-shared-ui-package: review
+  1-5-scaffold-client-apps: review
+  epic-2: review
+  2-6-email-registration-password-signin: review
+  2-7-google-oauth-signin-web: review
+  2-8-zalo-oauth-mini-app: review
+  2-9-link-auth-identity: review
+  2-10-merge-users-account-link: review
+  epic-3: review
+  3-11-subject-catalog-api: review
+  3-12-candidate-subject-catalog-ui: review
+  3-13-free-tier-entitlement-enforcement: review
+  3-14-platform-disclaimer-guardrails: review
+  epic-4: review
+  4-15-subscription-model-entitlement-service: review
+  4-16-payos-checkout-initiation: review
+  4-17-sepay-payment-adapter: review
+  4-18-payment-webhooks-idempotency: review
+  4-19-candidate-checkout-confirmation-ui: review
+  4-20-subscription-expiry-renewal-notice: review
+  epic-8: in-progress
+  8-33-question-crud-lifecycle-states: done
+  8-34-editorial-review-queue: done
+  8-35-emergency-unpublish-source-attribution: done
+  8-36-question-search-filter-preview: done
+  8-37-excel-bulk-import: done
+  8-38-flagged-questions-admin-queue: done
+  8-39-import-template-download: done
+  8-40-import-ux-multi-type-template: done
+  8-41-question-bulk-actions-a30: done
+  epic-9: done
+  9-39-subject-crud-go-live-gate: done
+  9-40-subject-pricing-free-tier: done
+  9-41-exam-blueprint-metadata: done
+  9-42-mock-exam-template-crud: done
+  9-43-exam-pool-rules-attempt-limits: done
+  9-61-course-crud-catalog-grouping: done
+  9-62-subject-management-within-course: done
+  epic-5: done
+  5-21-practice-session-api: done
+  5-22-practice-question-ui: done
+  5-23-practice-resume-paywall: done
+  5-24-question-flagging: done
+  epic-6: review
+  6-25-mock-exam-listing-attempt-limits: review
+  6-26-timed-mock-exam-execution: review
+  6-27-pre-submit-cross-section-review: review
+  6-28-mock-exam-scoring-results: review
+  6-29-mock-exam-candidate-ui-flow: review
+  epic-7: done
+  7-30-attempt-history-api-list-ui: done
+  7-31-subject-performance-summary-aggregates: done
+  7-32-progress-dashboard-ui: done
+  epic-10: done
+  10-44-user-search-profile-admin: done
+  10-45-manual-subscription-grant-revoke: done
+  10-46-account-merge-override: done
+  10-47-user-data-export: done
+  10-48-account-suspension: done
+  epic-11: done
+  11-49-payment-transaction-log-admin-view: done
+  11-50-provider-reconciliation-summaries: done
+  11-51-refund-processing-entitlement-adjustment: done
+  11-52-revenue-reports-subject-channel: done
+  11-53-promo-code-management: done
+  epic-12: done
+# EPIC-12 code review final pass 2026-07-01: Approved — all Medium + High verified
+  12-54-zalo-mini-app-configuration: done
+  12-55-payment-provider-merchant-config: done
+  12-56-webhook-event-log-manual-retry: done
+  epic-13: done
+  13-57-rbac-enforcement: done
+  13-58-admin-user-management: done
+  13-59-system-settings: done
+  13-60-admin-dashboard-kpis: done
+  epic-14: in-progress
+  14-65-study-mode-api-entitlements: review
+  14-66-candidate-study-mode-ui: done
+  14-67-subject-detail-study-integration: done
+  14-68-admin-study-tier-limit-config: done
