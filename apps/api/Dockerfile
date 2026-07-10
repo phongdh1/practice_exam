@@ -26,6 +26,9 @@ FROM builder AS deploy
 ENV DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build"
 ENV DIRECT_URL="postgresql://build:build@127.0.0.1:5432/build"
 RUN pnpm --filter @practice-exam/api deploy --prod /prod/api
+WORKDIR /prod/api
+# prisma CLI is dev-only and skipped by --prod; generate client inside deploy bundle.
+RUN pnpm dlx prisma@7.8.0 generate
 
 FROM node:22-alpine AS runner
 WORKDIR /app
