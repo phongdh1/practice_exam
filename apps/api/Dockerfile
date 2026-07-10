@@ -22,22 +22,15 @@ ENV DIRECT_URL="postgresql://build:build@127.0.0.1:5432/build"
 RUN pnpm --filter @practice-exam/api exec prisma generate
 RUN pnpm turbo build --filter=@practice-exam/api
 
+FROM builder AS deploy
+ENV DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build"
+ENV DIRECT_URL="postgresql://build:build@127.0.0.1:5432/build"
+RUN pnpm --filter @practice-exam/api deploy --prod /prod/api
+
 FROM node:22-alpine AS runner
-RUN corepack enable && corepack prepare pnpm@8.15.9 --activate
 WORKDIR /app
 ENV NODE_ENV=production
-
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
-COPY --from=builder /app/apps/api/prisma.config.ts ./apps/api/prisma.config.ts
-COPY --from=builder /app/packages ./packages
-
-WORKDIR /app/apps/api
+COPY --from=deploy /prod/api .
 EXPOSE 3001
 ENV PORT=3001
 CMD ["node", "dist/main.js"]
