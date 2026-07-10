@@ -12,12 +12,14 @@ FROM base AS deps
 RUN corepack prepare pnpm@8.15.9 --activate
 COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install --frozen-lockfile
+# Prisma schema is not in turbo prune's json stage; skip postinstall until full source is copied.
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 FROM deps AS builder
 COPY --from=prune /app/out/full/ .
 ENV DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build"
 ENV DIRECT_URL="postgresql://build:build@127.0.0.1:5432/build"
+RUN pnpm --filter @practice-exam/api exec prisma generate
 RUN pnpm turbo build --filter=@practice-exam/api
 
 FROM node:22-alpine AS runner
