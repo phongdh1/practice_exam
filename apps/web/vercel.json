@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
   "installCommand": "cd ../.. && pnpm install --ignore-scripts",
   "buildCommand": "cd ../.. && pnpm turbo build --filter=@practice-exam/web"
 }
