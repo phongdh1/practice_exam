@@ -873,8 +873,12 @@ export class ApiClient {
   }
 }
 
+export function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/+$/, "");
+}
+
 export function createApiClient(config: ApiClientConfig): ApiClient {
-  return new ApiClient(config);
+  return new ApiClient({ ...config, baseUrl: normalizeBaseUrl(config.baseUrl) });
 }
 
 export {
