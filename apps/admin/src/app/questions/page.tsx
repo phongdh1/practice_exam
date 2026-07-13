@@ -306,6 +306,37 @@ function QuestionBankContent() {
 
   return (
     <AdminPageShell>
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <StatCard
+          icon="list_alt"
+          label="Tổng số câu hỏi"
+          value={formatStatValue(statsError ? undefined : stats?.total)}
+          iconClassName="bg-primary/10 text-primary"
+          valueClassName="text-primary"
+        />
+        <StatCard
+          icon="check_circle"
+          label="Đã xuất bản"
+          value={formatStatValue(statsError ? undefined : stats?.published)}
+          iconClassName="bg-success/10 text-success"
+          valueClassName="text-success"
+        />
+        <StatCard
+          icon="rate_review"
+          label="Đang chờ duyệt"
+          value={formatStatValue(statsError ? undefined : stats?.inReview)}
+          iconClassName="bg-warning/10 text-warning"
+          valueClassName="text-warning"
+        />
+        <StatCard
+          icon="drafts"
+          label="Bản nháp"
+          value={formatStatValue(statsError ? undefined : stats?.draft)}
+          iconClassName="bg-surface-container-highest text-on-surface-variant"
+          valueClassName="text-on-surface"
+        />
+      </div>
+
       <div className="mb-6 flex flex-wrap items-center justify-end gap-3">
         <Link
           href="/questions/import"
@@ -625,37 +656,6 @@ function QuestionBankContent() {
           })}
         </TableBody>
       </AdminDataTable>
-
-      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
-        <StatCard
-          icon="list_alt"
-          label="Tổng số câu hỏi"
-          value={formatStatValue(statsError ? undefined : stats?.total)}
-          iconClassName="bg-primary/10 text-primary"
-          valueClassName="text-primary"
-        />
-        <StatCard
-          icon="check_circle"
-          label="Đã xuất bản"
-          value={formatStatValue(statsError ? undefined : stats?.published)}
-          iconClassName="bg-success/10 text-success"
-          valueClassName="text-success"
-        />
-        <StatCard
-          icon="rate_review"
-          label="Đang chờ duyệt"
-          value={formatStatValue(statsError ? undefined : stats?.inReview)}
-          iconClassName="bg-warning/10 text-warning"
-          valueClassName="text-warning"
-        />
-        <StatCard
-          icon="drafts"
-          label="Bản nháp"
-          value={formatStatValue(statsError ? undefined : stats?.draft)}
-          iconClassName="bg-surface-container-highest text-on-surface-variant"
-          valueClassName="text-on-surface"
-        />
-      </div>
     </AdminPageShell>
   );
 }
