@@ -35,10 +35,7 @@ export default function RbacPermissionMatrixPage() {
 
   return (
     <AdminRoleGate allowedRoles={["super_admin"]}>
-      <AdminPageShell
-        title="Ma trận phân quyền (A-92)"
-        subtitle="Tham chiếu read-only theo PRD — API thực thi RBAC trên mọi endpoint."
-      >
+      <AdminPageShell>
         <SettingsSectionTabs />
 
       {isLoading && (

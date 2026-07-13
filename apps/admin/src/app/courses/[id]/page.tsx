@@ -63,7 +63,7 @@ function EditCourseContent() {
   });
 
   return (
-    <AdminPageShell title="Sửa khóa học" subtitle="Course là lớp nhóm catalog phía trên môn học.">
+    <AdminPageShell>
       {isLoading && <p className="text-ink-muted">Đang tải...</p>}
       {!isLoading && !course && <p className="text-error">Không tìm thấy khóa học.</p>}
       {course && (

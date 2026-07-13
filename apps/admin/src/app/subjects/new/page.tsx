@@ -63,7 +63,7 @@ function NewSubjectContent() {
   });
 
   return (
-    <AdminPageShell title="Tạo môn học" subtitle="Course là bắt buộc; pricing vẫn ở cấp môn học.">
+    <AdminPageShell>
       <SubjectForm
         form={form}
         courses={selectableCourses}

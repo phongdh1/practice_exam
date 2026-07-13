@@ -35,10 +35,7 @@ export default function AdminDashboard() {
     kpis?.contentQueue != null;
 
   return (
-    <AdminPageShell
-      title="Tổng quan hệ thống (A-10)"
-      subtitle="Chào mừng trở lại. Đây là tình trạng vận hành hiện tại."
-    >
+    <AdminPageShell>
       <div className="space-y-8">
         {kpiLoading && <p className="text-ink-muted">Đang tải KPI...</p>}
 

@@ -7,6 +7,7 @@ import { queryKeys } from "@practice-exam/api-client";
 import type { EmailNotificationTemplateKey } from "@practice-exam/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsSectionTabs } from "@/components/settings-section-tabs";
+import { LandingContentSettingsSection } from "@/components/landing-content-settings";
 import { useEffect, useState } from "react";
 
 const EMAIL_TEMPLATE_LABELS: Record<EmailNotificationTemplateKey, string> = {
@@ -67,10 +68,7 @@ function SystemSettingsContent() {
   });
 
   return (
-    <AdminPageShell
-      title="Cài đặt hệ thống (A-90)"
-      subtitle="Disclaimer, chế độ bảo trì và mẫu email thông báo."
-    >
+    <AdminPageShell>
       <SettingsSectionTabs />
 
       {message && (
@@ -162,6 +160,8 @@ function SystemSettingsContent() {
               ))}
             </div>
           </section>
+
+          <LandingContentSettingsSection />
 
           <div>
             <button

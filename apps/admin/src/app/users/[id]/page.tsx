@@ -138,17 +138,14 @@ function UserProfileContent() {
 
   if (isLoading || !profile) {
     return (
-      <AdminPageShell title="Hồ sơ người dùng" subtitle="A-61">
+      <AdminPageShell>
         <p className="p-8 text-ink-muted">Đang tải...</p>
       </AdminPageShell>
     );
   }
 
   return (
-    <AdminPageShell
-      title={profile.displayName ?? "Người dùng"}
-      subtitle={`Hồ sơ hỗ trợ (A-61) · ${profile.id}`}
-    >
+    <AdminPageShell>
       <div className="mb-4">
         <Link href="/users" className="inline-flex items-center gap-1 text-primary hover:underline">
           <MaterialIcon name="arrow_back" className="text-base" />

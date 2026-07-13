@@ -107,7 +107,7 @@ function EditSubjectContent() {
   });
 
   return (
-    <AdminPageShell title="Sửa môn học" subtitle="Course bắt buộc; go-live gate vẫn tính trên môn học.">
+    <AdminPageShell>
       {isLoading && <p className="text-ink-muted">Đang tải...</p>}
       {!isLoading && !subject && <p className="text-error">Không tìm thấy môn học.</p>}
       {actionError && (

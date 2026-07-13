@@ -75,10 +75,7 @@ function BulkImportContent() {
   });
 
   return (
-    <AdminPageShell
-      title="Import hàng loạt"
-      subtitle="A-33 — Tải lên Excel (.xlsx), tối đa 500 dòng mỗi batch."
-    >
+    <AdminPageShell>
       <div className="mb-6 flex flex-wrap items-center gap-4">
         <Link href="/questions" className="text-label text-primary hover:underline">
           ← Quay lại ngân hàng câu hỏi

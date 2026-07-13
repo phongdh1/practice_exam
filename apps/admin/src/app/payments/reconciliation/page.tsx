@@ -54,10 +54,7 @@ function ReconciliationContent() {
   const rows = data?.data ?? [];
 
   return (
-    <AdminPageShell
-      title="Đối soát provider"
-      subtitle="A-71 — Tổng hợp theo ngày (ICT), mặc định 7 ngày gần nhất."
-    >
+    <AdminPageShell>
       <PaymentsSectionTabs />
 
       <div className="mb-4 flex flex-wrap gap-2">

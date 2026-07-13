@@ -158,10 +158,7 @@ function PaymentIntegrationsContent() {
   const merchants = data?.data;
 
   return (
-    <AdminPageShell
-      title="A-81 — Payment providers"
-      subtitle="Cấu hình PayOS / SePay merchant và test webhook (Super Admin)."
-    >
+    <AdminPageShell>
       <div className="mb-4 flex gap-3 text-body-sm">
         <InternalLink href="/integrations/zalo" className="text-primary underline">
           Zalo Mini App (A-80)

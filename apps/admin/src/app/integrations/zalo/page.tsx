@@ -65,10 +65,7 @@ function ZaloIntegrationContent() {
         : "secondary";
 
   return (
-    <AdminPageShell
-      title="A-80 — Zalo Mini App"
-      subtitle="Cấu hình App ID, secret và trạng thái triển khai (Super Admin)."
-    >
+    <AdminPageShell>
       <div className="mx-auto max-w-2xl space-y-6">
         {message && (
           <p className="rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-body-sm">

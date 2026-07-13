@@ -80,10 +80,7 @@ function PromoCodesContent() {
   const codes = data?.data ?? [];
 
   return (
-    <AdminPageShell
-      title="Mã khuyến mãi"
-      subtitle="A-74 — Tạo và quản lý mã giảm giá tại checkout."
-    >
+    <AdminPageShell>
       <PaymentsSectionTabs />
 
       <button

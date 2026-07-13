@@ -55,10 +55,7 @@ export default function ReviewDetailPage({
 
   return (
     <AdminRoleGate allowedRoles={["reviewer", "super_admin"]}>
-    <AdminPageShell
-      title="Chi tiết duyệt"
-      subtitle="A-41 — Phê duyệt hoặc từ chối câu hỏi."
-    >
+    <AdminPageShell>
       <div className="mb-6">
         <Link href="/review" className="text-label text-primary hover:underline">
           ← Quay lại hàng đợi

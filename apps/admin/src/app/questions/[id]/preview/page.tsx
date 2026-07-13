@@ -25,10 +25,7 @@ export default function QuestionPreviewPage({
 
   return (
     <AdminRoleGate allowedRoles={["editor", "reviewer", "super_admin"]}>
-      <AdminPageShell
-        title="Xem trước câu hỏi"
-        subtitle="A-32 — Hiển thị giống Practice Mode cho thí sinh."
-      >
+      <AdminPageShell>
         <div className="mb-6">
           <Link href="/questions" className="text-label text-primary hover:underline">
             ← Quay lại ngân hàng câu hỏi

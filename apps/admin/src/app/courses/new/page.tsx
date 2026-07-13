@@ -42,7 +42,7 @@ function NewCourseContent() {
   });
 
   return (
-    <AdminPageShell title="Tạo khóa học" subtitle="Course chỉ dùng để nhóm catalog, không có giá bán.">
+    <AdminPageShell>
       <CourseForm
         form={form}
         saving={createMutation.isPending}

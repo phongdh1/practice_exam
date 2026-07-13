@@ -72,10 +72,7 @@ function NewQuestionContent() {
   };
 
   return (
-    <AdminPageShell
-      title="Tạo câu hỏi"
-      subtitle="A-31 — Biên tập nội dung câu hỏi cho ngân hàng đề."
-    >
+    <AdminPageShell>
       <div className="mb-6">
         <Link href="/questions" className="text-label text-primary hover:underline">
           ← Quay lại ngân hàng câu hỏi

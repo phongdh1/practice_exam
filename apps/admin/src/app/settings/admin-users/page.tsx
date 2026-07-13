@@ -120,10 +120,7 @@ function AdminUsersManagementContent() {
   const audit = auditData?.data ?? [];
 
   return (
-    <AdminPageShell
-      title="Quản lý admin (A-91)"
-      subtitle="Tạo, vô hiệu hóa và gán vai trò cho tài khoản back-office."
-    >
+    <AdminPageShell>
       <SettingsSectionTabs />
 
       {message && (

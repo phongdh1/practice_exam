@@ -94,10 +94,7 @@ function PaymentsContent() {
   const items = result?.items ?? [];
 
   return (
-    <AdminPageShell
-      title="Nhật ký giao dịch"
-      subtitle="A-70 — Theo dõi thanh toán PayOS/SePay và liên kết gói đăng ký."
-    >
+    <AdminPageShell>
       <PaymentsSectionTabs />
 
       <div className="mb-4 flex flex-wrap gap-2">

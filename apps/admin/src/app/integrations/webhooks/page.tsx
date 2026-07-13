@@ -44,10 +44,7 @@ function WebhookLogContent() {
   });
 
   return (
-    <AdminPageShell
-      title="A-83 — Webhook event log"
-      subtitle="Zalo OAuth và payment webhooks — lưu 90 ngày, retry thủ công khi thất bại."
-    >
+    <AdminPageShell>
       <div className="mb-4 flex gap-3 text-body-sm">
         <InternalLink href="/integrations/zalo" className="text-primary underline">
           Zalo Mini App (A-80)

@@ -56,10 +56,7 @@ function UsersSearchContent() {
   const results = data?.data ?? [];
 
   return (
-    <AdminPageShell
-      title="Tìm kiếm người dùng"
-      subtitle="Tìm theo email, SĐT (externalId), Zalo ID hoặc User ID (A-60)."
-    >
+    <AdminPageShell>
       <form
         className="mb-6 flex flex-wrap gap-2"
         onSubmit={(e) => {

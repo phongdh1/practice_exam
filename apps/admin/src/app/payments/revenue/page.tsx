@@ -65,10 +65,7 @@ function RevenueContent() {
   };
 
   return (
-    <AdminPageShell
-      title="Báo cáo doanh thu"
-      subtitle="A-73 — Theo môn học và kênh (web/Zalo), chỉ giao dịch đã thanh toán (đã trừ hoàn tiền)."
-    >
+    <AdminPageShell>
       <PaymentsSectionTabs />
 
       <div className="mb-4 flex flex-wrap gap-2">

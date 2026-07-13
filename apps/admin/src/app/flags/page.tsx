@@ -36,10 +36,7 @@ function FlaggedQuestionsContent() {
   const flags = data?.data ?? [];
 
   return (
-    <AdminPageShell
-      title="Báo cáo từ thí sinh"
-      subtitle="A-42 — Hàng đợi câu hỏi bị gắn cờ."
-    >
+    <AdminPageShell>
       <div className="mb-6">
         <Link href="/review" className="text-label text-primary hover:underline">
           ← Hàng đợi duyệt

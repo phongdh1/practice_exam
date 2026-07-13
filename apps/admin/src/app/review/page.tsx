@@ -68,10 +68,7 @@ function EditorialQueueContent() {
   };
 
   return (
-    <AdminPageShell
-      title="Hàng đợi biên tập"
-      subtitle="A-40 — Câu hỏi chờ duyệt."
-    >
+    <AdminPageShell>
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <input
           type="text"
