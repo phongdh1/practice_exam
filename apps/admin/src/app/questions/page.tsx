@@ -67,6 +67,10 @@ function questionDisplayId(id: string): string {
   return `Q-${id.replace(/-/g, "").slice(-5).toUpperCase()}`;
 }
 
+function isDeletableStatus(status: string): boolean {
+  return status !== "published";
+}
+
 function getPaginationRange(current: number, total: number): (number | "ellipsis")[] {
   if (total <= 7) {
     return Array.from({ length: total }, (_, index) => index + 1);
@@ -644,12 +648,24 @@ function QuestionBankContent() {
                   </span>
                 </TableCell>
                 <TableCell className="px-6 text-right">
-                  <Link
-                    href={`/questions/${question.id}/edit`}
-                    className="rounded-lg px-3 py-1.5 text-sm font-bold text-primary transition-all hover:bg-primary/10"
-                  >
-                    Sửa
-                  </Link>
+                  <div className="inline-flex items-center gap-1">
+                    <Link
+                      href={`/questions/${question.id}/edit`}
+                      className="rounded-lg px-3 py-1.5 text-sm font-bold text-primary transition-all hover:bg-primary/10"
+                    >
+                      Sửa
+                    </Link>
+                    {canDelete && isDeletableStatus(question.status) && (
+                      <button
+                        type="button"
+                        disabled={bulkRunning}
+                        onClick={() => handleDelete([question.id])}
+                        className="rounded-lg px-3 py-1.5 text-sm font-bold text-error transition-all hover:bg-error/10 disabled:opacity-40"
+                      >
+                        Xóa
+                      </button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             );
