@@ -4,7 +4,7 @@ import { AdminSidebar, InternalLinkProvider, TooltipProvider } from "@practice-e
 import { usePathname, useRouter } from "next/navigation";
 import { AdminNotificationBell } from "@/components/admin-notification-bell";
 import { ClientLink } from "@/components/client-link";
-import { resolveAdminSidebar } from "@/lib/admin-nav";
+import { resolveAdminSidebar, resolveAdminTopHeader } from "@/lib/admin-nav";
 import { getHiddenNavItems } from "@/lib/admin-nav-access";
 import { useAdminRole } from "@/lib/admin-role";
 
@@ -20,8 +20,10 @@ export function AdminAppFrame({ children }: { children: React.ReactNode }) {
 
   const hiddenNavItems = getHiddenNavItems(role);
   const sidebarProps = resolveAdminSidebar(pathname);
+  const pageHeader = resolveAdminTopHeader(pathname);
   const showNotifications =
     role === "super_admin" || role === "support" || role === "finance";
+  const showTopBar = Boolean(pageHeader) || showNotifications;
 
   return (
     <InternalLinkProvider linkComponent={ClientLink}>
@@ -34,9 +36,19 @@ export function AdminAppFrame({ children }: { children: React.ReactNode }) {
             onNewSubject={() => router.push("/subjects/new")}
           />
           <div className="ml-64 flex min-h-screen flex-1 flex-col overflow-y-auto">
-            {showNotifications && (
-              <div className="sticky top-0 z-40 flex justify-end border-b border-outline-variant bg-surface-container-lowest px-gutter-desktop py-3">
-                <AdminNotificationBell />
+            {showTopBar && (
+              <div className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-outline-variant bg-surface-container-lowest px-gutter-desktop py-3">
+                <div className="min-w-0 flex-1">
+                  {pageHeader && (
+                    <div>
+                      <h1 className="text-display-sm text-primary">{pageHeader.title}</h1>
+                      {pageHeader.subtitle && (
+                        <p className="mt-0.5 text-body-sm text-ink-muted">{pageHeader.subtitle}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {showNotifications && <AdminNotificationBell />}
               </div>
             )}
             <main className="flex min-h-0 flex-1 flex-col">{children}</main>

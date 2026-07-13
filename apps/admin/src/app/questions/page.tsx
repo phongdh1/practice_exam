@@ -305,10 +305,7 @@ function QuestionBankContent() {
   const paginationRange = getPaginationRange(result?.page ?? 1, totalPages);
 
   return (
-    <AdminPageShell
-      title="Ngân hàng câu hỏi"
-      subtitle="Quản lý và biên tập nội dung các câu hỏi chứng chỉ (A-30)."
-    >
+    <AdminPageShell>
       <div className="mb-6 flex flex-wrap items-center justify-end gap-3">
         <Link
           href="/questions/import"

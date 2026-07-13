@@ -35,3 +35,18 @@ export function resolveAdminSidebar(pathname: string): Pick<
 
   return { active: "dashboard" as AdminNavItem };
 }
+
+export type AdminTopHeader = {
+  title: string;
+  subtitle?: string;
+};
+
+export function resolveAdminTopHeader(pathname: string): AdminTopHeader | null {
+  if (pathname === "/questions") {
+    return {
+      title: "Ngân hàng câu hỏi",
+      subtitle: "Quản lý và biên tập nội dung các câu hỏi chứng chỉ (A-30).",
+    };
+  }
+  return null;
+}
