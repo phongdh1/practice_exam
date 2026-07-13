@@ -14,6 +14,7 @@ export interface CandidateTopNavProps {
   progressHref?: string;
   accountHref?: string;
   accountAction?: React.ReactNode;
+  hiddenItems?: CandidateNavItem[];
   className?: string;
 }
 
@@ -30,6 +31,7 @@ export function CandidateTopNav({
   progressHref = "/progress",
   accountHref = "/account",
   accountAction,
+  hiddenItems,
   className,
 }: CandidateTopNavProps) {
   const hrefs: Record<CandidateNavItem, string> = {
@@ -37,6 +39,9 @@ export function CandidateTopNav({
     progress: progressHref,
     account: accountHref,
   };
+  const visibleNavItems = hiddenItems?.length
+    ? navItems.filter((item) => !hiddenItems.includes(item.id))
+    : navItems;
 
   return (
     <header
@@ -51,7 +56,7 @@ export function CandidateTopNav({
           CNVCK Prep
         </InternalLink>
         <nav className="hidden items-center gap-6 md:flex">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <InternalLink
               key={item.id}
               href={hrefs[item.id]}

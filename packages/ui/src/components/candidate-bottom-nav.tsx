@@ -10,6 +10,7 @@ export interface CandidateBottomNavProps {
   subjectsHref?: string;
   progressHref?: string;
   accountHref?: string;
+  hiddenItems?: CandidateNavItem[];
   className?: string;
 }
 
@@ -24,6 +25,7 @@ export function CandidateBottomNav({
   subjectsHref = "/",
   progressHref = "/progress",
   accountHref = "/account",
+  hiddenItems,
   className,
 }: CandidateBottomNavProps) {
   const hrefs: Record<CandidateNavItem, string> = {
@@ -31,6 +33,9 @@ export function CandidateBottomNav({
     progress: progressHref,
     account: accountHref,
   };
+  const visibleTabs = hiddenItems?.length
+    ? tabs.filter((tab) => !hiddenItems.includes(tab.id))
+    : tabs;
 
   return (
     <nav
@@ -40,7 +45,7 @@ export function CandidateBottomNav({
       )}
       data-component="candidate-bottom-nav"
     >
-      {tabs.map((tab) => (
+      {visibleTabs.map((tab) => (
         <InternalLink
           key={tab.id}
           href={hrefs[tab.id]}

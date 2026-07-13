@@ -1,6 +1,12 @@
 "use client";
 
-import { CandidateBottomNav, CandidateTopNav, InternalLink, MaterialIcon } from "@practice-exam/ui";
+import {
+  CandidateBottomNav,
+  CandidateTopNav,
+  InternalLink,
+  MaterialIcon,
+  type CandidateNavItem,
+} from "@practice-exam/ui";
 import { usePathname } from "next/navigation";
 import { useMemo, type ReactNode } from "react";
 import { useCandidateShellState } from "@/components/candidate-shell-context";
@@ -48,17 +54,31 @@ function useShellAccountAction(): ReactNode {
   }, [isAuthenticated, isLoading, user]);
 }
 
+const ANONYMOUS_HIDDEN_NAV_ITEMS: CandidateNavItem[] = ["progress", "account"];
+
+function useAnonymousHiddenNavItems(): CandidateNavItem[] | undefined {
+  const { isAuthenticated, isLoading } = useWebSession();
+
+  return useMemo(() => {
+    if (isLoading || !isAuthenticated) {
+      return ANONYMOUS_HIDDEN_NAV_ITEMS;
+    }
+    return undefined;
+  }, [isAuthenticated, isLoading]);
+}
+
 export default function CandidateShellLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const active = resolveActiveNav(pathname);
   const { hideBottomNav } = useCandidateShellState();
   const accountAction = useShellAccountAction();
+  const hiddenNavItems = useAnonymousHiddenNavItems();
 
   return (
     <>
-      <CandidateTopNav active={active} accountAction={accountAction} />
+      <CandidateTopNav active={active} accountAction={accountAction} hiddenItems={hiddenNavItems} />
       {children}
-      {!hideBottomNav && <CandidateBottomNav active={active} />}
+      {!hideBottomNav && <CandidateBottomNav active={active} hiddenItems={hiddenNavItems} />}
     </>
   );
 }
