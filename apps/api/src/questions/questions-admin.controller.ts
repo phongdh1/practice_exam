@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -37,6 +38,12 @@ export class QuestionsAdminController {
     return this.questionsService.search(query);
   }
 
+  @Get("stats")
+  @Roles("super_admin", "editor", "reviewer")
+  stats() {
+    return this.questionsService.getStats();
+  }
+
   @Get(":id")
   @Roles("super_admin", "editor", "reviewer")
   findOne(@Param("id") id: string) {
@@ -57,6 +64,12 @@ export class QuestionsAdminController {
   @Roles("super_admin", "editor")
   submitForReview(@AdminUser() admin: AdminAuthPayload, @Param("id") id: string) {
     return this.questionsService.submitForReview(id, admin.sub);
+  }
+
+  @Delete(":id")
+  @Roles("super_admin", "editor")
+  delete(@Param("id") id: string) {
+    return this.questionsService.delete(id);
   }
 
   @Get(":id/preview")

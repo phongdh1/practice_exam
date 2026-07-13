@@ -24,6 +24,7 @@ import type {
   FreeTierUsageSummary,
   HealthData,
   ImportBatchReport,
+  LandingContentView,
   MaintenanceMode,
   MergeSummary,
   MockExamAccess,
@@ -44,6 +45,7 @@ import type {
   QuestionFlagItem,
   QuestionPreview,
   QuestionSearchResult,
+  QuestionBankStats,
   AdminSubjectView,
   SubjectCatalogItem,
   StudyQuestionDetail,
@@ -166,6 +168,38 @@ export class ApiClient {
 
   getMaintenanceMode(): Promise<ApiResponse<MaintenanceMode>> {
     return this.request<MaintenanceMode>("/api/v1/settings/maintenance");
+  }
+
+  getLandingContent(): Promise<ApiResponse<LandingContentView>> {
+    return this.request<LandingContentView>("/api/v1/settings/landing-content");
+  }
+
+  adminGetLandingContent(): Promise<ApiResponse<LandingContentView>> {
+    return this.request<LandingContentView>("/api/v1/admin/landing-content");
+  }
+
+  adminUpdateLandingContent(
+    input: Omit<LandingContentView, "version" | "updatedAt">,
+  ): Promise<ApiResponse<LandingContentView>> {
+    return this.request<LandingContentView>("/api/v1/admin/landing-content", {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
+  }
+
+  async adminUploadLandingAsset(file: File): Promise<ApiResponse<{ assetId: string; url: string; alt: string }>> {
+    const form = new FormData();
+    form.append("file", file);
+    const headers: HeadersInit = {};
+    const token = this.config.getAccessToken?.();
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(`${this.config.baseUrl}/api/v1/admin/landing-content/assets`, {
+      method: "POST",
+      headers,
+      body: form,
+    });
+    await this.assertOk(res);
+    return (await res.json()) as ApiResponse<{ assetId: string; url: string; alt: string }>;
   }
 
   scanContentCompliance(text: string): Promise<ApiResponse<ContentComplianceScanResult>> {
@@ -353,6 +387,10 @@ export class ApiClient {
     return this.request<QuestionSearchResult>(`/api/v1/admin/questions${query ? `?${query}` : ""}`);
   }
 
+  adminGetQuestionStats(): Promise<ApiResponse<QuestionBankStats>> {
+    return this.request<QuestionBankStats>("/api/v1/admin/questions/stats");
+  }
+
   adminGetQuestion(id: string): Promise<ApiResponse<QuestionDetail>> {
     return this.request<QuestionDetail>(`/api/v1/admin/questions/${id}`);
   }
@@ -378,6 +416,12 @@ export class ApiClient {
   adminSubmitQuestionForReview(id: string): Promise<ApiResponse<QuestionDetail>> {
     return this.request<QuestionDetail>(`/api/v1/admin/questions/${id}/submit-for-review`, {
       method: "POST",
+    });
+  }
+
+  adminDeleteQuestion(id: string): Promise<ApiResponse<{ id: string; deleted: true }>> {
+    return this.request<{ id: string; deleted: true }>(`/api/v1/admin/questions/${id}`, {
+      method: "DELETE",
     });
   }
 
@@ -515,6 +559,12 @@ export class ApiClient {
     });
   }
 
+  adminDeleteSubject(id: string): Promise<ApiResponse<{ id: string; deleted: true }>> {
+    return this.request<{ id: string; deleted: true }>(`/api/v1/admin/subjects/${id}`, {
+      method: "DELETE",
+    });
+  }
+
   adminListCourses(): Promise<ApiResponse<AdminCourseView[]>> {
     return this.request<AdminCourseView[]>("/api/v1/admin/courses");
   }
@@ -556,6 +606,12 @@ export class ApiClient {
   adminActivateCourse(id: string): Promise<ApiResponse<AdminCourseView>> {
     return this.request<AdminCourseView>(`/api/v1/admin/courses/${id}/activate`, {
       method: "POST",
+    });
+  }
+
+  adminDeleteCourse(id: string): Promise<ApiResponse<{ id: string; deleted: true }>> {
+    return this.request<{ id: string; deleted: true }>(`/api/v1/admin/courses/${id}`, {
+      method: "DELETE",
     });
   }
 
@@ -912,6 +968,7 @@ export const queryKeys = {
   settings: {
     disclaimer: ["settings", "disclaimer"] as const,
     maintenance: ["settings", "maintenance"] as const,
+    landingContent: ["settings", "landing-content"] as const,
   },
   subscriptions: {
     all: ["subscriptions"] as const,
@@ -938,6 +995,7 @@ export const queryKeys = {
   },
   questions: {
     search: (params: Record<string, string | number | undefined>) => ["questions", "search", params] as const,
+    stats: ["questions", "stats"] as const,
     detail: (id: string) => ["questions", id] as const,
     preview: (id: string) => ["questions", id, "preview"] as const,
   },
@@ -977,6 +1035,9 @@ export const queryKeys = {
   },
   adminSystemSettings: {
     all: ["adminSystemSettings"] as const,
+  },
+  adminLandingContent: {
+    all: ["adminLandingContent"] as const,
   },
   dashboard: {
     kpis: ["dashboard", "kpis"] as const,

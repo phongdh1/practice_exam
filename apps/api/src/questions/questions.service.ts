@@ -176,6 +176,7 @@ export class QuestionsService {
     const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(query.pageSize) || DEFAULT_PAGE_SIZE));
     const where: Prisma.QuestionWhereInput = {};
 
+    if (query.courseId) where.subject = { courseId: query.courseId };
     if (query.subjectId) where.subjectId = query.subjectId;
     if (query.status) where.status = query.status;
     if (query.difficulty) where.difficulty = query.difficulty;
@@ -202,6 +203,51 @@ export class QuestionsService {
       page,
       pageSize,
     };
+  }
+
+  async getStats() {
+    const groups = await this.prisma.question.groupBy({
+      by: ["status"],
+      _count: { _all: true },
+    });
+
+    let published = 0;
+    let inReview = 0;
+    let draft = 0;
+    let total = 0;
+
+    for (const group of groups) {
+      const count = group._count._all;
+      total += count;
+      if (group.status === "published") published = count;
+      else if (group.status === "in_review") inReview = count;
+      else if (group.status === "draft") draft = count;
+    }
+
+    return { total, published, inReview, draft };
+  }
+
+  async delete(id: string) {
+    const question = await this.prisma.question.findUnique({ where: { id } });
+    if (!question) {
+      throw new NotFoundException({
+        code: "QUESTION_NOT_FOUND",
+        message: "Không tìm thấy câu hỏi.",
+      });
+    }
+    if (question.status === "published") {
+      throw new BadRequestException({
+        code: "QUESTION_PUBLISHED",
+        message: "Không thể xóa câu hỏi đã xuất bản. Hãy gỡ xuất bản trước.",
+      });
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.question.deleteMany({ where: { parentQuestionId: id } });
+      await tx.question.delete({ where: { id } });
+    });
+
+    return { id, deleted: true };
   }
 
   async preview(id: string) {

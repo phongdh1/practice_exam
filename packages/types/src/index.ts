@@ -393,6 +393,23 @@ export interface SystemSettingsView {
   updatedAt: string | null;
 }
 
+export type {
+  HeroBackgroundConfig,
+  HeroChartPreset,
+  HeroSidecardConfig,
+  HeroSidecardMode,
+  HeroSidecardStatsConfig,
+  LandingAssetRef,
+  LandingContentView,
+  LandingMetric,
+} from "./landing-content";
+export {
+  DEFAULT_LANDING_CONTENT,
+  DEFAULT_LANDING_ILLUSTRATION_FOOTNOTE,
+  HERO_CHART_PRESET_HEIGHTS,
+  mergeLandingContent,
+} from "./landing-content";
+
 export interface AdminDashboardSubscriptionRow {
   subjectId: string;
   subjectName: string;
@@ -475,6 +492,13 @@ export interface QuestionSearchResult {
   total: number;
   page: number;
   pageSize: number;
+}
+
+export interface QuestionBankStats {
+  total: number;
+  published: number;
+  inReview: number;
+  draft: number;
 }
 
 export interface EditorialQueueItem {

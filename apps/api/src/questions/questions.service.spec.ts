@@ -52,7 +52,10 @@ describe("QuestionsService", () => {
         subject: mockQuestion.subject,
         author: mockQuestion.author,
       })),
+      delete: jest.fn(async () => mockQuestion),
+      deleteMany: jest.fn(async () => ({ count: 0 })),
       count: jest.fn(async () => 0),
+      groupBy: jest.fn(async () => []),
     },
     questionVersion: { create: jest.fn() },
     contentReview: { create: jest.fn() },
@@ -130,5 +133,58 @@ describe("QuestionsService", () => {
       correctOptionKeys: ["A"],
     });
     expect(result.duplicateWarning?.matchingQuestionId).toBe("q-other");
+  });
+
+  it("deletes a draft question", async () => {
+    const result = await service.delete("q-1");
+    expect(result.deleted).toBe(true);
+    expect(mockPrisma.question.deleteMany).toHaveBeenCalledWith({
+      where: { parentQuestionId: "q-1" },
+    });
+    expect(mockPrisma.question.delete).toHaveBeenCalledWith({ where: { id: "q-1" } });
+  });
+
+  it("rejects deleting published question", async () => {
+    mockPrisma.question.findUnique.mockResolvedValueOnce({
+      ...mockQuestion,
+      status: "published",
+    });
+    await expect(service.delete("q-1")).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it("filters search by courseId", async () => {
+    await service.search({ courseId: "course-1", page: 1, pageSize: 10 });
+    expect(mockPrisma.question.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          subject: { courseId: "course-1" },
+        }),
+      }),
+    );
+  });
+
+  it("returns zero stats when no questions exist", async () => {
+    mockPrisma.question.groupBy.mockResolvedValueOnce([]);
+    await expect(service.getStats()).resolves.toEqual({
+      total: 0,
+      published: 0,
+      inReview: 0,
+      draft: 0,
+    });
+  });
+
+  it("aggregates stats by status", async () => {
+    mockPrisma.question.groupBy.mockResolvedValueOnce([
+      { status: "published", _count: { _all: 10 } },
+      { status: "in_review", _count: { _all: 3 } },
+      { status: "draft", _count: { _all: 5 } },
+      { status: "archived", _count: { _all: 2 } },
+    ]);
+    await expect(service.getStats()).resolves.toEqual({
+      total: 20,
+      published: 10,
+      inReview: 3,
+      draft: 5,
+    });
   });
 });
