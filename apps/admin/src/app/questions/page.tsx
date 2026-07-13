@@ -21,6 +21,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -585,8 +588,19 @@ function QuestionBankContent() {
                     </p>
                   </div>
                 </TableCell>
-                <TableCell className="px-6">
-                  <span className="text-sm text-on-surface">{question.subjectName}</span>
+                <TableCell className="max-w-40 px-6">
+                  {question.subjectName ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="block truncate text-sm text-on-surface">
+                          {question.subjectName}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>{question.subjectName}</TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <span className="text-sm text-on-surface-variant">—</span>
+                  )}
                 </TableCell>
                 <TableCell className="px-6">
                   <span
