@@ -7,7 +7,11 @@ import {
 
 describe("partitionByStatus", () => {
   it("returns empty buckets for an empty selection", () => {
-    expect(partitionByStatus([])).toEqual({ draftIds: [], inReviewIds: [] });
+    expect(partitionByStatus([])).toEqual({
+      draftIds: [],
+      inReviewIds: [],
+      deletableIds: [],
+    });
   });
 
   it("routes draft rows to draftIds and in_review rows to inReviewIds", () => {
@@ -20,10 +24,11 @@ describe("partitionByStatus", () => {
     expect(partitionByStatus(rows)).toEqual({
       draftIds: ["d1", "d2"],
       inReviewIds: ["r1"],
+      deletableIds: ["d1", "r1", "d2"],
     });
   });
 
-  it("ignores published and archived rows", () => {
+  it("ignores published for draft/review buckets but includes archived in deletable", () => {
     const rows: BulkQuestionRow[] = [
       { id: "p1", status: "published" },
       { id: "a1", status: "archived" },
@@ -33,6 +38,7 @@ describe("partitionByStatus", () => {
     expect(partitionByStatus(rows)).toEqual({
       draftIds: ["d1"],
       inReviewIds: [],
+      deletableIds: ["a1", "d1"],
     });
   });
 

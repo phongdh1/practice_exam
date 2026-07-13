@@ -33,6 +33,7 @@ export interface AuthMeUser {
   id: string;
   displayName: string | null;
   avatarUrl: string | null;
+  email?: string;
   identities: AuthIdentityLinkedView[];
 }
 
@@ -337,6 +338,7 @@ export type PaymentStatusType = "pending" | "paid" | "failed" | "cancelled" | "r
 export interface SubscriptionSummary {
   id: string;
   subjectId: string;
+  subjectName?: string;
   status: SubjectSubscriptionStatus;
   periodStart: string;
   periodEnd: string;

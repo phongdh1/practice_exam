@@ -14,4 +14,9 @@ export class SettingsController {
   getMaintenance() {
     return this.settingsService.getMaintenanceMode();
   }
+
+  @Get("landing-content")
+  getLandingContent() {
+    return this.settingsService.getLandingContent();
+  }
 }

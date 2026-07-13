@@ -33,7 +33,7 @@ export interface DisclaimerModalProps {
   text: string;
   version: string;
   onAcknowledge: () => void;
-  screenId?: "Z-02" | "W-03" | "W-40" | "W-41" | "W-42" | "Z-40" | "Z-41" | "Z-42";
+  screenId?: "Z-02" | "W-03" | "W-40" | "W-41" | "W-42" | "W-50" | "Z-40" | "Z-41" | "Z-42";
   className?: string;
 }
 

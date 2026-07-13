@@ -2,15 +2,24 @@
 
 import { createApiClient } from "@practice-exam/api-client";
 import { AuthShell } from "@practice-exam/ui";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
 import { useWebSession } from "@/components/web-session-provider";
 
 const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+function resolveReturnTo(returnTo: string | null): string {
+  if (!returnTo || !returnTo.startsWith("/") || returnTo.startsWith("//")) {
+    return "/";
+  }
+  return returnTo;
+}
+
 function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = resolveReturnTo(searchParams.get("returnTo"));
   const { invalidateSession } = useWebSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +42,7 @@ function SignInForm() {
         return;
       }
       await invalidateSession();
-      router.push("/");
+      router.push(returnTo);
       router.refresh();
     } catch {
       setError("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
@@ -119,5 +128,9 @@ function SignInForm() {
 }
 
 export default function SignInPage() {
-  return <SignInForm />;
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
+  );
 }

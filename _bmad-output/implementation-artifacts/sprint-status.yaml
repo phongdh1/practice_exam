@@ -6,7 +6,8 @@
 #   review: Implementation complete, awaiting code review
 #   done: Reviewed and merged/accepted
 
-last_updated: "2026-07-10"
+last_updated: "2026-07-13"
+# STORY-74 implemented 2026-07-13: landing content CMS on A-90
 # STORY-65 code review re-pass 2026-07-10: Approved — TOCTOU fixes verified, all AC pass → done
 # STORY-71..73 code review 2026-07-10: STORY-72/73 done (defer-only); STORY-71 in-progress (1 patch)
 # STORY-71..73 implemented 2026-07-10 (admin notifications, table UX, catalog pagination)
@@ -40,7 +41,7 @@ development_status:
   2-9-link-auth-identity: review
   2-10-merge-users-account-link: review
   2-69-web-session-provider-shell-auth: done  # merged/accepted 2026-07-10 ? code review P1-P4 + D1 Option A
-  2-70-candidate-account-profile-w50: backlog
+  2-70-candidate-account-profile-w50: review
   epic-3: review
   3-11-subject-catalog-api: review
   3-12-candidate-subject-catalog-ui: review
@@ -104,13 +105,14 @@ development_status:
   12-54-zalo-mini-app-configuration: done
   12-55-payment-provider-merchant-config: done
   12-56-webhook-event-log-manual-retry: done
-  epic-13: done
+  epic-13: in-progress
   13-57-rbac-enforcement: done
   13-58-admin-user-management: done
   13-59-system-settings: done
   13-60-admin-dashboard-kpis: done
   13-71-admin-activity-notifications: in-progress
   13-72-admin-table-ux-standardization: done
+  13-74-landing-content-cms-a90: review
   epic-14: in-progress
   14-65-study-mode-api-entitlements: done
   14-66-candidate-study-mode-ui: done

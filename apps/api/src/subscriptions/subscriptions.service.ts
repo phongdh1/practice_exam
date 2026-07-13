@@ -20,7 +20,16 @@ export class SubscriptionsService {
       where: { userId },
       orderBy: { periodEnd: "desc" },
     });
-    return rows.map((row) => this.toSummary(row));
+    const subjectIds = [...new Set(rows.map((row) => row.subjectId))];
+    const subjects =
+      subjectIds.length > 0
+        ? await this.prisma.subject.findMany({
+            where: { id: { in: subjectIds } },
+            select: { id: true, name: true },
+          })
+        : [];
+    const subjectNameById = new Map(subjects.map((subject) => [subject.id, subject.name]));
+    return rows.map((row) => this.toSummary(row, subjectNameById.get(row.subjectId)));
   }
 
   async getForSubject(userId: string, subjectId: string): Promise<SubscriptionSummary | null> {
@@ -220,18 +229,22 @@ export class SubscriptionsService {
     return "active";
   }
 
-  private toSummary(row: {
-    id: string;
-    subjectId: string;
-    status: string;
-    periodStart: Date;
-    periodEnd: Date;
-    channel: string;
-  }): SubscriptionSummary {
+  private toSummary(
+    row: {
+      id: string;
+      subjectId: string;
+      status: string;
+      periodStart: Date;
+      periodEnd: Date;
+      channel: string;
+    },
+    subjectName?: string,
+  ): SubscriptionSummary {
     const displayStatus = this.resolveDisplayStatus(row.periodEnd, row.status);
     return {
       id: row.id,
       subjectId: row.subjectId,
+      subjectName,
       status: displayStatus,
       periodStart: row.periodStart.toISOString(),
       periodEnd: row.periodEnd.toISOString(),

@@ -45,4 +45,36 @@ export const maintenanceQueryOptions: MaintenanceQueryOptions = {
   retry: false,
 };
 
+type LandingContentQueryOptions = {
+  queryKey: typeof queryKeys.settings.landingContent;
+  queryFn: () => ReturnType<typeof webApi.getLandingContent>;
+  staleTime: number;
+  retry: false;
+};
+
+export const landingContentQueryOptions: LandingContentQueryOptions = {
+  queryKey: queryKeys.settings.landingContent,
+  queryFn: () => webApi.getLandingContent(),
+  staleTime: SETTINGS_QUERY_STALE_MS,
+  retry: false,
+};
+
+type SubscriptionsQueryOptions = {
+  queryKey: typeof queryKeys.subscriptions.all;
+  queryFn: typeof fetchSubscriptions;
+  retry: false;
+};
+
+async function fetchSubscriptions() {
+  const res = await fetch("/api/subscriptions");
+  if (!res.ok) throw new Error("Failed to load subscriptions");
+  return res.json();
+}
+
+export const subscriptionsQueryOptions: SubscriptionsQueryOptions = {
+  queryKey: queryKeys.subscriptions.all,
+  queryFn: fetchSubscriptions,
+  retry: false,
+};
+
 export { webOnUnauthorized };

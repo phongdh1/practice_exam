@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { Roles } from "../admin-auth/decorators/roles.decorator";
 import { AdminJwtGuard } from "../admin-auth/guards/admin-jwt.guard";
 import { AdminRolesGuard } from "../admin-auth/guards/admin-roles.guard";
@@ -39,5 +39,10 @@ export class CoursesAdminController {
   @Post(":id/activate")
   activate(@Param("id") id: string) {
     return this.coursesService.activateCourse(id);
+  }
+
+  @Delete(":id")
+  delete(@Param("id") id: string) {
+    return this.coursesService.deleteCourse(id);
   }
 }

@@ -127,7 +127,8 @@ export { CandidateTopNav, type CandidateTopNavProps, type CandidateNavItem } fro
 export { CandidateBottomNav, type CandidateBottomNavProps } from "./components/candidate-bottom-nav";
 export { CandidateFooter, type CandidateFooterProps } from "./components/candidate-footer";
 export { AuthShell, type AuthShellProps } from "./components/auth-shell";
-export { LandingHero, type LandingHeroProps } from "./components/landing-hero";
+export { LandingHero, type LandingHeroProps, DEFAULT_LANDING_CONTENT, mergeLandingContent } from "./components/landing-hero";
+export { SafeMarkdown, type SafeMarkdownProps } from "./components/safe-markdown";
 export {
   AdminSidebar,
   AdminShell,
@@ -171,6 +172,7 @@ export {
   PracticeSessionSummaryView,
   type PracticeSessionSummaryViewProps,
 } from "./components/practice-session-summary-view";
+export { AccountProfileView, type AccountProfileViewProps, type AccountProfileUser } from "./components/account-profile-view";
 export { AttemptHistoryList, type AttemptHistoryListProps } from "./components/attempt-history-list";
 export {
   ProgressDashboard,

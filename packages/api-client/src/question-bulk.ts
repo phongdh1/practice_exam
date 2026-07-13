@@ -11,6 +11,8 @@ export interface StatusPartition {
   draftIds: string[];
   /** Ids eligible for "Duyệt tất cả" (approve all). */
   inReviewIds: string[];
+  /** Ids eligible for delete (not published). */
+  deletableIds: string[];
 }
 
 /**
@@ -20,6 +22,7 @@ export interface StatusPartition {
 export function partitionByStatus(rows: readonly BulkQuestionRow[]): StatusPartition {
   const draftIds: string[] = [];
   const inReviewIds: string[] = [];
+  const deletableIds: string[] = [];
 
   for (const row of rows) {
     if (row.status === "draft") {
@@ -27,9 +30,12 @@ export function partitionByStatus(rows: readonly BulkQuestionRow[]): StatusParti
     } else if (row.status === "in_review") {
       inReviewIds.push(row.id);
     }
+    if (row.status !== "published") {
+      deletableIds.push(row.id);
+    }
   }
 
-  return { draftIds, inReviewIds };
+  return { draftIds, inReviewIds, deletableIds };
 }
 
 export interface BulkSummary {

@@ -308,6 +308,25 @@ export class SubjectsService {
     }
   }
 
+  async deleteSubject(id: string): Promise<{ id: string; deleted: true }> {
+    const existing = await this.prisma.subject.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException({
+        code: "SUBJECT_NOT_FOUND",
+        message: "Không tìm thấy môn học.",
+      });
+    }
+    if (existing.visibility !== "archived") {
+      throw new BadRequestException({
+        code: "SUBJECT_NOT_ARCHIVED",
+        message: "Chỉ có thể xóa môn học đã lưu trữ.",
+      });
+    }
+
+    await this.prisma.subject.delete({ where: { id } });
+    return { id, deleted: true };
+  }
+
   async archiveSubject(id: string) {
     const existing = await this.prisma.subject.findUnique({ where: { id } });
     if (!existing) {

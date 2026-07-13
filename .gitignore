@@ -29,5 +29,9 @@ coverage/
 # Prisma
 apps/api/prisma/*.db
 
+# Landing CMS asset uploads (local dev)
+storage/landing-assets/
+apps/api/storage/landing-assets/
+
 # Zalo
 apps/zalo-mini-app/www/

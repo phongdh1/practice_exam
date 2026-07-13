@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -62,5 +63,10 @@ export class SubjectsAdminController {
   @Get(":id/go-live-status")
   goLiveStatus(@Param("id") id: string) {
     return this.subjectsService.getGoLiveStatus(id);
+  }
+
+  @Delete(":id")
+  delete(@Param("id") id: string) {
+    return this.subjectsService.deleteSubject(id);
   }
 }

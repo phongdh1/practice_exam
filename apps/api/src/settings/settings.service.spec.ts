@@ -151,4 +151,56 @@ describe("SettingsService", () => {
     });
     expect(result.payment_confirmed).toEqual(DEFAULT_EMAIL_TEMPLATES.payment_confirmed);
   });
+
+  it("returns default landing content when unset", async () => {
+    mockPrisma.systemSetting.findUnique.mockResolvedValue(null);
+
+    const result = await service.getLandingContent();
+
+    expect(result.badge).toBe("Cập nhật kỳ thi 2024");
+    expect(result.version).toBe("default");
+  });
+
+  it("updates landing content and writes audit log", async () => {
+    const updatedAt = new Date("2026-07-13T10:00:00.000Z");
+    mockPrisma.systemSetting.upsert.mockResolvedValue({
+      key: "landing_content",
+      value: JSON.stringify({ badge: "Mới" }),
+      updatedAt,
+    });
+
+    await service.updateLandingContent(
+      {
+        badge: "Mới",
+        headline: "Headline",
+        subheadlineMarkdown: "Mô tả",
+        ctaPrimaryLabel: "CTA 1",
+        ctaSecondaryLabel: "CTA 2",
+        heroSidecard: {
+          mode: "stats",
+          cardTitle: "Stats",
+          illustrationFootnote: "Minh họa",
+          stats: {
+            chartPreset: "balanced",
+            metrics: [
+              { label: "A", value: "1" },
+              { label: "B", value: "2" },
+            ],
+          },
+        },
+      },
+      actor,
+    );
+
+    expect(mockPrisma.systemSetting.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { key: "landing_content" } }),
+    );
+    expect(mockPrisma.adminAuthAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "landing_content_updated",
+        }),
+      }),
+    );
+  });
 });

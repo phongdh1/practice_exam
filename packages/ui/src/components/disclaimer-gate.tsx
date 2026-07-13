@@ -12,7 +12,7 @@ import { cn } from "../lib/utils";
 export interface DisclaimerGateProps {
   text: string;
   version: string;
-  screenId?: "Z-02" | "W-03" | "W-40" | "W-41" | "W-42" | "Z-40" | "Z-41" | "Z-42";
+  screenId?: "Z-02" | "W-03" | "W-40" | "W-41" | "W-42" | "W-50" | "Z-40" | "Z-41" | "Z-42";
   children: React.ReactNode;
   className?: string;
 }

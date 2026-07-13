@@ -25,6 +25,7 @@ export interface AuthMeView {
   id: string;
   displayName: string | null;
   avatarUrl: string | null;
+  email?: string;
   identities: { provider: AuthProvider; linkedAt: string }[];
 }
 
@@ -341,10 +342,12 @@ export class AuthService {
         message: AUTH_ERRORS_VI.ACCOUNT_SUSPENDED,
       });
     }
+    const emailIdentity = user.identities.find((i) => i.provider === "email");
     return {
       id: user.id,
       displayName: user.displayName,
       avatarUrl: user.avatarUrl,
+      email: emailIdentity?.externalId,
       identities: user.identities.map((identity) => ({
         provider: identity.provider,
         linkedAt: identity.createdAt.toISOString(),

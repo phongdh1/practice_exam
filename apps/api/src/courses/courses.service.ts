@@ -102,6 +102,29 @@ export class CoursesService {
     return this.setCourseVisibility(id, "active");
   }
 
+  async deleteCourse(id: string): Promise<{ id: string; deleted: true }> {
+    const existing = await this.prisma.course.findUnique({
+      where: { id },
+      include: { _count: { select: { subjects: true } } },
+    });
+    if (!existing) {
+      throw new NotFoundException({
+        code: "COURSE_NOT_FOUND",
+        message: "Không tìm thấy khóa học.",
+      });
+    }
+    if (existing._count.subjects > 0) {
+      throw new BadRequestException({
+        code: "COURSE_HAS_SUBJECTS",
+        message: "Không thể xóa khóa học còn môn học. Hãy xóa hoặc chuyển các môn học trước.",
+        details: { subjectCount: existing._count.subjects },
+      });
+    }
+
+    await this.prisma.course.delete({ where: { id } });
+    return { id, deleted: true };
+  }
+
   async reorderCourses(dto: ReorderCoursesDto) {
     const allCourses = await this.prisma.course.findMany({ select: { id: true } });
     const courses = await this.prisma.course.findMany({

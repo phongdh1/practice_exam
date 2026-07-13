@@ -116,6 +116,10 @@ export class UpdateQuestionDto {
 export class SearchQuestionsDto {
   @IsOptional()
   @IsUUID()
+  courseId?: string;
+
+  @IsOptional()
+  @IsUUID()
   subjectId?: string;
 
   @IsOptional()

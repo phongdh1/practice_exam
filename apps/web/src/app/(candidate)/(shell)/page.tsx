@@ -1,7 +1,7 @@
 "use client";
 
 import { createApiClient, queryKeys } from "@practice-exam/api-client";
-import { disclaimerQueryOptions } from "@/lib/web-api";
+import { disclaimerQueryOptions, landingContentQueryOptions } from "@/lib/web-api";
 import {
   CatalogPagination,
   CatalogSkeleton,
@@ -9,6 +9,7 @@ import {
   DisclaimerGate,
   FALLBACK_PLATFORM_DISCLAIMER,
   LandingHero,
+  mergeLandingContent,
   PullToRefresh,
   SubjectCatalogGrid,
 } from "@practice-exam/ui";
@@ -46,6 +47,11 @@ export default function HomePage() {
 
   const { data: disclaimerResponse } = useQuery(disclaimerQueryOptions);
 
+  const { data: landingContentResponse } = useQuery({
+    ...landingContentQueryOptions,
+    enabled: !isAuthenticated,
+  });
+
   const { data: entitlementsResponse } = useQuery({
     queryKey: queryKeys.entitlements.freeTier,
     queryFn: fetchFreeTierUsage,
@@ -55,6 +61,7 @@ export default function HomePage() {
   const catalog = subjectsResponse?.data;
   const subjects = catalog?.items ?? [];
   const disclaimer = disclaimerResponse?.data ?? FALLBACK_PLATFORM_DISCLAIMER;
+  const landingContent = mergeLandingContent(landingContentResponse?.data);
   const freeTierUsedBySubjectId = useMemo(() => {
     const map: Record<string, number> = {};
     for (const item of entitlementsResponse?.data?.items ?? []) {
@@ -65,7 +72,7 @@ export default function HomePage() {
 
   const content = (
     <>
-      {!isAuthenticated && <LandingHero catalogHref="#catalog" />}
+      {!isAuthenticated && <LandingHero content={landingContent} catalogHref="#catalog" />}
       <PullToRefresh
         className="min-h-screen pb-20 md:pb-0"
         onRefresh={() => refetch()}

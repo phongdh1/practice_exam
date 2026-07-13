@@ -1,0 +1,781 @@
+// Prisma schema — AD-3 Supabase PostgreSQL with dual URL (pooler + direct)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthProvider {
+  email
+  google
+  zalo
+
+  @@map("auth_provider")
+}
+
+enum SubjectVisibility {
+  active
+  archived
+
+  @@map("subject_visibility")
+}
+
+enum CourseVisibility {
+  active
+  archived
+
+  @@map("course_visibility")
+}
+
+enum PaymentProvider {
+  payos
+  sepay
+
+  @@map("payment_provider")
+}
+
+enum PaymentChannel {
+  web
+  zalo
+
+  @@map("payment_channel")
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  cancelled
+  refunded
+
+  @@map("payment_status")
+}
+
+enum RefundStatus {
+  pending
+  confirmed
+  failed
+
+  @@map("refund_status")
+}
+
+enum PromoDiscountType {
+  percentage
+  fixed
+
+  @@map("promo_discount_type")
+}
+
+enum AdminRole {
+  super_admin
+  editor
+  reviewer
+  finance
+  support
+
+  @@map("admin_role")
+}
+
+model HealthCheck {
+  id        String   @id @default(uuid()) @db.Uuid
+  checkedAt DateTime @default(now()) @map("checked_at")
+  status    String   @default("ok")
+
+  @@map("health_checks")
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  displayName String?  @map("display_name")
+  avatarUrl   String?  @map("avatar_url")
+  isSuspended Boolean  @default(false) @map("is_suspended")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  identities       AuthIdentity[]
+  refreshTokens    RefreshToken[]
+  subscriptions    Subscription[]
+  payments         Payment[]
+  practiceSessions PracticeSession[]
+  freeTierUsage    FreeTierUsage[]
+  studyTierUsage   StudyTierUsage[]
+  studyViewLogs    StudyViewLog[]
+  authAuditLogs    AuthAuditLog[]
+  questionFlags    QuestionFlag[]
+  mockExamAttempts MockExamAttempt[]
+
+  @@map("users")
+}
+
+model AuthIdentity {
+  id           String       @id @default(uuid()) @db.Uuid
+  userId       String       @map("user_id") @db.Uuid
+  provider     AuthProvider
+  externalId   String       @map("external_id")
+  passwordHash String?      @map("password_hash")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, externalId])
+  @@index([userId])
+  @@map("auth_identities")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model AuthAuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  action    String
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("auth_audit_logs")
+}
+
+enum QuestionStatus {
+  draft
+  in_review
+  published
+  archived
+
+  @@map("question_status")
+}
+
+enum QuestionType {
+  single_choice
+  multiple_choice
+  true_false
+
+  @@map("question_type")
+}
+
+enum QuestionDifficulty {
+  easy
+  medium
+  hard
+
+  @@map("question_difficulty")
+}
+
+enum ContentReviewAction {
+  submit_for_review
+  approve
+  reject
+  unpublish
+  escalate
+
+  @@map("content_review_action")
+}
+
+enum ImportBatchStatus {
+  pending
+  processing
+  completed
+  failed
+
+  @@map("import_batch_status")
+}
+
+enum QuestionFlagStatus {
+  open
+  assigned
+  resolved
+  escalated
+
+  @@map("question_flag_status")
+}
+
+enum MockExamTemplateStatus {
+  draft
+  approved
+  archived
+
+  @@map("mock_exam_template_status")
+}
+
+enum MockExamSectionSelectionMode {
+  fixed
+  randomized
+
+  @@map("mock_exam_section_selection_mode")
+}
+
+enum MockExamAttemptStatus {
+  in_progress
+  completed
+  expired
+
+  @@map("mock_exam_attempt_status")
+}
+
+enum MockExamAttemptPhase {
+  in_section
+  review
+  completed
+
+  @@map("mock_exam_attempt_phase")
+}
+
+model Course {
+  id           String           @id @default(uuid()) @db.Uuid
+  code         String           @unique
+  name         String
+  description  String?
+  visibility   CourseVisibility @default(archived)
+  displayOrder Int              @default(0) @map("display_order")
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  subjects Subject[]
+
+  @@map("courses")
+}
+
+model Subject {
+  id           String            @id @default(uuid()) @db.Uuid
+  courseId     String            @map("course_id") @db.Uuid
+  code         String            @unique
+  name         String
+  description  String?
+  visibility   SubjectVisibility @default(archived)
+  displayOrder Int               @default(0) @map("display_order")
+  topicTags    String[]          @default([]) @map("topic_tags")
+  minPublishedQuestionsForGoLive Int @default(200) @map("min_published_questions_for_go_live")
+  minApprovedTemplatesForGoLive  Int @default(1) @map("min_approved_templates_for_go_live")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  course            Course             @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  pricing           SubjectPricing?
+  questions         Question[]
+  importBatches     ImportBatch[]
+  practiceSessions  PracticeSession[]
+  mockExamTemplates MockExamTemplate[]
+  mockExamSections  MockExamSection[]
+
+  @@index([courseId])
+  @@map("subjects")
+}
+
+model SubjectPricing {
+  id               String @id @default(uuid()) @db.Uuid
+  subjectId        String @unique @map("subject_id") @db.Uuid
+  monthlyAmountVnd Int    @map("monthly_amount_vnd")
+  freeTierLimit    Int    @default(20) @map("free_tier_limit")
+  studyTierLimit   Int    @default(5) @map("study_tier_limit")
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("subject_pricing")
+}
+
+model Subscription {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  subjectId   String   @map("subject_id") @db.Uuid
+  status      String   @default("active")
+  periodStart DateTime @map("period_start")
+  periodEnd   DateTime @map("period_end")
+  channel     String   @default("web")
+  paymentId   String?  @unique @map("payment_id") @db.Uuid
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([userId, subjectId])
+  @@map("subscriptions")
+}
+
+model Payment {
+  id          String          @id @default(uuid()) @db.Uuid
+  userId      String          @map("user_id") @db.Uuid
+  subjectId   String          @map("subject_id") @db.Uuid
+  provider    PaymentProvider
+  channel     PaymentChannel
+  status      PaymentStatus   @default(pending)
+  amountVnd   Int             @map("amount_vnd")
+  externalRef String?         @map("external_ref")
+  checkoutUrl String?         @map("checkout_url")
+  promoCode   String?         @map("promo_code")
+  isTest      Boolean         @default(false) @map("is_test")
+  paidAt      DateTime?       @map("paid_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription?
+  webhookEvents PaymentWebhookEvent[]
+  refunds      PaymentRefund[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([provider])
+  @@index([paidAt])
+  @@map("payments")
+}
+
+model PaymentRefund {
+  id          String       @id @default(uuid()) @db.Uuid
+  paymentId   String       @map("payment_id") @db.Uuid
+  amountVnd   Int          @map("amount_vnd")
+  reason      String
+  status      RefundStatus @default(pending)
+  providerRef String?      @map("provider_ref")
+  adminId     String       @map("admin_id") @db.Uuid
+  createdAt   DateTime     @default(now()) @map("created_at")
+  processedAt DateTime?    @map("processed_at")
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+  @@index([status])
+  @@map("payment_refunds")
+}
+
+model PromoCode {
+  id            String            @id @default(uuid()) @db.Uuid
+  code          String            @unique
+  discountType  PromoDiscountType @map("discount_type")
+  discountValue Int               @map("discount_value")
+  expiresAt     DateTime          @map("expires_at")
+  usageLimit    Int               @map("usage_limit")
+  usageCount    Int               @default(0) @map("usage_count")
+  subjectIds    String[]          @default([]) @map("subject_ids")
+  isActive      Boolean           @default(true) @map("is_active")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  @@map("promo_codes")
+}
+
+model PaymentWebhookEvent {
+  id              String          @id @default(uuid()) @db.Uuid
+  provider        PaymentProvider
+  externalEventId String          @map("external_event_id")
+  paymentId       String?         @map("payment_id") @db.Uuid
+  status          String          @default("received")
+  payload         Json
+  errorMessage    String?         @map("error_message")
+  retryCount      Int             @default(0) @map("retry_count")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  processedAt     DateTime?       @map("processed_at")
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@unique([provider, externalEventId])
+  @@index([status])
+  @@map("payment_webhook_events")
+}
+
+enum PracticeSessionStatus {
+  in_progress
+  completed
+  expired
+
+  @@map("practice_session_status")
+}
+
+model PracticeSession {
+  id             String                @id @default(uuid()) @db.Uuid
+  userId         String                @map("user_id") @db.Uuid
+  subjectId      String                @map("subject_id") @db.Uuid
+  status         PracticeSessionStatus @default(in_progress)
+  answeredCount  Int                   @default(0) @map("answered_count")
+  correctCount   Int                   @default(0) @map("correct_count")
+  currentQuestionId String?            @map("current_question_id") @db.Uuid
+  expiresAt      DateTime              @map("expires_at")
+  lastActivityAt DateTime              @default(now()) @map("last_activity_at")
+  completedAt    DateTime?             @map("completed_at")
+  createdAt      DateTime              @default(now()) @map("created_at")
+
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject          @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  answers PracticeAnswer[]
+
+  @@index([userId])
+  @@index([userId, subjectId, status])
+  @@map("practice_sessions")
+}
+
+model PracticeAnswer {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionId    String   @map("session_id") @db.Uuid
+  questionId   String   @map("question_id") @db.Uuid
+  selectedKeys Json     @map("selected_keys")
+  isCorrect    Boolean  @map("is_correct")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  session  PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, questionId])
+  @@index([sessionId])
+  @@map("practice_answers")
+}
+
+model FreeTierUsage {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  subjectId String   @map("subject_id") @db.Uuid
+  periodKey String   @map("period_key")
+  usedCount Int      @default(0) @map("used_count")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, subjectId, periodKey])
+  @@index([userId, periodKey])
+  @@map("free_tier_usage")
+}
+
+model StudyTierUsage {
+  userId      String @map("user_id") @db.Uuid
+  subjectId   String @map("subject_id") @db.Uuid
+  periodKey   String @map("period_key")
+  viewedCount Int    @default(0) @map("viewed_count")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, subjectId, periodKey])
+  @@map("study_tier_usage")
+}
+
+model StudyViewLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  subjectId  String   @map("subject_id") @db.Uuid
+  questionId String   @map("question_id") @db.Uuid
+  periodKey  String   @map("period_key")
+  viewedAt   DateTime @default(now()) @map("viewed_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, subjectId, questionId, periodKey])
+  @@index([userId, subjectId, periodKey])
+  @@map("study_view_logs")
+}
+
+model SystemSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}
+
+model AdminUser {
+  id           String    @id @default(uuid()) @db.Uuid
+  username     String    @unique
+  passwordHash String    @map("password_hash")
+  displayName  String?   @map("display_name")
+  role         AdminRole @default(super_admin)
+  isDisabled   Boolean   @default(false) @map("is_disabled")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  authoredQuestions  Question[]        @relation("QuestionAuthor")
+  reviewingQuestions Question[]        @relation("QuestionReviewer")
+  contentReviews     ContentReview[]
+  questionVersions   QuestionVersion[]
+  contentAuditLogs   ContentAuditLog[]
+  importBatches      ImportBatch[]
+  assignedFlags         QuestionFlag[]         @relation("FlagAssignee")
+  resolvedFlags         QuestionFlag[]         @relation("FlagResolver")
+  integrationAuditLogs  IntegrationAuditLog[]
+  adminAuthAuditLogs    AdminAuthAuditLog[]
+
+  @@map("admin_users")
+}
+
+model AdminAuthAuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  adminId   String?  @map("admin_id") @db.Uuid
+  username  String?
+  action    String
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  admin AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@map("admin_auth_audit_logs")
+}
+
+model IntegrationAuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  adminId     String   @map("admin_id") @db.Uuid
+  integration String
+  action      String
+  details     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([integration])
+  @@index([createdAt])
+  @@map("integration_audit_logs")
+}
+
+model ZaloOAuthEvent {
+  id           String    @id @default(uuid()) @db.Uuid
+  externalId   String?   @map("external_id")
+  status       String    @default("received")
+  payload      Json
+  errorMessage String?   @map("error_message")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  processedAt  DateTime? @map("processed_at")
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("zalo_oauth_events")
+}
+
+model Question {
+  id                 String             @id @default(uuid()) @db.Uuid
+  subjectId          String             @map("subject_id") @db.Uuid
+  authorId           String             @map("author_id") @db.Uuid
+  status             QuestionStatus     @default(draft)
+  questionType       QuestionType       @default(single_choice) @map("question_type")
+  difficulty         QuestionDifficulty @default(medium)
+  stem               String
+  explanation        String?
+  correctOptionKeys  Json               @map("correct_option_keys")
+  options            Json
+  tags               String[]           @default([])
+  imageUrls          String[]           @default([]) @map("image_urls")
+  sourceRef          String?            @map("source_ref")
+  versionNumber      Int                @default(1) @map("version_number")
+  parentQuestionId   String?            @map("parent_question_id") @db.Uuid
+  reviewerId         String?            @map("reviewer_id") @db.Uuid
+  assignedAt         DateTime?          @map("assigned_at")
+  submittedAt        DateTime?          @map("submitted_at")
+  publishedAt        DateTime?          @map("published_at")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  subject        Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  author         AdminUser         @relation("QuestionAuthor", fields: [authorId], references: [id])
+  reviewer       AdminUser?        @relation("QuestionReviewer", fields: [reviewerId], references: [id])
+  parentQuestion Question?         @relation("QuestionVersions", fields: [parentQuestionId], references: [id])
+  childVersions  Question[]        @relation("QuestionVersions")
+  reviews        ContentReview[]
+  versions       QuestionVersion[]
+  flags          QuestionFlag[]
+  mockExamAnswers MockExamAnswer[]
+  practiceAnswers PracticeAnswer[]
+  studyViewLogs   StudyViewLog[]
+
+  @@index([subjectId, status])
+  @@index([status])
+  @@index([authorId])
+  @@index([reviewerId])
+  @@map("questions")
+}
+
+model QuestionVersion {
+  id            String   @id @default(uuid()) @db.Uuid
+  questionId    String   @map("question_id") @db.Uuid
+  versionNumber Int      @map("version_number")
+  snapshot      Json
+  createdById   String   @map("created_by_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  question  Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdBy AdminUser @relation(fields: [createdById], references: [id])
+
+  @@unique([questionId, versionNumber])
+  @@map("question_versions")
+}
+
+model ContentReview {
+  id         String              @id @default(uuid()) @db.Uuid
+  questionId String              @map("question_id") @db.Uuid
+  reviewerId String              @map("reviewer_id") @db.Uuid
+  action     ContentReviewAction
+  comment    String?
+  createdAt  DateTime            @default(now()) @map("created_at")
+
+  question Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  reviewer AdminUser @relation(fields: [reviewerId], references: [id])
+
+  @@index([questionId])
+  @@map("content_reviews")
+}
+
+model ContentAuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  questionId String?  @map("question_id") @db.Uuid
+  actorId    String   @map("actor_id") @db.Uuid
+  action     String
+  reason     String?
+  details    Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  actor AdminUser @relation(fields: [actorId], references: [id])
+
+  @@index([questionId])
+  @@map("content_audit_logs")
+}
+
+model ImportBatch {
+  id           String            @id @default(uuid()) @db.Uuid
+  subjectId    String            @map("subject_id") @db.Uuid
+  uploadedById String            @map("uploaded_by_id") @db.Uuid
+  fileName     String            @map("file_name")
+  status       ImportBatchStatus @default(pending)
+  totalRows    Int               @default(0) @map("total_rows")
+  successCount Int               @default(0) @map("success_count")
+  errorCount   Int               @default(0) @map("error_count")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  completedAt  DateTime?         @map("completed_at")
+
+  subject    Subject          @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  uploadedBy AdminUser        @relation(fields: [uploadedById], references: [id])
+  rowErrors  ImportRowError[]
+
+  @@map("import_batches")
+}
+
+model ImportRowError {
+  id            String @id @default(uuid()) @db.Uuid
+  importBatchId String @map("import_batch_id") @db.Uuid
+  rowNumber     Int    @map("row_number")
+  field         String?
+  message       String
+  rawData       Json?  @map("raw_data")
+
+  importBatch ImportBatch @relation(fields: [importBatchId], references: [id], onDelete: Cascade)
+
+  @@index([importBatchId])
+  @@map("import_row_errors")
+}
+
+model QuestionFlag {
+  id             String             @id @default(uuid()) @db.Uuid
+  questionId     String             @map("question_id") @db.Uuid
+  userId         String             @map("user_id") @db.Uuid
+  comment        String?
+  status         QuestionFlagStatus @default(open)
+  assigneeId     String?            @map("assignee_id") @db.Uuid
+  resolutionNote String?            @map("resolution_note")
+  resolvedAt     DateTime?          @map("resolved_at")
+  resolvedById   String?            @map("resolved_by_id") @db.Uuid
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+
+  question   Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignee   AdminUser? @relation("FlagAssignee", fields: [assigneeId], references: [id])
+  resolvedBy AdminUser? @relation("FlagResolver", fields: [resolvedById], references: [id])
+
+  @@index([status])
+  @@index([questionId])
+  @@map("question_flags")
+}
+
+model MockExamTemplate {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  subjectId            String                 @map("subject_id") @db.Uuid
+  name                 String
+  description          String?
+  status               MockExamTemplateStatus @default(draft)
+  totalDurationMinutes Int                    @map("total_duration_minutes")
+  passingScorePercent  Int                    @map("passing_score_percent")
+  monthlyAttemptLimit  Int                    @default(3) @map("monthly_attempt_limit")
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+
+  subject  Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  sections MockExamSection[]
+  attempts MockExamAttempt[]
+
+  @@index([subjectId, status])
+  @@map("mock_exam_templates")
+}
+
+model MockExamSection {
+  id               String                       @id @default(uuid()) @db.Uuid
+  templateId       String                       @map("template_id") @db.Uuid
+  subjectId        String                       @map("subject_id") @db.Uuid
+  sectionOrder     Int                          @map("section_order")
+  questionCount    Int                          @map("question_count")
+  timeLimitMinutes Int                          @map("time_limit_minutes")
+  selectionMode    MockExamSectionSelectionMode @map("selection_mode")
+  weightPercent    Int                          @map("weight_percent")
+  fixedQuestionIds Json?                        @map("fixed_question_ids")
+  difficultyRules  Json?                        @map("difficulty_rules")
+  topicTags        String[]                     @default([]) @map("topic_tags")
+  createdAt        DateTime                     @default(now()) @map("created_at")
+  updatedAt        DateTime                     @updatedAt @map("updated_at")
+
+  template MockExamTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  subject  Subject          @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+  @@map("mock_exam_sections")
+}
+
+model MockExamAttempt {
+  id                  String                @id @default(uuid()) @db.Uuid
+  templateId          String                @map("template_id") @db.Uuid
+  userId              String                @map("user_id") @db.Uuid
+  periodKey           String                @map("period_key")
+  status              MockExamAttemptStatus @default(in_progress)
+  phase               MockExamAttemptPhase  @default(in_section)
+  currentSectionIndex Int                   @default(0) @map("current_section_index")
+  currentQuestionIndex Int                  @default(0) @map("current_question_index")
+  sectionEndsAt       DateTime?             @map("section_ends_at")
+  scorePercent        Int?                  @map("score_percent")
+  passed              Boolean?              @map("passed")
+  sectionScores       Json?                 @map("section_scores")
+  questionIds         Json                  @map("question_ids")
+  startedAt           DateTime              @default(now()) @map("started_at")
+  completedAt         DateTime?             @map("completed_at")
+  createdAt           DateTime              @default(now()) @map("created_at")
+
+  template MockExamTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers  MockExamAnswer[]
+
+  @@index([userId, templateId, periodKey])
+  @@index([userId, status])
+  @@map("mock_exam_attempts")
+}
+
+model MockExamAnswer {
+  id             String   @id @default(uuid()) @db.Uuid
+  attemptId      String   @map("attempt_id") @db.Uuid
+  questionId     String   @map("question_id") @db.Uuid
+  sectionIndex   Int      @map("section_index")
+  questionIndex  Int      @map("question_index")
+  selectedKeys   Json     @map("selected_keys")
+  answeredAt     DateTime @default(now()) @map("answered_at")
+
+  attempt  MockExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@map("mock_exam_answers")
+}

@@ -2,18 +2,22 @@ import { Injectable } from "@nestjs/common";
 import type {
   EmailNotificationTemplate,
   EmailNotificationTemplateKey,
+  LandingContentView,
   MaintenanceMode,
   PlatformDisclaimer,
   SystemSettingsView,
 } from "@practice-exam/types";
+import { DEFAULT_LANDING_CONTENT, mergeLandingContent } from "@practice-exam/types";
 import type { AdminAuthPayload } from "../admin-auth/admin-auth.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { toInputJsonValue } from "../prisma/input-json";
 import type { UpdateSystemSettingsDto } from "./dto/update-system-settings.dto";
+import type { UpdateLandingContentDto } from "./dto/update-landing-content.dto";
 
 export const PLATFORM_DISCLAIMER_KEY = "platform_disclaimer";
 export const MAINTENANCE_MODE_KEY = "maintenance_mode";
 export const EMAIL_TEMPLATES_KEY = "email_templates";
+export const LANDING_CONTENT_KEY = "landing_content";
 export const SETTINGS_CACHE_TTL_MS = 5 * 60 * 1000;
 
 export const DEFAULT_PLATFORM_DISCLAIMER =
@@ -49,6 +53,7 @@ type CacheEntry<T> = { value: T; expiresAt: number };
 export class SettingsService {
   private disclaimerCache: CacheEntry<PlatformDisclaimer> | null = null;
   private maintenanceCache: CacheEntry<MaintenanceMode> | null = null;
+  private landingContentCache: CacheEntry<LandingContentView> | null = null;
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -170,6 +175,101 @@ export class SettingsService {
     }
 
     return this.getAdminSystemSettings();
+  }
+
+  async getLandingContent(): Promise<LandingContentView> {
+    if (this.landingContentCache && this.landingContentCache.expiresAt > Date.now()) {
+      return this.landingContentCache.value;
+    }
+
+    const setting = await this.prisma.systemSetting.findUnique({
+      where: { key: LANDING_CONTENT_KEY },
+    });
+
+    const value = setting
+      ? this.parseLandingContent(setting.value, setting.updatedAt)
+      : { ...DEFAULT_LANDING_CONTENT };
+
+    this.landingContentCache = {
+      value,
+      expiresAt: Date.now() + SETTINGS_CACHE_TTL_MS,
+    };
+    return value;
+  }
+
+  async updateLandingContent(
+    dto: UpdateLandingContentDto,
+    actor: AdminAuthPayload,
+  ): Promise<LandingContentView> {
+    const payload: LandingContentView = {
+      version: "pending",
+      badge: dto.badge.trim(),
+      headline: dto.headline.trim(),
+      subheadlineMarkdown: dto.subheadlineMarkdown.trim(),
+      ctaPrimaryLabel: dto.ctaPrimaryLabel.trim(),
+      ctaSecondaryLabel: dto.ctaSecondaryLabel.trim(),
+      signInPrompt: dto.signInPrompt?.trim() || DEFAULT_LANDING_CONTENT.signInPrompt,
+      heroBackground: dto.heroBackground ?? null,
+      heroSidecard: {
+        mode: dto.heroSidecard.mode,
+        cardTitle: dto.heroSidecard.cardTitle.trim(),
+        illustrationFootnote: dto.heroSidecard.illustrationFootnote.trim(),
+        stats: dto.heroSidecard.stats
+          ? {
+              chartPreset: dto.heroSidecard.stats.chartPreset,
+              metrics: [
+                {
+                  label: dto.heroSidecard.stats.metrics[0].label.trim(),
+                  value: dto.heroSidecard.stats.metrics[0].value.trim(),
+                },
+                {
+                  label: dto.heroSidecard.stats.metrics[1].label.trim(),
+                  value: dto.heroSidecard.stats.metrics[1].value.trim(),
+                },
+              ],
+            }
+          : undefined,
+        image: dto.heroSidecard.image,
+      },
+      updatedAt: null,
+    };
+
+    const stored = await this.prisma.systemSetting.upsert({
+      where: { key: LANDING_CONTENT_KEY },
+      create: { key: LANDING_CONTENT_KEY, value: JSON.stringify(payload) },
+      update: { value: JSON.stringify(payload) },
+    });
+
+    this.landingContentCache = null;
+
+    await this.prisma.adminAuthAuditLog.create({
+      data: {
+        adminId: actor.sub,
+        username: actor.username,
+        action: "landing_content_updated",
+        details: toInputJsonValue({
+          changedFields: Object.keys(dto),
+          actorId: actor.sub,
+          actorUsername: actor.username,
+        }),
+      },
+    });
+
+    return this.parseLandingContent(stored.value, stored.updatedAt);
+  }
+
+  private parseLandingContent(raw: string, updatedAt: Date): LandingContentView {
+    try {
+      const parsed = JSON.parse(raw) as Partial<LandingContentView>;
+      const merged = mergeLandingContent(parsed);
+      return {
+        ...merged,
+        version: updatedAt.toISOString(),
+        updatedAt: updatedAt.toISOString(),
+      };
+    } catch {
+      return { ...DEFAULT_LANDING_CONTENT };
+    }
   }
 
   private defaultMaintenanceMode(): MaintenanceMode {

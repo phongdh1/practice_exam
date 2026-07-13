@@ -1,0 +1,6 @@
+-- No-op.
+--
+-- This migration used to alter "courses" before that table was created by
+-- 20260702193000_courses_catalog_grouping, which broke shadow database replay.
+-- The current Prisma schema keeps Course.id as @default(uuid()), so no change is
+-- needed here.
