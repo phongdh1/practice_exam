@@ -516,6 +516,8 @@ export class ApiClient {
     studyTierLimit?: number;
     displayOrder?: number;
     topicTags?: string[];
+    coverImageUrl?: string | null;
+    isHot?: boolean;
     minPublishedQuestionsForGoLive?: number;
     minApprovedTemplatesForGoLive?: number;
   }): Promise<ApiResponse<AdminSubjectView>> {
@@ -537,6 +539,8 @@ export class ApiClient {
       displayOrder?: number;
       visibility?: "active" | "archived";
       topicTags?: string[];
+      coverImageUrl?: string | null;
+      isHot?: boolean;
       minPublishedQuestionsForGoLive?: number;
       minApprovedTemplatesForGoLive?: number;
     },

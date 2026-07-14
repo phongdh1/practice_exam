@@ -3,7 +3,6 @@
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import {
-  parseSubjectTopicTags,
   SubjectEditorForm,
   type SubjectEditorFormValues,
 } from "@/components/subject-editor-form";
@@ -23,7 +22,9 @@ const INITIAL_FORM: SubjectEditorFormValues = {
   studyTierLimit: 5,
   displayOrder: 0,
   visibility: "archived",
-  topicTags: "",
+  topicTags: [],
+  coverImageUrl: null,
+  isHot: false,
   minPublishedQuestionsForGoLive: 200,
   minApprovedTemplatesForGoLive: 1,
 };
@@ -41,6 +42,8 @@ function NewSubjectContent() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<SubjectEditorFormValues>(INITIAL_FORM);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   const { data: coursesData } = useQuery({
     queryKey: queryKeys.courses.admin,
@@ -60,7 +63,9 @@ function NewSubjectContent() {
         freeTierLimit: form.freeTierLimit,
         studyTierLimit: form.studyTierLimit,
         displayOrder: form.displayOrder,
-        topicTags: parseSubjectTopicTags(form.topicTags),
+        topicTags: form.topicTags,
+        coverImageUrl: form.coverImageUrl,
+        isHot: form.isHot,
         minPublishedQuestionsForGoLive: form.minPublishedQuestionsForGoLive,
         minApprovedTemplatesForGoLive: form.minApprovedTemplatesForGoLive,
       }),
@@ -72,6 +77,21 @@ function NewSubjectContent() {
     onError: (error: Error) => setActionError(error.message),
   });
 
+  const handleUploadCover = async (file: File) => {
+    setCoverUploadError(null);
+    setUploadingCover(true);
+    try {
+      const res = await adminApi.adminUploadLandingAsset(file);
+      const url = res.data?.url;
+      if (!url) throw new Error("Upload không trả về URL.");
+      setForm((prev) => ({ ...prev, coverImageUrl: url }));
+    } catch (error) {
+      setCoverUploadError(error instanceof Error ? error.message : "Tải ảnh thất bại.");
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
   return (
     <AdminPageShell>
       <SubjectEditorForm
@@ -82,9 +102,12 @@ function NewSubjectContent() {
         saving={createMutation.isPending}
         submitLabel="Lưu thay đổi"
         error={actionError}
+        coverUploadError={coverUploadError}
+        uploadingCover={uploadingCover}
         onChange={setForm}
+        onUploadCover={handleUploadCover}
         onSubmit={() => {
-          if (createMutation.isPending) return;
+          if (createMutation.isPending || uploadingCover) return;
           if (!form.code.trim()) {
             setActionError("Mã môn học không được để trống.");
             return;

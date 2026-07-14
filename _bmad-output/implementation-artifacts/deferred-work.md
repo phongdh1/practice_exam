@@ -165,3 +165,11 @@
 - Update-then-activate/archive is still a non-atomic two-step client chain (pre-existing pattern) — partial persist if activate fails after PATCH.
 - Admin app `pnpm --filter admin lint` fails repo-wide (missing eslint.config) — pre-existing; typecheck used instead.
 - Stitch free-tier "limit 0 locks free users" vs API `@Min(1)` — product decision to allow 0 deferred; UI corrected to API floor for this pass.
+
+## Deferred from: code review of spec-subject-editor-cover-hot-tags (2026-07-14)
+
+- Catalog card does not render `coverImageUrl` media yet — Ask First in spec; types/API expose URL for a later pass.
+- Subject covers reuse landing-content upload storage/lifecycle (no subject-owned delete cleanup) — accepted storage choice; dedicated subject-asset lifecycle later.
+- No DB index on `subjects.is_hot` — fine for MVP catalog size.
+- Arbitrary `coverImageUrl` strings accepted on DTO (admin-trusted) beyond the upload UI path — tighten URL allowlist if needed later.
+- Pre-existing update-then-activate/archive non-atomic client chain unchanged.

@@ -42,6 +42,8 @@ export interface AdminSubjectView {
   code: string;
   name: string;
   description: string | null;
+  coverImageUrl: string | null;
+  isHot: boolean;
   visibility: SubjectVisibility;
   displayOrder: number;
   topicTags: string[];
@@ -52,6 +54,13 @@ export interface AdminSubjectView {
   createdAt: string;
   updatedAt: string;
 }
+
+const SUBJECT_LIST_ORDER_BY = [
+  { isHot: "desc" as const },
+  { course: { displayOrder: "asc" as const } },
+  { displayOrder: "asc" as const },
+  { name: "asc" as const },
+];
 
 @Injectable()
 export class SubjectsService {
@@ -66,7 +75,7 @@ export class SubjectsService {
     const subjects = await this.prisma.subject.findMany({
       where: { visibility: "active", course: { visibility: "active" } },
       include: { pricing: true, course: true },
-      orderBy: [{ course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
+      orderBy: SUBJECT_LIST_ORDER_BY,
     });
 
     return this.mapCatalogItems(subjects);
@@ -81,7 +90,7 @@ export class SubjectsService {
       this.prisma.subject.findMany({
         where,
         include: { pricing: true, course: true },
-        orderBy: [{ course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
+        orderBy: SUBJECT_LIST_ORDER_BY,
       }),
       this.prisma.subject.count({ where }),
     ]);
@@ -115,6 +124,8 @@ export class SubjectsService {
       code: string;
       name: string;
       description: string | null;
+      coverImageUrl: string | null;
+      isHot: boolean;
       course: { code: string; name: string };
       pricing: { monthlyAmountVnd: number; freeTierLimit: number } | null;
     }>,
@@ -139,6 +150,8 @@ export class SubjectsService {
         code: subject.code,
         name: subject.name,
         description: subject.description,
+        coverImageUrl: subject.coverImageUrl,
+        isHot: subject.isHot,
         monthlyPriceVnd: subject.pricing!.monthlyAmountVnd,
         freeTierLimit: subject.pricing!.freeTierLimit,
       }));
@@ -147,7 +160,7 @@ export class SubjectsService {
   async listAdminCatalog(): Promise<AdminSubjectView[]> {
     const subjects = await this.prisma.subject.findMany({
       include: { pricing: true, course: true },
-      orderBy: [{ course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
+      orderBy: SUBJECT_LIST_ORDER_BY,
     });
 
     const goLiveBySubject = await this.buildGoLiveStatusMap(subjects.map((s) => s.id));
@@ -160,6 +173,8 @@ export class SubjectsService {
       code: subject.code,
       name: subject.name,
       description: subject.description,
+      coverImageUrl: subject.coverImageUrl,
+      isHot: subject.isHot,
       visibility: subject.visibility,
       displayOrder: subject.displayOrder,
       topicTags: subject.topicTags,
@@ -188,6 +203,8 @@ export class SubjectsService {
           displayOrder: dto.displayOrder ?? 0,
           visibility: "archived",
           topicTags: dto.topicTags ?? [],
+          coverImageUrl: dto.coverImageUrl ? dto.coverImageUrl : null,
+          isHot: dto.isHot ?? false,
           minPublishedQuestionsForGoLive:
             dto.minPublishedQuestionsForGoLive ?? DEFAULT_MIN_PUBLISHED_QUESTIONS_FOR_GO_LIVE,
           minApprovedTemplatesForGoLive:
@@ -269,6 +286,10 @@ export class SubjectsService {
           ...(dto.displayOrder !== undefined && { displayOrder: dto.displayOrder }),
           ...(dto.visibility !== undefined && { visibility: dto.visibility }),
           ...(dto.topicTags !== undefined && { topicTags: dto.topicTags }),
+          ...(dto.coverImageUrl !== undefined && {
+            coverImageUrl: dto.coverImageUrl ? dto.coverImageUrl : null,
+          }),
+          ...(dto.isHot !== undefined && { isHot: dto.isHot }),
           ...(dto.minPublishedQuestionsForGoLive !== undefined && {
             minPublishedQuestionsForGoLive: dto.minPublishedQuestionsForGoLive,
           }),

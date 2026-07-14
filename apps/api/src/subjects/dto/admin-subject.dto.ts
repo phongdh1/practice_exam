@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsInt,
   IsOptional,
@@ -10,6 +11,7 @@ import {
   Max,
   Min,
   MinLength,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { MIN_SUBJECT_PRICE_VND } from "../subject.constants";
@@ -51,6 +53,15 @@ export class CreateSubjectDto {
   @IsArray()
   @IsString({ each: true })
   topicTags?: string[];
+
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  coverImageUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isHot?: boolean;
 
   @IsOptional()
   @IsInt()
@@ -106,6 +117,15 @@ export class UpdateSubjectDto {
   @IsArray()
   @IsString({ each: true })
   topicTags?: string[];
+
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  coverImageUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isHot?: boolean;
 
   @IsOptional()
   @IsInt()

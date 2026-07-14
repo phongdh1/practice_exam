@@ -16,6 +16,8 @@ describe("SubjectsController (e2e)", () => {
       code: "plck",
       name: "Pháp luật chứng khoán",
       description: "Môn pháp luật",
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 1,
       pricing: { monthlyAmountVnd: 100_000, freeTierLimit: 20 },
@@ -27,6 +29,8 @@ describe("SubjectsController (e2e)", () => {
       code: "ptbtc",
       name: "Phân tích báo cáo tài chính",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 2,
       pricing: { monthlyAmountVnd: 80_000, freeTierLimit: 20 },
@@ -75,7 +79,7 @@ describe("SubjectsController (e2e)", () => {
     expect(mockPrisma.subject.findMany).toHaveBeenCalledWith({
       where: { visibility: "active", course: { visibility: "active" } },
       include: { pricing: true, course: true },
-      orderBy: [{ course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
+      orderBy: [{ isHot: "desc" }, { course: { displayOrder: "asc" } }, { displayOrder: "asc" }, { name: "asc" }],
     });
   });
 });

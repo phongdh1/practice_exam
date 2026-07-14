@@ -3,7 +3,6 @@
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import {
-  parseSubjectTopicTags,
   SubjectEditorForm,
   type SubjectEditorFormValues,
 } from "@/components/subject-editor-form";
@@ -23,7 +22,9 @@ const EMPTY_FORM: SubjectEditorFormValues = {
   studyTierLimit: 5,
   displayOrder: 0,
   visibility: "archived",
-  topicTags: "",
+  topicTags: [],
+  coverImageUrl: null,
+  isHot: false,
   minPublishedQuestionsForGoLive: 200,
   minApprovedTemplatesForGoLive: 1,
 };
@@ -41,6 +42,8 @@ function EditSubjectContent() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [form, setForm] = useState<SubjectEditorFormValues>(EMPTY_FORM);
   const [hydratedId, setHydratedId] = useState<string | null>(null);
 
@@ -72,7 +75,9 @@ function EditSubjectContent() {
       studyTierLimit: subject.studyTierLimit ?? 5,
       displayOrder: subject.displayOrder,
       visibility: subject.visibility,
-      topicTags: subject.topicTags.join(", "),
+      topicTags: subject.topicTags ?? [],
+      coverImageUrl: subject.coverImageUrl ?? null,
+      isHot: subject.isHot ?? false,
       minPublishedQuestionsForGoLive: subject.goLive.requirements.minPublishedQuestions,
       minApprovedTemplatesForGoLive: subject.goLive.requirements.minApprovedTemplates,
     });
@@ -89,7 +94,9 @@ function EditSubjectContent() {
         freeTierLimit: form.freeTierLimit,
         studyTierLimit: form.studyTierLimit,
         displayOrder: form.displayOrder,
-        topicTags: parseSubjectTopicTags(form.topicTags),
+        topicTags: form.topicTags,
+        coverImageUrl: form.coverImageUrl,
+        isHot: form.isHot,
         minPublishedQuestionsForGoLive: form.minPublishedQuestionsForGoLive,
         minApprovedTemplatesForGoLive: form.minApprovedTemplatesForGoLive,
       };
@@ -128,6 +135,21 @@ function EditSubjectContent() {
     onError: (error: Error) => setActionError(error.message),
   });
 
+  const handleUploadCover = async (file: File) => {
+    setCoverUploadError(null);
+    setUploadingCover(true);
+    try {
+      const res = await adminApi.adminUploadLandingAsset(file);
+      const url = res.data?.url;
+      if (!url) throw new Error("Upload không trả về URL.");
+      setForm((prev) => ({ ...prev, coverImageUrl: url }));
+    } catch (error) {
+      setCoverUploadError(error instanceof Error ? error.message : "Tải ảnh thất bại.");
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
   const handleDelete = () => {
     if (subject?.visibility !== "archived") return;
     if (updateMutation.isPending || deleteMutation.isPending) return;
@@ -154,12 +176,15 @@ function EditSubjectContent() {
           saving={updateMutation.isPending}
           submitLabel="Lưu thay đổi"
           error={actionError}
+          coverUploadError={coverUploadError}
+          uploadingCover={uploadingCover}
           updatedAt={subject.updatedAt}
           goLive={subject.goLive}
           persistedVisibility={subject.visibility}
           onChange={setForm}
+          onUploadCover={handleUploadCover}
           onSubmit={() => {
-            if (updateMutation.isPending || deleteMutation.isPending) return;
+            if (updateMutation.isPending || deleteMutation.isPending || uploadingCover) return;
             updateMutation.mutate();
           }}
           onDelete={handleDelete}

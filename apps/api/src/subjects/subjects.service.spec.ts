@@ -37,6 +37,8 @@ describe("SubjectsService", () => {
       code: "plck",
       name: "Pháp luật chứng khoán",
       description: "Môn pháp luật",
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 1,
       topicTags: ["luật"],
@@ -53,6 +55,8 @@ describe("SubjectsService", () => {
       code: "ptbtc",
       name: "Phân tích báo cáo tài chính",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 2,
       topicTags: [],
@@ -69,6 +73,8 @@ describe("SubjectsService", () => {
       code: "noprice",
       name: "Missing Pricing",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 3,
       topicTags: [],
@@ -85,6 +91,8 @@ describe("SubjectsService", () => {
       code: "badcopy",
       name: "Khóa guaranteed pass",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 4,
       topicTags: [],
@@ -101,6 +109,8 @@ describe("SubjectsService", () => {
       code: "archived",
       name: "Archived Subject",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "archived" as const,
       displayOrder: 99,
       topicTags: [],
@@ -117,6 +127,8 @@ describe("SubjectsService", () => {
       code: "archived-child",
       name: "Archived Course Child",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "archived" as const,
       displayOrder: 6,
       topicTags: [],
@@ -133,6 +145,8 @@ describe("SubjectsService", () => {
       code: "hidden-course",
       name: "Hidden Course Subject",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "active" as const,
       displayOrder: 5,
       topicTags: [],
@@ -149,6 +163,8 @@ describe("SubjectsService", () => {
       code: "custom-gate",
       name: "Custom Gate Subject",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "archived" as const,
       displayOrder: 7,
       topicTags: [],
@@ -165,6 +181,8 @@ describe("SubjectsService", () => {
       code: "zero-gate",
       name: "Zero Gate Subject",
       description: null,
+      coverImageUrl: null,
+      isHot: false,
       visibility: "archived" as const,
       displayOrder: 8,
       topicTags: [],
@@ -252,6 +270,8 @@ describe("SubjectsService", () => {
       code: "plck",
       name: "Pháp luật chứng khoán",
       description: "Môn pháp luật",
+      coverImageUrl: null,
+      isHot: false,
       monthlyPriceVnd: 100_000,
       freeTierLimit: 20,
     });
@@ -293,6 +313,8 @@ describe("SubjectsService", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           courseId: activeCourse.id,
+          coverImageUrl: null,
+          isHot: false,
           pricing: {
             create: {
               monthlyAmountVnd: 100_000,
@@ -301,6 +323,73 @@ describe("SubjectsService", () => {
             },
           },
         }),
+      }),
+    );
+  });
+
+  it("persists coverImageUrl and isHot on create", async () => {
+    mockPrisma.subject.create.mockResolvedValue({ id: "new-sub" });
+
+    await service.createSubject({
+      courseId: activeCourse.id,
+      code: "HOT1",
+      name: "Môn hot",
+      monthlyAmountVnd: 100_000,
+      freeTierLimit: 20,
+      coverImageUrl: "https://example.com/cover.webp",
+      isHot: true,
+    });
+
+    expect(mockPrisma.subject.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          coverImageUrl: "https://example.com/cover.webp",
+          isHot: true,
+        }),
+      }),
+    );
+  });
+
+  it("persists coverImageUrl clear and isHot off on update", async () => {
+    mockPrisma.subject.update.mockResolvedValue({ id: "sub-1" });
+
+    await service.updateSubject("sub-1", {
+      coverImageUrl: null,
+      isHot: false,
+    });
+
+    expect(mockPrisma.subject.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          coverImageUrl: null,
+          isHot: false,
+        }),
+      }),
+    );
+  });
+
+  it("lists with isHot descending first", async () => {
+    await service.listActiveCatalog();
+    expect(mockPrisma.subject.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: [
+          { isHot: "desc" },
+          { course: { displayOrder: "asc" } },
+          { displayOrder: "asc" },
+          { name: "asc" },
+        ],
+      }),
+    );
+
+    await service.listAdminCatalog();
+    expect(mockPrisma.subject.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: [
+          { isHot: "desc" },
+          { course: { displayOrder: "asc" } },
+          { displayOrder: "asc" },
+          { name: "asc" },
+        ],
       }),
     );
   });

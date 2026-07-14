@@ -54,6 +54,7 @@ export function SubjectCatalogGrid({
   );
 
   let subjectIndex = 0;
+  let featuredUsed = 0;
 
   return (
     <div className={cn("space-y-8", className)} data-component="subject-catalog-grid">
@@ -77,6 +78,9 @@ export function SubjectCatalogGrid({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
                 {group.subjects.map((subject) => {
                   const index = subjectIndex++;
+                  const featured =
+                    subject.isHot && (featuredCount <= 0 || featuredUsed < featuredCount);
+                  if (featured) featuredUsed += 1;
                   return (
                     <SubjectCard
                       key={subject.id}
@@ -85,7 +89,7 @@ export function SubjectCatalogGrid({
                       priceVnd={subject.monthlyPriceVnd}
                       freeTierUsed={freeTierUsedBySubjectId[subject.id] ?? 0}
                       freeTierLimit={subject.freeTierLimit}
-                      featured={index < featuredCount}
+                      featured={featured}
                       variant={variant}
                       icon={SUBJECT_ICONS[index % SUBJECT_ICONS.length]}
                       href={getSubjectHref?.(subject)}

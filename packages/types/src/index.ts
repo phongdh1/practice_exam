@@ -67,6 +67,8 @@ export interface SubjectCatalogItem {
   code: string;
   name: string;
   description: string | null;
+  coverImageUrl: string | null;
+  isHot: boolean;
   monthlyPriceVnd: number;
   freeTierLimit: number;
 }
@@ -320,6 +322,8 @@ export interface AdminSubjectView {
   code: string;
   name: string;
   description: string | null;
+  coverImageUrl: string | null;
+  isHot: boolean;
   visibility: SubjectVisibilityType;
   displayOrder: number;
   topicTags: string[];

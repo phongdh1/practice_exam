@@ -208,7 +208,14 @@ function SubjectsContent() {
                   />
                 </TableCell>
                 <TableCell>
-                  <div className="font-medium">{subject.name}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="font-medium">{subject.name}</div>
+                    {subject.isHot && (
+                      <Badge variant="secondary" className="shrink-0">
+                        Hot
+                      </Badge>
+                    )}
+                  </div>
                   <div className="font-mono text-label text-ink-muted">{subject.code}</div>
                 </TableCell>
                 <TableCell>{subject.courseName}</TableCell>
