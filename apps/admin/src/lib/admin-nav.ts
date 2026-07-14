@@ -104,13 +104,13 @@ export function resolveAdminTopHeader(pathname: string): AdminTopHeader | null {
   if (pathname === "/subjects/new") {
     return {
       title: "Tạo môn học",
-      subtitle: "Course là bắt buộc; pricing vẫn ở cấp môn học.",
+      subtitle: "A-21 — Thiết lập thông tin môn học, gói học và giới hạn.",
     };
   }
   if (/^\/subjects\/[^/]+$/.test(pathname)) {
     return {
       title: "Sửa môn học",
-      subtitle: "Course bắt buộc; go-live gate vẫn tính trên môn học.",
+      subtitle: "A-21 — Cập nhật thông tin, gói học và trạng thái hiển thị.",
     };
   }
   if (pathname === "/subjects") {

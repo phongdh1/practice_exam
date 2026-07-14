@@ -159,3 +159,9 @@
 
 - No server revoke/logout API on admin Sign Out — client clears storage only; token remains valid until expiry if copied.
 - No automated unit tests for `admin-session` helpers (snapshot cache, corrupt JSON, login partial-admin clear).
+
+## Deferred from: code review of spec-subject-editor-a21-ui (2026-07-14)
+
+- Update-then-activate/archive is still a non-atomic two-step client chain (pre-existing pattern) — partial persist if activate fails after PATCH.
+- Admin app `pnpm --filter admin lint` fails repo-wide (missing eslint.config) — pre-existing; typecheck used instead.
+- Stitch free-tier "limit 0 locks free users" vs API `@Min(1)` — product decision to allow 0 deferred; UI corrected to API floor for this pass.
