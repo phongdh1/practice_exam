@@ -3,6 +3,7 @@
 import { AuthShell } from "@practice-exam/ui";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { clearAdminUser, setAdminUser, type AdminCachedUser } from "@/lib/admin-session";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -30,6 +31,17 @@ export default function AdminLoginPage() {
         return;
       }
       localStorage.setItem("admin_access_token", body.data.tokens.accessToken);
+      // Drop any prior profile so a partial login payload cannot leave a stale chip.
+      clearAdminUser();
+      const admin = body.data.admin as AdminCachedUser | undefined;
+      if (admin?.id && admin.username && admin.role) {
+        setAdminUser({
+          id: admin.id,
+          username: admin.username,
+          displayName: admin.displayName ?? null,
+          role: admin.role,
+        });
+      }
       router.push("/");
       router.refresh();
     } catch {

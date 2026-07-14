@@ -1,4 +1,5 @@
 import { createApiClient, createUnauthorizedGuard } from "@practice-exam/api-client";
+import { clearAdminUser } from "./admin-session";
 
 export function getAdminToken(): string | undefined {
   if (typeof window === "undefined") return undefined;
@@ -8,6 +9,7 @@ export function getAdminToken(): string | undefined {
 export function clearAdminSession(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem("admin_access_token");
+  clearAdminUser();
 }
 
 export const adminOnUnauthorized = createUnauthorizedGuard({

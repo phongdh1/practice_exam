@@ -154,3 +154,8 @@
 - **STORY-69** — `clearWebSession` / `getWebAccessToken` read `document.cookie` but tokens are httpOnly — client-side session clear/token read ineffective; needs BFF logout route.
 - **STORY-69** — OAuth tokens passed in URL query params (referrer/history leak risk) — Google routes commented out; existing redirect contract.
 - **STORY-69** — No unit/integration tests for BFF `/api/auth/me` or `/api/auth/set-session` routes — API `auth/me` e2e covered; BFF layer untested.
+
+## Deferred from: code review of spec-admin-login-user-info (2026-07-14)
+
+- No server revoke/logout API on admin Sign Out — client clears storage only; token remains valid until expiry if copied.
+- No automated unit tests for `admin-session` helpers (snapshot cache, corrupt JSON, login partial-admin clear).

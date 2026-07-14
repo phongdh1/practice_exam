@@ -26,6 +26,8 @@ export interface AdminSidebarProps {
   /** Show the "New Subject" quick action. Defaults to true; gate to super_admin (UI hint). */
   showNewSubject?: boolean;
   onNewSubject?: () => void;
+  /** When provided, Sign Out runs this instead of a dead `#` link. */
+  onSignOut?: () => void;
   className?: string;
 }
 
@@ -57,6 +59,7 @@ export function AdminSidebar({
   hiddenNavItems = [],
   showNewSubject = true,
   onNewSubject,
+  onSignOut,
   className,
 }: AdminSidebarProps) {
   const hidden = new Set(hiddenNavItems);
@@ -151,13 +154,24 @@ export function AdminSidebar({
           <MaterialIcon name="contact_support" size={20} />
           <span className="text-label">Support</span>
         </a>
-        <a
-          href="#"
-          className="flex items-center gap-3 rounded-lg px-4 py-2 text-on-primary/80 transition-all hover:bg-on-primary/10 hover:text-on-primary"
-        >
-          <MaterialIcon name="logout" size={20} />
-          <span className="text-label">Sign Out</span>
-        </a>
+        {onSignOut ? (
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="flex w-full items-center gap-3 rounded-lg px-4 py-2 text-left text-on-primary/80 transition-all hover:bg-on-primary/10 hover:text-on-primary"
+          >
+            <MaterialIcon name="logout" size={20} />
+            <span className="text-label">Sign Out</span>
+          </button>
+        ) : (
+          <a
+            href="#"
+            className="flex items-center gap-3 rounded-lg px-4 py-2 text-on-primary/80 transition-all hover:bg-on-primary/10 hover:text-on-primary"
+          >
+            <MaterialIcon name="logout" size={20} />
+            <span className="text-label">Sign Out</span>
+          </a>
+        )}
       </div>
     </aside>
   );
