@@ -19,7 +19,15 @@ import {
 } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Archive, Check, Pencil, Trash2 } from "lucide-react";
-import { CatalogSectionToolbar } from "@/components/catalog-section-tabs";
+import {
+  CatalogSectionToolbar,
+  catalogCheckboxClassName,
+  catalogTableCellClassName,
+  catalogTableFooterClassName,
+  catalogTableHeadClassName,
+  catalogTableHeadRowClassName,
+  catalogTableRowClassName,
+} from "@/components/catalog-section-tabs";
 import { useCallback, useState } from "react";
 
 type BulkResult = { success: number; failed: number } | null;
@@ -159,15 +167,15 @@ function SubjectsContent() {
       <AdminDataTable
         footer={
           !isLoading ? (
-            <div className="border-t border-outline-variant px-4 py-3 text-label">
-              {subjects.length} môn học
+            <div className={catalogTableFooterClassName}>
+              <span className="font-bold text-on-surface">{subjects.length}</span> môn học
             </div>
           ) : undefined
         }
       >
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">
+          <TableRow className={catalogTableHeadRowClassName}>
+            <TableHead className={`w-12 ${catalogTableCellClassName}`}>
               <input
                 type="checkbox"
                 aria-label="Chọn tất cả môn học"
@@ -177,15 +185,17 @@ function SubjectsContent() {
                   if (el) el.indeterminate = someSelected && !allSelected;
                 }}
                 onChange={toggleAll}
-                className="rounded border-outline-variant text-primary disabled:opacity-40"
+                className={catalogCheckboxClassName}
               />
             </TableHead>
-            <TableHead>Môn học</TableHead>
-            <TableHead>Course</TableHead>
-            <TableHead>Giá</TableHead>
-            <TableHead>Go-live</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead className="w-[140px]" />
+            <TableHead className={catalogTableHeadClassName}>Môn học</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Course</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Giá</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Go-live</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Trạng thái</TableHead>
+            <TableHead className={`w-[200px] text-right ${catalogTableHeadClassName}`}>
+              Thao tác
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -196,44 +206,50 @@ function SubjectsContent() {
           {subjects.map((subject) => {
             const checked = selectedIds.has(subject.id);
             return (
-              <TableRow key={subject.id} data-state={checked ? "selected" : undefined}>
-                <TableCell>
+              <TableRow
+                key={subject.id}
+                data-state={checked ? "selected" : undefined}
+                className={catalogTableRowClassName}
+              >
+                <TableCell className={catalogTableCellClassName}>
                   <input
                     type="checkbox"
                     aria-label={`Chọn môn học ${subject.name}`}
                     checked={checked}
                     disabled={bulkRunning}
                     onChange={() => toggleRow(subject.id)}
-                    className="rounded border-outline-variant text-primary disabled:opacity-40"
+                    className={catalogCheckboxClassName}
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className={catalogTableCellClassName}>
                   <div className="flex items-center gap-2">
-                    <div className="font-medium">{subject.name}</div>
+                    <div className="text-sm font-semibold text-on-surface">{subject.name}</div>
                     {subject.isHot && (
                       <Badge variant="secondary" className="shrink-0">
                         Hot
                       </Badge>
                     )}
                   </div>
-                  <div className="font-mono text-label text-ink-muted">{subject.code}</div>
+                  <div className="font-mono text-[11px] text-on-surface-variant">{subject.code}</div>
                 </TableCell>
-                <TableCell>{subject.courseName}</TableCell>
-                <TableCell>
+                <TableCell className={`${catalogTableCellClassName} text-sm`}>
+                  {subject.courseName}
+                </TableCell>
+                <TableCell className={`${catalogTableCellClassName} text-sm`}>
                   {subject.monthlyAmountVnd?.toLocaleString("vi-VN") ?? "—"} ₫
                 </TableCell>
-                <TableCell className="text-body-sm">
+                <TableCell className={`${catalogTableCellClassName} text-body-sm text-on-surface-variant`}>
                   {subject.goLive.publishedQuestionCount}/
                   {subject.goLive.requirements.minPublishedQuestions} câu hỏi,{" "}
                   {subject.goLive.approvedTemplateCount}/
                   {subject.goLive.requirements.minApprovedTemplates} template
                 </TableCell>
-                <TableCell>
+                <TableCell className={catalogTableCellClassName}>
                   <Badge variant={subject.visibility === "active" ? "secondary" : "outline"}>
                     {subject.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className={`${catalogTableCellClassName} text-right`}>
                   <AdminTableActions>
                     {subject.visibility === "archived" ? (
                       subject.goLive.canActivate ? (

@@ -19,7 +19,15 @@ import {
 } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Archive, ArrowDown, ArrowUp, Check, Pencil, Trash2 } from "lucide-react";
-import { CatalogSectionToolbar } from "@/components/catalog-section-tabs";
+import {
+  CatalogSectionToolbar,
+  catalogCheckboxClassName,
+  catalogTableCellClassName,
+  catalogTableFooterClassName,
+  catalogTableHeadClassName,
+  catalogTableHeadRowClassName,
+  catalogTableRowClassName,
+} from "@/components/catalog-section-tabs";
 import { useCallback, useState } from "react";
 
 type BulkResult = { success: number; failed: number } | null;
@@ -180,15 +188,15 @@ function CoursesContent() {
       <AdminDataTable
         footer={
           !isLoading ? (
-            <div className="border-t border-outline-variant px-4 py-3 text-label">
-              {courses.length} khóa học
+            <div className={catalogTableFooterClassName}>
+              <span className="font-bold text-on-surface">{courses.length}</span> khóa học
             </div>
           ) : undefined
         }
       >
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">
+          <TableRow className={catalogTableHeadRowClassName}>
+            <TableHead className={`w-12 ${catalogTableCellClassName}`}>
               <input
                 type="checkbox"
                 aria-label="Chọn tất cả khóa học"
@@ -198,14 +206,16 @@ function CoursesContent() {
                   if (el) el.indeterminate = someSelected && !allSelected;
                 }}
                 onChange={toggleAll}
-                className="rounded border-outline-variant text-primary disabled:opacity-40"
+                className={catalogCheckboxClassName}
               />
             </TableHead>
-            <TableHead>Khóa học</TableHead>
-            <TableHead>Thứ tự</TableHead>
-            <TableHead>Môn học</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead className="w-[200px]" />
+            <TableHead className={catalogTableHeadClassName}>Khóa học</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Thứ tự</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Môn học</TableHead>
+            <TableHead className={catalogTableHeadClassName}>Trạng thái</TableHead>
+            <TableHead className={`w-[200px] text-right ${catalogTableHeadClassName}`}>
+              Thao tác
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -216,32 +226,40 @@ function CoursesContent() {
           {courses.map((course, index) => {
             const checked = selectedIds.has(course.id);
             return (
-              <TableRow key={course.id} data-state={checked ? "selected" : undefined}>
-                <TableCell>
+              <TableRow
+                key={course.id}
+                data-state={checked ? "selected" : undefined}
+                className={catalogTableRowClassName}
+              >
+                <TableCell className={catalogTableCellClassName}>
                   <input
                     type="checkbox"
                     aria-label={`Chọn khóa học ${course.name}`}
                     checked={checked}
                     disabled={bulkRunning}
                     onChange={() => toggleRow(course.id)}
-                    className="rounded border-outline-variant text-primary disabled:opacity-40"
+                    className={catalogCheckboxClassName}
                   />
                 </TableCell>
-                <TableCell>
-                  <div className="font-medium">{course.name}</div>
-                  <div className="font-mono text-label text-ink-muted">{course.code}</div>
+                <TableCell className={catalogTableCellClassName}>
+                  <div className="text-sm font-semibold text-on-surface">{course.name}</div>
+                  <div className="font-mono text-[11px] text-on-surface-variant">{course.code}</div>
                   {course.description && (
-                    <div className="mt-1 text-body-sm text-ink-muted">{course.description}</div>
+                    <div className="mt-1 text-body-sm text-on-surface-variant">{course.description}</div>
                   )}
                 </TableCell>
-                <TableCell>{course.displayOrder}</TableCell>
-                <TableCell>{course.subjectCount}</TableCell>
-                <TableCell>
+                <TableCell className={`${catalogTableCellClassName} text-sm`}>
+                  {course.displayOrder}
+                </TableCell>
+                <TableCell className={`${catalogTableCellClassName} text-sm`}>
+                  {course.subjectCount}
+                </TableCell>
+                <TableCell className={catalogTableCellClassName}>
                   <Badge variant={course.visibility === "active" ? "secondary" : "outline"}>
                     {course.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className={`${catalogTableCellClassName} text-right`}>
                   <AdminTableActions>
                     <AdminIconAction
                       icon={ArrowUp}
