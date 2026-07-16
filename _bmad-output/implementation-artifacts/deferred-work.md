@@ -173,3 +173,9 @@
 - No DB index on `subjects.is_hot` — fine for MVP catalog size.
 - Arbitrary `coverImageUrl` strings accepted on DTO (admin-trusted) beyond the upload UI path — tighten URL allowlist if needed later.
 - Pre-existing update-then-activate/archive non-atomic client chain unchanged.
+
+## Deferred from: code review of spec-rbac-editor-course-subject-read (2026-07-16)
+
+- Subject list payload still includes `monthlyAmountVnd` / tier limits / embedded `goLive` for editor/reviewer — acceptable for dropdown binding this pass; consider a projected list DTO later.
+- Controller role specs assert Reflector metadata only — no HTTP 200/403 integration tests for list vs mutate (same depth as existing AdminRolesGuard unit coverage).
+- `AdminRolesGuard` fails open when `@Roles` omitted — pre-existing (STORY-57 M3); removing class-level `@Roles` increases importance of decorating every new handler.

@@ -7,41 +7,47 @@ import { CreateCourseDto, ReorderCoursesDto, UpdateCourseDto } from "./dto/admin
 
 @Controller("admin/courses")
 @UseGuards(AdminJwtGuard, AdminRolesGuard)
-@Roles("super_admin")
 export class CoursesAdminController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Get()
+  @Roles("super_admin", "editor", "reviewer")
   list() {
     return this.coursesService.listAdminCourses();
   }
 
   @Post()
+  @Roles("super_admin")
   create(@Body() dto: CreateCourseDto) {
     return this.coursesService.createCourse(dto);
   }
 
   @Patch("reorder")
+  @Roles("super_admin")
   reorder(@Body() dto: ReorderCoursesDto) {
     return this.coursesService.reorderCourses(dto);
   }
 
   @Patch(":id")
+  @Roles("super_admin")
   update(@Param("id") id: string, @Body() dto: UpdateCourseDto) {
     return this.coursesService.updateCourse(id, dto);
   }
 
   @Post(":id/archive")
+  @Roles("super_admin")
   archive(@Param("id") id: string) {
     return this.coursesService.archiveCourse(id);
   }
 
   @Post(":id/activate")
+  @Roles("super_admin")
   activate(@Param("id") id: string) {
     return this.coursesService.activateCourse(id);
   }
 
   @Delete(":id")
+  @Roles("super_admin")
   delete(@Param("id") id: string) {
     return this.coursesService.deleteCourse(id);
   }
