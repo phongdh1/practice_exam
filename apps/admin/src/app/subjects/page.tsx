@@ -8,7 +8,6 @@ import {
   AdminDataTable,
   AdminIconAction,
   AdminTableActions,
-  AdminTableEmpty,
   Badge,
   MaterialIcon,
   TableBody,
@@ -31,6 +30,19 @@ import {
 import { useCallback, useState } from "react";
 
 type BulkResult = { success: number; failed: number } | null;
+
+const VISIBILITY_BADGES = {
+  active: {
+    label: "Hoạt động",
+    className: "bg-success-muted text-success",
+    dotClassName: "bg-success",
+  },
+  archived: {
+    label: "Lưu trữ",
+    className: "bg-surface-container-highest text-on-surface-variant",
+    dotClassName: "bg-on-surface-variant",
+  },
+} as const;
 
 export default function SubjectsPage() {
   return (
@@ -125,13 +137,13 @@ function SubjectsContent() {
       <CatalogSectionToolbar />
 
       {actionError && (
-        <p className="mb-4 rounded-lg border border-error/30 bg-error-container px-4 py-2 text-body-sm text-on-error-container">
+        <p className="mb-5 rounded-xl border border-error/30 bg-error-container px-6 py-3 text-body-sm text-on-error-container">
           {actionError}
         </p>
       )}
 
       {someSelected && (
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3">
+        <div className="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-low px-6 py-3.5">
           <span className="text-label font-medium text-on-surface">
             Đã chọn {selectedIds.size} môn học
           </span>
@@ -158,7 +170,7 @@ function SubjectsContent() {
       )}
 
       {bulkResult && (
-        <div className="mb-4 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-sm">
+        <div className="mb-5 rounded-xl border border-outline-variant bg-surface-container-lowest px-6 py-3.5 text-body-sm">
           Thành công: <strong className="text-success">{bulkResult.success}</strong> · Thất bại:{" "}
           <strong className={bulkResult.failed ? "text-error" : ""}>{bulkResult.failed}</strong>
         </div>
@@ -199,12 +211,30 @@ function SubjectsContent() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading && <AdminTableEmpty colSpan={7}>Đang tải...</AdminTableEmpty>}
+          {isLoading && (
+            <TableRow>
+              <TableCell
+                colSpan={7}
+                className={`${catalogTableCellClassName} py-10 text-center text-on-surface-variant`}
+              >
+                Đang tải...
+              </TableCell>
+            </TableRow>
+          )}
           {!isLoading && subjects.length === 0 && (
-            <AdminTableEmpty colSpan={7}>Chưa có môn học.</AdminTableEmpty>
+            <TableRow>
+              <TableCell
+                colSpan={7}
+                className={`${catalogTableCellClassName} py-10 text-center text-on-surface-variant`}
+              >
+                Chưa có môn học.
+              </TableCell>
+            </TableRow>
           )}
           {subjects.map((subject) => {
             const checked = selectedIds.has(subject.id);
+            const visibilityBadge =
+              VISIBILITY_BADGES[subject.visibility] ?? VISIBILITY_BADGES.archived;
             return (
               <TableRow
                 key={subject.id}
@@ -223,7 +253,7 @@ function SubjectsContent() {
                 </TableCell>
                 <TableCell className={catalogTableCellClassName}>
                   <div className="flex items-center gap-2">
-                    <div className="text-sm font-semibold text-on-surface">{subject.name}</div>
+                    <div className="text-sm font-semibold text-primary">{subject.name}</div>
                     {subject.isHot && (
                       <Badge variant="secondary" className="shrink-0">
                         Hot
@@ -245,9 +275,15 @@ function SubjectsContent() {
                   {subject.goLive.requirements.minApprovedTemplates} template
                 </TableCell>
                 <TableCell className={catalogTableCellClassName}>
-                  <Badge variant={subject.visibility === "active" ? "secondary" : "outline"}>
-                    {subject.visibility === "active" ? "Hoạt động" : "Lưu trữ"}
-                  </Badge>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${visibilityBadge.className}`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`mr-1.5 h-1.5 w-1.5 rounded-full ${visibilityBadge.dotClassName}`}
+                    />
+                    {visibilityBadge.label}
+                  </span>
                 </TableCell>
                 <TableCell className={`${catalogTableCellClassName} text-right`}>
                   <AdminTableActions>
