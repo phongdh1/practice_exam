@@ -5,7 +5,14 @@ import { cn } from "../lib/utils";
 import { InternalLink } from "./internal-link";
 import { MaterialIcon } from "./material-icon";
 
-export type AdminNavItem = "dashboard" | "catalog" | "content" | "users" | "payments" | "settings";
+export type AdminNavItem =
+  | "dashboard"
+  | "catalog"
+  | "course"
+  | "content"
+  | "users"
+  | "payments"
+  | "settings";
 
 export type AdminSettingsSubNav = "rbac" | "admin-users" | "system";
 
@@ -13,6 +20,7 @@ export interface AdminSidebarProps {
   active?: AdminNavItem;
   dashboardHref?: string;
   catalogHref?: string;
+  courseHref?: string;
   contentHref?: string;
   usersHref?: string;
   paymentsHref?: string;
@@ -33,7 +41,8 @@ export interface AdminSidebarProps {
 
 const navItems: { id: AdminNavItem; label: string; icon: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard" },
-  { id: "catalog", label: "Catalog", icon: "category" },
+  { id: "catalog", label: "Subject", icon: "category" },
+  { id: "course", label: "Course", icon: "layers" },
   { id: "content", label: "Content", icon: "edit_note" },
   { id: "users", label: "Users", icon: "group" },
   { id: "payments", label: "Payments", icon: "payments" },
@@ -49,6 +58,7 @@ export function AdminSidebar({
   active = "dashboard",
   dashboardHref = "/",
   catalogHref = "/subjects",
+  courseHref = "/courses",
   contentHref = "/questions",
   usersHref = "/users",
   paymentsHref = "/payments",
@@ -66,6 +76,7 @@ export function AdminSidebar({
   const hrefs: Record<AdminNavItem, string> = {
     dashboard: dashboardHref,
     catalog: catalogHref,
+    course: courseHref,
     content: contentHref,
     users: usersHref,
     payments: paymentsHref,
@@ -80,9 +91,16 @@ export function AdminSidebar({
       )}
       data-component="admin-sidebar"
     >
-      <div className="mb-4 flex flex-col gap-1 px-2">
-        <h1 className="text-display-sm text-on-primary">CNVCK Back-Office</h1>
-        <p className="text-label text-on-primary/60">Certification Management</p>
+      <div className="mb-4 flex items-center gap-3 px-2">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-on-primary text-primary">
+          <MaterialIcon name="school" size={22} />
+        </div>
+        <div className="flex min-w-0 flex-col leading-tight">
+          <span className="text-display-sm font-bold text-on-primary">CNVCK</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-on-primary/70">
+            BACK-OFFICE
+          </span>
+        </div>
       </div>
       <nav className="flex flex-1 flex-col gap-1">
         {navItems

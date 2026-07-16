@@ -3,21 +3,21 @@ import type { AdminRoleType } from "@practice-exam/types";
 
 /** UI nav visibility by role — mirrors API permission matrix (hint only). */
 export function getHiddenNavItems(role: string | null): AdminNavItem[] {
-  if (!role) return ["catalog", "content", "users", "payments", "settings"];
+  if (!role) return ["catalog", "course", "content", "users", "payments", "settings"];
 
   switch (role as AdminRoleType) {
     case "super_admin":
       return [];
     case "editor":
-      return ["catalog", "users", "payments", "settings"];
+      return ["catalog", "course", "users", "payments", "settings"];
     case "reviewer":
-      return ["catalog", "users", "payments", "settings"];
+      return ["catalog", "course", "users", "payments", "settings"];
     case "support":
-      return ["catalog", "content", "payments", "settings"];
+      return ["catalog", "course", "content", "payments", "settings"];
     case "finance":
-      return ["catalog", "content", "users", "settings"];
+      return ["catalog", "course", "content", "users", "settings"];
     default:
-      return ["catalog", "content", "users", "payments", "settings"];
+      return ["catalog", "course", "content", "users", "payments", "settings"];
   }
 }
 

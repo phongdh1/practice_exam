@@ -29,8 +29,11 @@ export function resolveAdminSidebar(pathname: string): Pick<
   ) {
     return { active: "content", contentHref: "/questions" };
   }
-  if (pathname.startsWith("/subjects") || pathname.startsWith("/courses")) {
+  if (pathname.startsWith("/subjects")) {
     return { active: "catalog" };
+  }
+  if (pathname.startsWith("/courses")) {
+    return { active: "course" };
   }
 
   return { active: "dashboard" as AdminNavItem };
