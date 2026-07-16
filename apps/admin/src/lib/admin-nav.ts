@@ -114,7 +114,11 @@ export function resolveAdminTopHeader(pathname: string): AdminTopHeader | null {
     };
   }
   if (pathname === "/subjects") {
-    return null;
+    return {
+      title: "Quản lý môn học",
+      subtitle:
+        "Quản lý các khóa đào tạo, học liệu và cấu hình phí cho hệ thống học tập.",
+    };
   }
 
   if (pathname === "/courses/new") {

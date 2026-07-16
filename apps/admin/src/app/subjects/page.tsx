@@ -213,26 +213,7 @@ function SubjectsContent() {
 
   return (
     <AdminPageShell>
-      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="mb-2 text-xs text-on-surface-variant">
-            <Link href="/" className="hover:text-primary">
-              Dashboard
-            </Link>
-            <span className="mx-1.5">›</span>
-            <span className="font-medium text-on-surface">Quản lý môn học</span>
-          </p>
-          <h1 className="text-display-sm font-bold text-on-surface">Quản lý môn học</h1>
-          <p className="mt-1 max-w-2xl text-body-sm text-on-surface-variant">
-            Quản lý các khóa đào tạo, học liệu và cấu hình phí cho hệ thống học tập.
-          </p>
-          <p className="mt-2 text-xs text-on-surface-variant">
-            Quản lý khóa học:{" "}
-            <Link href="/courses" className="font-bold text-primary hover:underline">
-              /courses
-            </Link>
-          </p>
-        </div>
+      <div className="mb-6 flex flex-wrap items-center justify-end gap-4">
         <Link
           href="/subjects/new"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-label font-bold text-on-primary shadow-sm transition-all hover:bg-primary-container active:scale-95"
@@ -240,7 +221,7 @@ function SubjectsContent() {
           <MaterialIcon name="add" size={18} />
           Thêm môn học mới
         </Link>
-      </header>
+      </div>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <StatCard
