@@ -114,10 +114,7 @@ export function resolveAdminTopHeader(pathname: string): AdminTopHeader | null {
     };
   }
   if (pathname === "/subjects") {
-    return {
-      title: "Môn học",
-      subtitle: "Mỗi môn thuộc đúng một Course; giá, free tier và go-live gate vẫn ở cấp môn.",
-    };
+    return null;
   }
 
   if (pathname === "/courses/new") {
