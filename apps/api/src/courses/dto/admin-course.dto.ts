@@ -1,4 +1,14 @@
-import { IsArray, IsEnum, IsInt, IsOptional, IsString, IsUUID, ArrayMinSize, MinLength } from "class-validator";
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ArrayMinSize,
+  MinLength,
+  ValidateIf,
+} from "class-validator";
 
 export class CreateCourseDto {
   @IsString()
@@ -16,6 +26,11 @@ export class CreateCourseDto {
   @IsOptional()
   @IsInt()
   displayOrder?: number;
+
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  coverImageUrl?: string | null;
 }
 
 export class UpdateCourseDto {
@@ -40,6 +55,11 @@ export class UpdateCourseDto {
   @IsOptional()
   @IsEnum(["active", "archived"])
   visibility?: "active" | "archived";
+
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  coverImageUrl?: string | null;
 }
 
 export class ReorderCoursesDto {

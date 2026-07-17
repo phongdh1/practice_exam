@@ -2,12 +2,24 @@
 
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
+import {
+  CourseEditorForm,
+  type CourseEditorFormValues,
+} from "@/components/course-editor-form";
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const EMPTY_FORM: CourseEditorFormValues = {
+  code: "",
+  name: "",
+  description: "",
+  displayOrder: 0,
+  coverImageUrl: null,
+  visibility: "archived",
+};
 
 export default function EditCoursePage() {
   return (
@@ -21,13 +33,11 @@ function EditCourseContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState({
-    code: "",
-    name: "",
-    description: "",
-    displayOrder: 0,
-    visibility: "archived" as "active" | "archived",
-  });
+  const [form, setForm] = useState<CourseEditorFormValues>(EMPTY_FORM);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [hydratedId, setHydratedId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.courses.admin,
@@ -38,87 +48,106 @@ function EditCourseContent() {
 
   useEffect(() => {
     if (!course) return;
+    if (hydratedId === course.id) return;
     setForm({
       code: course.code,
       name: course.name,
       description: course.description ?? "",
       displayOrder: course.displayOrder,
+      coverImageUrl: course.coverImageUrl,
       visibility: course.visibility,
     });
-  }, [course]);
+    setHydratedId(course.id);
+  }, [course, hydratedId]);
+
+  const invalidate = () => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.courses.admin });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.subjects.admin });
+  };
 
   const updateMutation = useMutation({
     mutationFn: () =>
       adminApi.adminUpdateCourse(params.id, {
-        code: form.code,
-        name: form.name,
-        description: form.description || null,
+        code: form.code.trim(),
+        name: form.name.trim(),
+        description: form.description.trim() || null,
         displayOrder: form.displayOrder,
         visibility: form.visibility,
+        coverImageUrl: form.coverImageUrl,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.courses.admin });
+      setActionError(null);
+      invalidate();
       router.push("/courses");
     },
+    onError: (error: Error) => setActionError(error.message),
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => adminApi.adminDeleteCourse(params.id),
+    onSuccess: () => {
+      setActionError(null);
+      invalidate();
+      router.push("/courses");
+    },
+    onError: (error: Error) => setActionError(error.message),
+  });
+
+  const handleUploadCover = async (file: File) => {
+    setCoverUploadError(null);
+    setUploadingCover(true);
+    try {
+      const res = await adminApi.adminUploadLandingAsset(file);
+      const url = res.data?.url;
+      if (!url) throw new Error("Upload không trả về URL.");
+      setForm((prev) => ({ ...prev, coverImageUrl: url }));
+    } catch (error) {
+      setCoverUploadError(error instanceof Error ? error.message : "Tải ảnh thất bại.");
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (!course || course.subjectCount > 0) return;
+    if (!window.confirm("Xóa vĩnh viễn khóa học này? Chỉ khóa học không có môn học mới xóa được.")) {
+      return;
+    }
+    deleteMutation.mutate();
+  };
 
   return (
     <AdminPageShell>
       {isLoading && <p className="text-ink-muted">Đang tải...</p>}
       {!isLoading && !course && <p className="text-error">Không tìm thấy khóa học.</p>}
       {course && (
-        <form
-          className="max-w-xl space-y-4 rounded-xl border border-outline-variant bg-surface-container-lowest p-4"
-          onSubmit={(event) => {
-            event.preventDefault();
+        <CourseEditorForm
+          mode="edit"
+          form={form}
+          saving={updateMutation.isPending}
+          submitLabel="Lưu khóa học"
+          error={actionError}
+          coverUploadError={coverUploadError}
+          uploadingCover={uploadingCover}
+          subjectCount={course.subjectCount}
+          deleting={deleteMutation.isPending}
+          onChange={setForm}
+          onUploadCover={handleUploadCover}
+          onDelete={handleDelete}
+          onSubmit={() => {
+            if (updateMutation.isPending || uploadingCover || deleteMutation.isPending) return;
+            if (!form.code.trim()) {
+              setActionError("Mã khóa học không được để trống.");
+              return;
+            }
+            if (!form.name.trim()) {
+              setActionError("Tên khóa học không được để trống.");
+              return;
+            }
             updateMutation.mutate();
           }}
-        >
-          <input
-            required
-            value={form.code}
-            onChange={(event) => setForm({ ...form, code: event.target.value })}
-            className="w-full rounded-lg border border-outline-variant px-3 py-2"
-          />
-          <input
-            required
-            value={form.name}
-            onChange={(event) => setForm({ ...form, name: event.target.value })}
-            className="w-full rounded-lg border border-outline-variant px-3 py-2"
-          />
-          <textarea
-            value={form.description}
-            onChange={(event) => setForm({ ...form, description: event.target.value })}
-            className="min-h-24 w-full rounded-lg border border-outline-variant px-3 py-2"
-          />
-          <input
-            type="number"
-            value={form.displayOrder}
-            onChange={(event) => setForm({ ...form, displayOrder: Number(event.target.value) })}
-            className="w-full rounded-lg border border-outline-variant px-3 py-2"
-          />
-          <select
-            value={form.visibility}
-            onChange={(event) =>
-              setForm({ ...form, visibility: event.target.value as "active" | "archived" })
-            }
-            className="w-full rounded-lg border border-outline-variant px-3 py-2"
-          >
-            <option value="active">Hoạt động</option>
-            <option value="archived">Lưu trữ</option>
-          </select>
-          <button
-            type="submit"
-            disabled={updateMutation.isPending}
-            className="rounded-lg bg-primary px-4 py-2 text-label text-on-primary disabled:opacity-50"
-          >
-            {updateMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
-          </button>
-        </form>
+        />
       )}
-      <Link href="/courses" className="mt-4 inline-block text-primary underline">
-        Quay lại danh sách
-      </Link>
     </AdminPageShell>
   );
 }

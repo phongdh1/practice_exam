@@ -10,6 +10,12 @@ import { ContentComplianceService } from "../content-compliance/content-complian
 import { PrismaService } from "../prisma/prisma.service";
 import type { CreateCourseDto, ReorderCoursesDto, UpdateCourseDto } from "./dto/admin-course.dto";
 
+function normalizeCoverImageUrl(value: string | null | undefined): string | null {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
 @Injectable()
 export class CoursesService {
   constructor(
@@ -33,11 +39,12 @@ export class CoursesService {
     try {
       course = await this.prisma.course.create({
         data: {
-          code: dto.code,
-          name: dto.name,
+          code: dto.code.trim(),
+          name: dto.name.trim(),
           description: dto.description,
           displayOrder: dto.displayOrder ?? 0,
           visibility: "archived",
+          coverImageUrl: normalizeCoverImageUrl(dto.coverImageUrl),
         },
         include: { _count: { select: { subjects: true } } },
       });
@@ -68,11 +75,14 @@ export class CoursesService {
         const updated = await tx.course.update({
           where: { id },
           data: {
-            ...(dto.code !== undefined && { code: dto.code }),
-            ...(dto.name !== undefined && { name: dto.name }),
+            ...(dto.code !== undefined && { code: dto.code.trim() }),
+            ...(dto.name !== undefined && { name: dto.name.trim() }),
             ...(dto.description !== undefined && { description: dto.description }),
             ...(dto.displayOrder !== undefined && { displayOrder: dto.displayOrder }),
             ...(dto.visibility !== undefined && { visibility: dto.visibility }),
+            ...(dto.coverImageUrl !== undefined && {
+              coverImageUrl: normalizeCoverImageUrl(dto.coverImageUrl),
+            }),
           },
           include: { _count: { select: { subjects: true } } },
         });
@@ -205,6 +215,7 @@ export class CoursesService {
     code: string;
     name: string;
     description: string | null;
+    coverImageUrl: string | null;
     visibility: CourseVisibility;
     displayOrder: number;
     createdAt: Date;
@@ -216,6 +227,7 @@ export class CoursesService {
       code: course.code,
       name: course.name,
       description: course.description,
+      coverImageUrl: course.coverImageUrl,
       visibility: course.visibility,
       displayOrder: course.displayOrder,
       subjectCount: course._count.subjects,

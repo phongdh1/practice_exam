@@ -307,6 +307,7 @@ export interface AdminCourseView {
   code: string;
   name: string;
   description: string | null;
+  coverImageUrl: string | null;
   visibility: CourseVisibilityType;
   displayOrder: number;
   subjectCount: number;

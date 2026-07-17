@@ -184,3 +184,8 @@
 
 - Courses (and subjects) list query ignores `isError` — failed load looks like an empty catalog; shared list-error UX later.
 - Extract shared StatCard / pagination helpers from subjects + courses when a third list adopts the same chrome.
+
+## Deferred from: review of spec-courses-editor-ui-cover (2026-07-17)
+
+- Course covers reuse landing-content upload storage with no orphan cleanup on cancel/failed save/delete (same pattern as subject covers).
+- No server-side cover URL allowlist beyond string validation — admin-trusted, mirrors subjects.

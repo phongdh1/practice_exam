@@ -578,6 +578,7 @@ export class ApiClient {
     name: string;
     description?: string | null;
     displayOrder?: number;
+    coverImageUrl?: string | null;
   }): Promise<ApiResponse<AdminCourseView>> {
     return this.request<AdminCourseView>("/api/v1/admin/courses", {
       method: "POST",
@@ -593,6 +594,7 @@ export class ApiClient {
       description?: string | null;
       displayOrder?: number;
       visibility?: "active" | "archived";
+      coverImageUrl?: string | null;
     },
   ): Promise<ApiResponse<AdminCourseView>> {
     return this.request<AdminCourseView>(`/api/v1/admin/courses/${id}`, {
