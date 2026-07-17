@@ -204,3 +204,7 @@
 
 - Native `select` ellipsis is browser-dependent (esp. Firefox); verify manually and consider a custom select if closed-value truncation is insufficient.
 - No `title`/tooltip exposing the full selected label when truncated (native or Radix).
+
+## Deferred from: one-shot open-dropdown-ellipsis (2026-07-17)
+
+- Native browser/OS `<option>` popups do not reliably support ellipsis; full open-menu truncation for native selects requires replacing them with a custom select component.

@@ -12,5 +12,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-}
 
+  /* Best effort: open native option menus are browser/OS controlled. */
+  select option {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
