@@ -199,3 +199,8 @@
 
 - Client import validation is extension-suffix only (no MIME sniffing) — same depth as typical admin upload UIs; server remains source of truth.
 - Empty 0-byte spreadsheet passes client checks and fails later on API parse.
+
+## Deferred from: one-shot dropdown-ellipsis (2026-07-17)
+
+- Native `select` ellipsis is browser-dependent (esp. Firefox); verify manually and consider a custom select if closed-value truncation is insufficient.
+- No `title`/tooltip exposing the full selected label when truncated (native or Radix).
