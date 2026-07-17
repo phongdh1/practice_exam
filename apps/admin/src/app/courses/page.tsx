@@ -528,11 +528,6 @@ function CourseRow({
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold text-primary">{course.name}</div>
             <div className="font-mono text-[11px] text-on-surface-variant">{course.code}</div>
-            {course.description ? (
-              <div className="mt-0.5 truncate text-[11px] text-on-surface-variant">
-                {course.description}
-              </div>
-            ) : null}
           </div>
         </div>
       </TableCell>
