@@ -370,6 +370,26 @@ export function SubjectEditorForm({
               </div>
             </div>
             <div className="flex flex-col gap-2">
+              <label className="font-label text-label text-primary">
+                Course <span className="text-error">*</span>
+              </label>
+              <select
+                required
+                disabled={!hasSelectableCourses}
+                value={form.courseId}
+                onChange={(event) => onChange({ ...form, courseId: event.target.value })}
+                className="w-full rounded-lg border border-outline-variant px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary disabled:bg-surface-container-low disabled:text-ink-muted"
+              >
+                <option value="">Chọn Course</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.name} ({course.code})
+                    {course.visibility === "archived" ? " - lưu trữ" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-2">
               <label className="font-label text-label text-primary">Mô tả chi tiết</label>
               <textarea
                 value={form.description}
@@ -463,25 +483,6 @@ export function SubjectEditorForm({
               </div>
             )}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2 sm:col-span-2">
-                <label className="font-label text-label text-primary">
-                  Course <span className="text-error">*</span>
-                </label>
-                <select
-                  required
-                  value={form.courseId}
-                  onChange={(event) => onChange({ ...form, courseId: event.target.value })}
-                  className="w-full rounded-lg border border-outline-variant px-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                >
-                  <option value="">Chọn Course</option>
-                  {courses.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.name} ({course.code})
-                      {course.visibility === "archived" ? " - lưu trữ" : ""}
-                    </option>
-                  ))}
-                </select>
-              </div>
               <div className="flex flex-col gap-2">
                 <label className="font-label text-label text-primary">Study Tier limit</label>
                 <input
