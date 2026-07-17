@@ -42,6 +42,26 @@ function parseFiniteNumber(raw: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/** First letter of each whitespace token → strip diacritics → uppercase. */
+export function suggestCourseCodeFromName(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((token) => {
+      const letter = [...token].find((char) => /\p{L}/u.test(char));
+      if (!letter) return "";
+      return letter
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .normalize("NFD")
+        .replace(/\p{M}/gu, "")
+        .toUpperCase();
+    })
+    .join("")
+    .slice(0, 64);
+}
+
 function ToggleSwitch({
   checked,
   disabled,
@@ -98,9 +118,36 @@ export function CourseEditorForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localCoverError, setLocalCoverError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [codeManuallyEdited, setCodeManuallyEdited] = useState(false);
 
   const deleteEnabled =
     mode === "edit" && subjectCount === 0 && Boolean(onDelete) && !saving && !deleting;
+
+  const applyNameChange = (name: string) => {
+    if (mode === "create" && !codeManuallyEdited) {
+      onChange((prev) => ({
+        ...prev,
+        name,
+        code: suggestCourseCodeFromName(name),
+      }));
+      return;
+    }
+    onChange((prev) => ({ ...prev, name }));
+  };
+
+  const applyCodeChange = (raw: string) => {
+    const code = raw.toUpperCase().slice(0, 64);
+    if (code.trim() === "") {
+      setCodeManuallyEdited(false);
+      onChange((prev) => ({
+        ...prev,
+        code: mode === "create" ? suggestCourseCodeFromName(prev.name) : "",
+      }));
+      return;
+    }
+    setCodeManuallyEdited(true);
+    onChange((prev) => ({ ...prev, code }));
+  };
 
   const handleCoverPick = async (file: File | undefined) => {
     setLocalCoverError(null);
@@ -168,7 +215,7 @@ export function CourseEditorForm({
               <input
                 required
                 value={form.name}
-                onChange={(event) => onChange({ ...form, name: event.target.value })}
+                onChange={(event) => applyNameChange(event.target.value)}
                 placeholder="Nhập tên khóa học đầy đủ"
                 className="w-full rounded-lg border border-outline-variant px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary"
               />
@@ -181,12 +228,15 @@ export function CourseEditorForm({
               <input
                 required
                 value={form.code}
-                onChange={(event) =>
-                  onChange({ ...form, code: event.target.value.toUpperCase().slice(0, 64) })
-                }
-                placeholder="CERT-2024-001"
+                onChange={(event) => applyCodeChange(event.target.value)}
+                placeholder="VD: CVM"
                 className="w-full rounded-lg border border-outline-variant px-4 py-3 uppercase outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary"
               />
+              {mode === "create" && (
+                <p className="text-caption text-ink-muted">
+                  Tự sinh từ chữ cái đầu mỗi từ trong tên khóa học (bỏ dấu, chữ hoa). Bạn có thể sửa.
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -321,10 +371,17 @@ export function CourseEditorForm({
                 Mã khóa học phải <strong className="text-on-surface">duy nhất</strong> trong hệ
                 thống, không chứa ký tự đặc biệt hoặc khoảng trắng.
               </li>
-              <li>
-                Định dạng khuyến nghị: <code className="text-on-surface">CERT-YYYY-NNN</code> (ví dụ:{" "}
-                <code className="text-on-surface">CERT-2024-001</code>).
-              </li>
+              {mode === "create" ? (
+                <li>
+                  Mã được gợi ý tự động từ chữ cái đầu mỗi từ trong tên (ví dụ:{" "}
+                  <code className="text-on-surface">Chuyên viên Môi giới</code> →{" "}
+                  <code className="text-on-surface">CVMG</code>).
+                </li>
+              ) : (
+                <li>
+                  Có thể chỉnh mã khóa học; thay đổi phải giữ tính duy nhất trong hệ thống.
+                </li>
+              )}
               <li>
                 Tên khóa học nên ngắn gọn và chứa từ khóa chuyên môn liên quan đến chứng chỉ.
               </li>

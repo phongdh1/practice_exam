@@ -189,3 +189,8 @@
 
 - Course covers reuse landing-content upload storage with no orphan cleanup on cancel/failed save/delete (same pattern as subject covers).
 - No server-side cover URL allowlist beyond string validation — admin-trusted, mirrors subjects.
+
+## Deferred from: one-shot course-code-from-name (2026-07-17)
+
+- Extract shared `suggestCodeFromName` used by subject + course editors (duplicate algorithms; subject still lacks Ð?D).
+- Unit tests for code-from-name edge cases (diacritics, empty tokens, max length, manual lock).
