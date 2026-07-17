@@ -1,0 +1,24 @@
+﻿diff --git a/packages/ui/src/components/admin-shell.tsx b/packages/ui/src/components/admin-shell.tsx
+index 0e0d82a..293878d 100644
+--- a/packages/ui/src/components/admin-shell.tsx
++++ b/packages/ui/src/components/admin-shell.tsx
+@@ -80,9 +80,16 @@ export function AdminSidebar({
+       )}
+       data-component="admin-sidebar"
+     >
+-      <div className="mb-4 flex flex-col gap-1 px-2">
+-        <h1 className="text-display-sm text-on-primary">CNVCK Back-Office</h1>
+-        <p className="text-label text-on-primary/60">Certification Management</p>
++      <div className="mb-4 flex items-center gap-3 px-2">
++        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-on-primary text-primary">
++          <MaterialIcon name="school" size={22} />
++        </div>
++        <div className="flex min-w-0 flex-col leading-tight">
++          <span className="text-display-sm font-bold text-on-primary">CNVCK</span>
++          <span className="text-[10px] font-bold uppercase tracking-wider text-on-primary/70">
++            BACK-OFFICE
++          </span>
++        </div>
+       </div>
+       <nav className="flex flex-1 flex-col gap-1">
+         {navItems
