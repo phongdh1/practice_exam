@@ -357,6 +357,13 @@ export interface CheckoutResult {
   provider: PaymentProviderType;
   channel: PaymentChannelType;
   amountVnd: number;
+  /** Present for SePay VietQR / bank-transfer checkout */
+  qrImageUrl?: string | null;
+  transferContent?: string | null;
+  bankAccountNumber?: string | null;
+  bankCode?: string | null;
+  accountHolder?: string | null;
+  checkoutMode?: "redirect" | "vietqr";
 }
 
 export interface PaymentDetail {
@@ -369,6 +376,12 @@ export interface PaymentDetail {
   checkoutUrl: string | null;
   paidAt: string | null;
   subscription: SubscriptionSummary | null;
+  qrImageUrl?: string | null;
+  transferContent?: string | null;
+  bankAccountNumber?: string | null;
+  bankCode?: string | null;
+  accountHolder?: string | null;
+  checkoutMode?: "redirect" | "vietqr";
 }
 
 export type SubjectSubscriptionStatus = "active" | "expiring" | "expired";
@@ -780,6 +793,9 @@ export interface PaymentMerchantConfigView {
   testMode: boolean;
   webhookUrl: string;
   configured: boolean;
+  bankAccountNumber: string | null;
+  bankCode: string | null;
+  accountHolder: string | null;
 }
 
 export interface PaymentMerchantsView {
