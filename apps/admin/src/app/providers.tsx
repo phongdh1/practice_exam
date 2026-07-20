@@ -1,6 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@practice-exam/ui";
 import { useState } from "react";
 import { AdminAppFrame } from "@/components/admin-app-frame";
 
@@ -9,6 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AdminAppFrame>{children}</AdminAppFrame>
+      <Toaster />
     </QueryClientProvider>
   );
 }

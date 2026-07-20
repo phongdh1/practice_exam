@@ -222,3 +222,16 @@
 
 - No automated test that Payments tab hrefs match page role gates (finance vs super_admin).
 - Payments ↔ Integrations IA is still partial (Zalo/webhook stay as ad-hoc links on the config page).
+
+## Deferred from: quick-dev sepay-bank-dropdown (2026-07-20)
+
+- After SePay payment success: redirect user to the purchased subject and ensure study access works immediately (entitlement refresh / navigation).
+- Optional admin proxy for `banks.json` if browser CORS blocks direct SePay fetch.
+- Match stored bank identifiers against SePay `alias[]` (today: short_name / code / bin only).
+- Dedupe collisions across banks that share the same short_name/code are first-wins; no admin warning UI.
+- Unsupported (`supported: false`) banks remain selectable (supported-first sort only), per spec.
+
+## Deferred from: quick-dev admin-save-toast-feedback (2026-07-20)
+
+- Native `<select>` is not searchable; custom combobox deferred if bank list UX becomes painful.
+- Dual inline `setMessage` + toast remains on some pages by design; consolidating to toast-only is a later UX pass.

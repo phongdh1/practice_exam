@@ -4,6 +4,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys, summarizeSettled } from "@practice-exam/api-client";
 import { Badge, MaterialIcon } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -49,9 +50,14 @@ function EditorialQueueContent() {
     },
     onSuccess: (summary) => {
       setBulkResult(summary);
+      toastApiSuccess(
+        "Đã duyệt hàng loạt",
+        `${summary.success} thành công, ${summary.failed} thất bại`,
+      );
       void queryClient.invalidateQueries({ queryKey: ["editorial", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["questions"] });
     },
+    onError: (error) => toastApiError(error, "Duyệt hàng loạt thất bại"),
   });
 
   const handleApproveAll = () => {

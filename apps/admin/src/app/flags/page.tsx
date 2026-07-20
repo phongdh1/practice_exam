@@ -4,6 +4,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { Badge } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,7 +31,11 @@ function FlaggedQuestionsContent() {
   const resolveMutation = useMutation({
     mutationFn: ({ id, note }: { id: string; note: string }) =>
       adminApi.adminResolveFlag(id, note),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.editorial.flags() }),
+    onSuccess: () => {
+      toastApiSuccess("Đã xử lý báo cáo");
+      void queryClient.invalidateQueries({ queryKey: queryKeys.editorial.flags() });
+    },
+    onError: (error) => toastApiError(error, "Xử lý báo cáo thất bại"),
   });
 
   const flags = data?.data ?? [];

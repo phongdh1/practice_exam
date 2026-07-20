@@ -4,6 +4,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { Badge, InternalLink, MaterialIcon } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,8 +40,10 @@ function WebhookLogContent() {
   const retryMutation = useMutation({
     mutationFn: (eventId: string) => adminApi.adminRetryPaymentWebhook(eventId),
     onSuccess: () => {
+      toastApiSuccess("Đã thử lại webhook");
       void queryClient.invalidateQueries({ queryKey: queryKeys.integrations.webhooks(50) });
     },
+    onError: (error) => toastApiError(error, "Thử lại webhook thất bại"),
   });
 
   return (

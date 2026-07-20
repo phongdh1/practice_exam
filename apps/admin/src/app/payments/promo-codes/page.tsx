@@ -4,6 +4,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import {
   AdminDataTable,
@@ -65,16 +66,20 @@ function PromoCodesContent() {
       }),
     onSuccess: () => {
       setShowForm(false);
+      toastApiSuccess("Đã tạo mã khuyến mãi");
       void queryClient.invalidateQueries({ queryKey: queryKeys.paymentsAdmin.promoCodes });
     },
+    onError: (error) => toastApiError(error, "Không tạo được mã"),
   });
 
   const toggleMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       adminApi.adminUpdatePromoCode(id, { isActive }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      toastApiSuccess(variables.isActive ? "Đã bật mã khuyến mãi" : "Đã tắt mã khuyến mãi");
       void queryClient.invalidateQueries({ queryKey: queryKeys.paymentsAdmin.promoCodes });
     },
+    onError: (error) => toastApiError(error, "Không cập nhật được mã"),
   });
 
   const codes = data?.data ?? [];

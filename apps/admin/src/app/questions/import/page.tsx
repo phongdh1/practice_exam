@@ -3,6 +3,7 @@
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { MaterialIcon } from "@practice-exam/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -63,7 +64,9 @@ function BulkImportContent() {
     onSuccess: (res) => {
       setBatchId(res.data.batchId);
       setSelectedFile(null);
+      toastApiSuccess("Đã gửi import câu hỏi");
     },
+    onError: (error) => toastApiError(error, "Import thất bại"),
     onSettled: () => {
       submitLockRef.current = false;
     },

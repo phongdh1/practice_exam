@@ -5,6 +5,7 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 import { formatRelativeTime } from "@/lib/format-relative-time";
 import { adminApi } from "@/lib/admin-api";
 import { useAdminRole } from "@/lib/admin-role";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import {
   partitionByStatus,
   queryKeys,
@@ -214,6 +215,12 @@ function QuestionBankContent() {
     (summary: { success: number; failed: number }, invalidateEditorial = false) => {
       setBulkResult(summary);
       setSelectedIds(new Set());
+      const desc = `${summary.success} thành công, ${summary.failed} thất bại`;
+      if (summary.success === 0) {
+        toastApiError(new Error(desc), "Xử lý hàng loạt thất bại");
+      } else {
+        toastApiSuccess("Đã xử lý hàng loạt", desc);
+      }
       void queryClient.invalidateQueries({ queryKey: ["questions"] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.questions.stats });
       if (invalidateEditorial) {
@@ -231,6 +238,7 @@ function QuestionBankContent() {
       return summarizeSettled(results);
     },
     onSuccess: (summary) => afterBulk(summary),
+    onError: (error) => toastApiError(error, "Gửi duyệt hàng loạt thất bại"),
   });
 
   const approveMutation = useMutation({
@@ -244,6 +252,7 @@ function QuestionBankContent() {
       return summarizeSettled(results);
     },
     onSuccess: (summary) => afterBulk(summary, true),
+    onError: (error) => toastApiError(error, "Duyệt hàng loạt thất bại"),
   });
 
   const deleteMutation = useMutation({
@@ -252,6 +261,7 @@ function QuestionBankContent() {
       return summarizeSettled(results);
     },
     onSuccess: (summary) => afterBulk(summary),
+    onError: (error) => toastApiError(error, "Xóa hàng loạt thất bại"),
   });
 
   const bulkRunning =

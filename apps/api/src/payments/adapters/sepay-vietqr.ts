@@ -9,7 +9,13 @@ export function buildSepayVietQrUrl(input: {
 }): string {
   const params = new URLSearchParams({
     acc: input.accountNumber.replace(/\s+/g, ""),
-    bank: input.bankCode.trim(),
+    bank: (() => {
+      const bank = input.bankCode.trim();
+      if (!bank) {
+        throw new Error("Thiếu mã ngân hàng SePay (bank) để tạo VietQR.");
+      }
+      return bank;
+    })(),
     amount: String(Math.trunc(input.amountVnd)),
     des: sanitizeTransferContent(input.transferContent),
     template: "compact",

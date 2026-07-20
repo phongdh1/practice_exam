@@ -7,6 +7,7 @@ import {
   type CourseEditorFormValues,
 } from "@/components/course-editor-form";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -48,10 +49,14 @@ function NewCourseContent() {
       }),
     onSuccess: () => {
       setActionError(null);
+      toastApiSuccess("Đã tạo khóa học");
       void queryClient.invalidateQueries({ queryKey: queryKeys.courses.admin });
       router.push("/courses");
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Không tạo được khóa học");
+    },
   });
 
   const handleUploadCover = async (file: File) => {
@@ -62,8 +67,10 @@ function NewCourseContent() {
       const url = res.data?.url;
       if (!url) throw new Error("Upload không trả về URL.");
       setForm((prev) => ({ ...prev, coverImageUrl: url }));
+      toastApiSuccess("Đã tải ảnh bìa");
     } catch (error) {
       setCoverUploadError(error instanceof Error ? error.message : "Tải ảnh thất bại.");
+      toastApiError(error, "Tải ảnh bìa thất bại");
     } finally {
       setUploadingCover(false);
     }

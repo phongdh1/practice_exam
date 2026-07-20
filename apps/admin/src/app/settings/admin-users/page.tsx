@@ -3,6 +3,7 @@
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import type { AdminAuthAuditEntry, AdminRoleType } from "@practice-exam/types";
 import {
@@ -95,10 +96,14 @@ function AdminUsersManagementContent() {
       setShowForm(false);
       setForm({ username: "", password: "", displayName: "", role: "editor" });
       setMessage("Đã tạo tài khoản admin.");
+      toastApiSuccess("Đã tạo tài khoản admin");
       void queryClient.invalidateQueries({ queryKey: queryKeys.adminStaff.list });
       void queryClient.invalidateQueries({ queryKey: ["adminStaff", "authAudit"] });
     },
-    onError: (err: Error) => setMessage(err.message),
+    onError: (err: Error) => {
+      setMessage(err.message);
+      toastApiError(err, "Không tạo được tài khoản");
+    },
   });
 
   const updateMutation = useMutation({
@@ -111,9 +116,13 @@ function AdminUsersManagementContent() {
     }) => adminApi.adminUpdateStaffUser(id, input),
     onSuccess: () => {
       setMessage("Đã cập nhật tài khoản.");
+      toastApiSuccess("Đã cập nhật tài khoản");
       void queryClient.invalidateQueries({ queryKey: queryKeys.adminStaff.list });
     },
-    onError: (err: Error) => setMessage(err.message),
+    onError: (err: Error) => {
+      setMessage(err.message);
+      toastApiError(err, "Không cập nhật được tài khoản");
+    },
   });
 
   const staff = staffData?.data ?? [];

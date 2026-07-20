@@ -3,6 +3,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { QuestionPreview } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,17 +38,29 @@ export default function ReviewDetailPage({
 
   const assignMutation = useMutation({
     mutationFn: () => adminApi.adminAssignReview(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.questions.detail(id) }),
+    onSuccess: () => {
+      toastApiSuccess("Đã gán reviewer");
+      void queryClient.invalidateQueries({ queryKey: queryKeys.questions.detail(id) });
+    },
+    onError: (error) => toastApiError(error, "Gán reviewer thất bại"),
   });
 
   const approveMutation = useMutation({
     mutationFn: () => adminApi.adminApproveQuestion(id, comment || undefined),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      toastApiSuccess("Đã duyệt câu hỏi");
+      invalidate();
+    },
+    onError: (error) => toastApiError(error, "Duyệt thất bại"),
   });
 
   const rejectMutation = useMutation({
     mutationFn: () => adminApi.adminRejectQuestion(id, comment),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      toastApiSuccess("Đã từ chối câu hỏi");
+      invalidate();
+    },
+    onError: (error) => toastApiError(error, "Từ chối thất bại"),
   });
 
   const question = questionData?.data;

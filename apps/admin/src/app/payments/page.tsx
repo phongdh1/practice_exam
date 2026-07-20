@@ -4,6 +4,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import {
   AdminDataTable,
@@ -86,8 +87,10 @@ function PaymentsContent() {
     onSuccess: () => {
       setRefundId(null);
       setRefundReason("");
+      toastApiSuccess("Đã khởi tạo hoàn tiền");
       void queryClient.invalidateQueries({ queryKey: ["paymentsAdmin"] });
     },
+    onError: (error) => toastApiError(error, "Hoàn tiền thất bại"),
   });
 
   const result = data?.data;

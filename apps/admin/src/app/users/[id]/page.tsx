@@ -4,6 +4,7 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
 import { useAdminRole } from "@/lib/admin-role";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { Badge, MaterialIcon } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -71,24 +72,29 @@ function UserProfileContent() {
       }),
     onSuccess: () => {
       setActionMessage("Đã cấp gói đăng ký.");
+      toastApiSuccess("Đã cấp gói đăng ký");
       setGrantReason("");
       invalidate();
     },
+    onError: (error) => toastApiError(error, "Không cấp được gói"),
   });
 
   const revokeMutation = useMutation({
     mutationFn: () => adminApi.adminRevokeSubscription(userId, revokeTargetId, revokeReason),
     onSuccess: () => {
       setActionMessage("Đã thu hồi gói đăng ký.");
+      toastApiSuccess("Đã thu hồi gói đăng ký");
       setRevokeReason("");
       setRevokeTargetId("");
       invalidate();
     },
+    onError: (error) => toastApiError(error, "Không thu hồi được gói"),
   });
 
   const mergePreviewMutation = useMutation({
     mutationFn: () => adminApi.adminPreviewMerge(mergeSurvivorId, mergeDuplicateId),
     onSuccess: (res) => setMergePreview(res.data ?? null),
+    onError: (error) => toastApiError(error, "Xem trước gộp thất bại"),
   });
 
   const mergeMutation = useMutation({
@@ -100,29 +106,35 @@ function UserProfileContent() {
       }),
     onSuccess: () => {
       setActionMessage("Đã gộp tài khoản.");
+      toastApiSuccess("Đã gộp tài khoản");
       setMergePreview(null);
       setMergeDuplicateId("");
       setMergeTicket("");
       invalidate();
     },
+    onError: (error) => toastApiError(error, "Gộp tài khoản thất bại"),
   });
 
   const suspendMutation = useMutation({
     mutationFn: () => adminApi.adminSuspendUser(userId, suspendReason),
     onSuccess: () => {
       setActionMessage("Đã tạm khóa tài khoản.");
+      toastApiSuccess("Đã tạm khóa tài khoản");
       setSuspendReason("");
       invalidate();
     },
+    onError: (error) => toastApiError(error, "Không khóa được tài khoản"),
   });
 
   const unsuspendMutation = useMutation({
     mutationFn: () => adminApi.adminUnsuspendUser(userId, unsuspendReason),
     onSuccess: () => {
       setActionMessage("Đã mở khóa tài khoản.");
+      toastApiSuccess("Đã mở khóa tài khoản");
       setUnsuspendReason("");
       invalidate();
     },
+    onError: (error) => toastApiError(error, "Không mở khóa được tài khoản"),
   });
 
   const handleExport = async (format: "json" | "csv") => {

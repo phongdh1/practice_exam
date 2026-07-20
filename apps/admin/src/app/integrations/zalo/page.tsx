@@ -4,6 +4,7 @@ import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { Badge, MaterialIcon } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,9 +40,11 @@ function ZaloIntegrationContent() {
       }),
     onSuccess: () => {
       setMessage("Đã lưu cấu hình Zalo Mini App.");
+      toastApiSuccess("Đã lưu cấu hình Zalo");
       setAppSecret("");
       void queryClient.invalidateQueries({ queryKey: queryKeys.integrations.zalo });
     },
+    onError: (error) => toastApiError(error, "Không lưu được cấu hình"),
   });
 
   const verifyMutation = useMutation({
@@ -53,8 +56,17 @@ function ZaloIntegrationContent() {
           ? "Xác thực thành công."
           : `Xác thực thất bại: ${res.data.diagnosticError ?? "Không rõ lỗi"}`,
       );
+      if (status === "verified") {
+        toastApiSuccess("Xác thực thành công");
+      } else {
+        toastApiError(
+          new Error(res.data.diagnosticError ?? "Không rõ lỗi"),
+          "Xác thực thất bại",
+        );
+      }
       void queryClient.invalidateQueries({ queryKey: queryKeys.integrations.zalo });
     },
+    onError: (error) => toastApiError(error, "Xác thực thất bại"),
   });
 
   const statusVariant =

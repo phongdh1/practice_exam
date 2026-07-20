@@ -9,6 +9,7 @@ import {
   createEmptyQuestionForm,
   validateQuestionForm,
 } from "@/lib/question-editor";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -53,11 +54,13 @@ function NewQuestionContent() {
       });
     },
     onSuccess: (response) => {
+      toastApiSuccess("Đã tạo câu hỏi");
       void queryClient.invalidateQueries({ queryKey: ["questions"] });
       router.push(`/questions/${response.data.id}/edit`);
     },
     onError: (err) => {
       setError(err instanceof Error ? err.message : "Không thể tạo câu hỏi.");
+      toastApiError(err, "Không tạo được câu hỏi");
     },
   });
 

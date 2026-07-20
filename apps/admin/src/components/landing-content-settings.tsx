@@ -1,6 +1,7 @@
 "use client";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import {
   DEFAULT_LANDING_CONTENT,
@@ -59,15 +60,23 @@ export function LandingContentSettingsSection() {
     mutationFn: () => adminApi.adminUpdateLandingContent(form),
     onSuccess: () => {
       setMessage("Đã lưu nội dung trang chủ.");
+      toastApiSuccess("Đã lưu nội dung trang chủ");
       void queryClient.invalidateQueries({ queryKey: queryKeys.adminLandingContent.all });
     },
-    onError: (err: Error) => setMessage(err.message),
+    onError: (err: Error) => {
+      setMessage(err.message);
+      toastApiError(err, "Không lưu được nội dung");
+    },
   });
 
   const uploadMutation = useMutation({
     mutationFn: ({ file, target }: { file: File; target: "background" | "sidecard" }) =>
       adminApi.adminUploadLandingAsset(file).then((res) => ({ ...res.data, target })),
-    onError: (err: Error) => setMessage(err.message),
+    onSuccess: () => toastApiSuccess("Đã tải ảnh lên"),
+    onError: (err: Error) => {
+      setMessage(err.message);
+      toastApiError(err, "Tải ảnh thất bại");
+    },
   });
 
   const previewContent = useMemo(

@@ -7,6 +7,7 @@ import {
   type SubjectEditorFormValues,
 } from "@/components/subject-editor-form";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -118,21 +119,29 @@ function EditSubjectContent() {
     },
     onSuccess: () => {
       setActionError(null);
+      toastApiSuccess("Đã lưu môn học");
       void queryClient.invalidateQueries({ queryKey: queryKeys.subjects.admin });
       router.push("/subjects");
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Không lưu được môn học");
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: () => adminApi.adminDeleteSubject(params.id),
     onSuccess: () => {
       setActionError(null);
+      toastApiSuccess("Đã xóa môn học");
       void queryClient.invalidateQueries({ queryKey: queryKeys.subjects.admin });
       void queryClient.invalidateQueries({ queryKey: queryKeys.courses.admin });
       router.push("/subjects");
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Không xóa được môn học");
+    },
   });
 
   const handleUploadCover = async (file: File) => {
@@ -143,8 +152,10 @@ function EditSubjectContent() {
       const url = res.data?.url;
       if (!url) throw new Error("Upload không trả về URL.");
       setForm((prev) => ({ ...prev, coverImageUrl: url }));
+      toastApiSuccess("Đã tải ảnh bìa");
     } catch (error) {
       setCoverUploadError(error instanceof Error ? error.message : "Tải ảnh thất bại.");
+      toastApiError(error, "Tải ảnh bìa thất bại");
     } finally {
       setUploadingCover(false);
     }

@@ -3,6 +3,7 @@
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys, summarizeSettled } from "@practice-exam/api-client";
 import type { AdminSubjectView } from "@practice-exam/types";
 import {
@@ -173,12 +174,18 @@ function SubjectsContent() {
   const visibilityMutation = useMutation({
     mutationFn: ({ id, visibility }: { id: string; visibility: "active" | "archived" }) =>
       visibility === "active" ? adminApi.adminActivateSubject(id) : adminApi.adminArchiveSubject(id),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       setActionError(null);
       setSelectedIds(new Set());
+      toastApiSuccess(
+        variables.visibility === "active" ? "Đã kích hoạt môn học" : "Đã lưu trữ môn học",
+      );
       void queryClient.invalidateQueries({ queryKey: queryKeys.subjects.admin });
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Không đổi được trạng thái");
+    },
   });
 
   const deleteMutation = useMutation({
@@ -190,10 +197,19 @@ function SubjectsContent() {
       setBulkResult(summary);
       setSelectedIds(new Set());
       setActionError(null);
+      const desc = `${summary.success} thành công, ${summary.failed} thất bại`;
+      if (summary.success === 0) {
+        toastApiError(new Error(desc), "Xóa hàng loạt thất bại");
+      } else {
+        toastApiSuccess("Đã xóa hàng loạt", desc);
+      }
       void queryClient.invalidateQueries({ queryKey: queryKeys.subjects.admin });
       void queryClient.invalidateQueries({ queryKey: queryKeys.courses.admin });
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Xóa hàng loạt thất bại");
+    },
   });
 
   const bulkRunning = deleteMutation.isPending;

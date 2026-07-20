@@ -3,6 +3,7 @@
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys, summarizeSettled } from "@practice-exam/api-client";
 import type { AdminCourseView } from "@practice-exam/types";
 import {
@@ -181,18 +182,28 @@ function CoursesContent() {
         next.delete(variables.id);
         return next;
       });
+      toastApiSuccess(
+        variables.visibility === "active" ? "Đã kích hoạt khóa học" : "Đã lưu trữ khóa học",
+      );
       invalidate();
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Không đổi được trạng thái");
+    },
   });
 
   const reorderMutation = useMutation({
     mutationFn: (orderedIds: string[]) => adminApi.adminReorderCourses(orderedIds),
     onSuccess: () => {
       setActionError(null);
+      toastApiSuccess("Đã sắp xếp khóa học");
       void queryClient.invalidateQueries({ queryKey: queryKeys.courses.admin });
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Sắp xếp thất bại");
+    },
   });
 
   const deleteMutation = useMutation({
@@ -204,9 +215,18 @@ function CoursesContent() {
       setBulkResult(summary);
       setSelectedIds(new Set());
       setActionError(null);
+      const desc = `${summary.success} thành công, ${summary.failed} thất bại`;
+      if (summary.success === 0) {
+        toastApiError(new Error(desc), "Xóa hàng loạt thất bại");
+      } else {
+        toastApiSuccess("Đã xóa hàng loạt", desc);
+      }
       invalidate();
     },
-    onError: (error: Error) => setActionError(error.message),
+    onError: (error: Error) => {
+      setActionError(error.message);
+      toastApiError(error, "Xóa hàng loạt thất bại");
+    },
   });
 
   const bulkRunning = deleteMutation.isPending;

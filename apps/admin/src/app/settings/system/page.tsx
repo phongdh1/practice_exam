@@ -3,6 +3,7 @@
 import { AdminRoleGate } from "@/components/admin-role-gate";
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import type { EmailNotificationTemplateKey } from "@practice-exam/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -62,9 +63,13 @@ function SystemSettingsContent() {
       }),
     onSuccess: () => {
       setMessage("Đã lưu cài đặt hệ thống.");
+      toastApiSuccess("Đã lưu cài đặt hệ thống");
       void queryClient.invalidateQueries({ queryKey: queryKeys.adminSystemSettings.all });
     },
-    onError: (err: Error) => setMessage(err.message),
+    onError: (err: Error) => {
+      setMessage(err.message);
+      toastApiError(err, "Không lưu được cài đặt");
+    },
   });
 
   return (

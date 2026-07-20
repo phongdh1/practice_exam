@@ -9,6 +9,7 @@ import {
   questionDetailToForm,
   validateQuestionForm,
 } from "@/lib/question-editor";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -70,6 +71,7 @@ function EditQuestionContent({ questionId }: { questionId: string }) {
       return adminApi.adminUpdateQuestion(questionId, buildQuestionPayload(form));
     },
     onSuccess: (response) => {
+      toastApiSuccess("Đã lưu câu hỏi");
       void queryClient.invalidateQueries({ queryKey: ["questions"] });
       const saved = response.data;
       if (saved.id !== questionId) {
@@ -81,17 +83,20 @@ function EditQuestionContent({ questionId }: { questionId: string }) {
     },
     onError: (err) => {
       setError(err instanceof Error ? err.message : "Không thể lưu câu hỏi.");
+      toastApiError(err, "Không lưu được câu hỏi");
     },
   });
 
   const submitMutation = useMutation({
     mutationFn: () => adminApi.adminSubmitQuestionForReview(questionId),
     onSuccess: () => {
+      toastApiSuccess("Đã gửi duyệt");
       void queryClient.invalidateQueries({ queryKey: ["questions"] });
       router.push("/review");
     },
     onError: (err) => {
       setError(err instanceof Error ? err.message : "Không thể gửi duyệt.");
+      toastApiError(err, "Không gửi duyệt được");
     },
   });
 

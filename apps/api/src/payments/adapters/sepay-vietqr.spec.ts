@@ -29,4 +29,15 @@ describe("sepay-vietqr", () => {
     expect(url).toContain("des=PEABCDEF1234");
     expect(url).toContain("holder=NGUYENVANA");
   });
+
+  it("rejects empty bank code when building VietQR url", () => {
+    expect(() =>
+      buildSepayVietQrUrl({
+        accountNumber: "0123456789",
+        bankCode: "   ",
+        amountVnd: 1000,
+        transferContent: "PEABCDEF1234",
+      }),
+    ).toThrow(/Thiếu mã ngân hàng/);
+  });
 });

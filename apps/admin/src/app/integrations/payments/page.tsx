@@ -5,18 +5,33 @@ import { AdminRoleGate } from "@/components/admin-role-gate";
 import { PaymentsSectionTabs } from "@/components/payments-section-tabs";
 
 import { adminApi } from "@/lib/admin-api";
+import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
+import {
+  fetchSepayBankOptions,
+  isKnownSepayBank,
+  resolveSepayBankValue,
+  type SepayBankOption,
+} from "@/lib/sepay-banks";
 import { queryKeys } from "@practice-exam/api-client";
 import type { PaymentMerchantConfigView } from "@practice-exam/types";
 import { Badge, InternalLink, MaterialIcon } from "@practice-exam/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 function MerchantForm({
   config,
   provider,
+  bankOptions,
+  banksError,
+  banksLoading,
+  onRetryBanks,
 }: {
   config: PaymentMerchantConfigView;
   provider: "payos" | "sepay";
+  bankOptions: SepayBankOption[];
+  banksError: string | null;
+  banksLoading: boolean;
+  onRetryBanks?: () => void;
 }) {
   const queryClient = useQueryClient();
   const [merchantId, setMerchantId] = useState("");
@@ -30,9 +45,40 @@ function MerchantForm({
   const [testPaymentId, setTestPaymentId] = useState("");
   const [message, setMessage] = useState<string | null>(null);
 
+  const selectedBankValue = useMemo(
+    () => resolveSepayBankValue(bankCode, bankOptions),
+    [bankCode, bankOptions],
+  );
+  const bankKnown = useMemo(
+    () => isKnownSepayBank(bankCode, bankOptions),
+    [bankCode, bankOptions],
+  );
+  const legacyBank =
+    provider === "sepay" && Boolean(bankCode.trim()) && bankOptions.length > 0 && !bankKnown;
+  const bankGateActive =
+    provider === "sepay" && Boolean(bankAccountNumber.trim()) && (banksLoading || Boolean(banksError) || legacyBank || !selectedBankValue);
+
   const saveMutation = useMutation({
-    mutationFn: () =>
-      adminApi.adminUpdatePaymentMerchant(provider, {
+    mutationFn: () => {
+      const account = bankAccountNumber.trim();
+      const holder = accountHolder.trim();
+      if (provider === "sepay" && account) {
+        if (banksLoading) {
+          throw new Error("Đang tải danh sách ngân hàng, thử lại sau.");
+        }
+        if (banksError) {
+          throw new Error(banksError);
+        }
+        if (!selectedBankValue) {
+          throw new Error("Chọn ngân hàng từ danh sách SePay trước khi lưu.");
+        }
+      }
+      const nextBankCode =
+        provider === "sepay"
+          ? selectedBankValue ||
+            (banksError || banksLoading ? config.bankCode || undefined : undefined)
+          : undefined;
+      return adminApi.adminUpdatePaymentMerchant(provider, {
         merchantId: merchantId || config.merchantId || undefined,
         apiKey: apiKey || undefined,
         checksumKey: checksumKey || undefined,
@@ -40,24 +86,37 @@ function MerchantForm({
         testMode,
         ...(provider === "sepay"
           ? {
-              bankAccountNumber: bankAccountNumber || undefined,
-              bankCode: bankCode || undefined,
-              accountHolder: accountHolder || undefined,
+              bankAccountNumber: account || undefined,
+              bankCode: nextBankCode,
+              accountHolder: holder || undefined,
             }
           : {}),
-      }),
+      });
+    },
     onSuccess: () => {
       setMessage("Đã lưu cấu hình merchant.");
+      toastApiSuccess("Đã lưu cấu hình merchant");
       setApiKey("");
       setChecksumKey("");
       setWebhookSecret("");
       void queryClient.invalidateQueries({ queryKey: queryKeys.integrations.payments });
     },
+    onError: (error) => {
+      setMessage(null);
+      toastApiError(error, "Không lưu được cấu hình");
+    },
   });
 
   const testWebhookMutation = useMutation({
     mutationFn: () => adminApi.adminTestPaymentWebhook(provider, testPaymentId),
-    onSuccess: () => setMessage("Đã gửi webhook thử nghiệm."),
+    onSuccess: () => {
+      setMessage("Đã gửi webhook thử nghiệm.");
+      toastApiSuccess("Đã gửi webhook thử nghiệm");
+    },
+    onError: (error) => {
+      setMessage(null);
+      toastApiError(error, "Gửi webhook thử thất bại");
+    },
   });
 
   return (
@@ -86,7 +145,7 @@ function MerchantForm({
         {provider === "sepay" && (
           <div className="space-y-3 rounded-lg border border-dashed border-outline-variant p-3">
             <p className="text-label text-ink-muted">
-              Tài khoản ngân hàng (VietQR) — SePay webhook sẽ khớp mã CK + số tiền
+              Tài khoản ngân hàng (VietQR) — chọn ngân hàng từ danh sách SePay
             </p>
             <input
               className="w-full rounded-lg border border-outline px-3 py-2"
@@ -94,12 +153,55 @@ function MerchantForm({
               value={bankAccountNumber}
               onChange={(e) => setBankAccountNumber(e.target.value)}
             />
-            <input
-              className="w-full rounded-lg border border-outline px-3 py-2"
-              placeholder="Mã ngân hàng (VD: VCB, BIDV, Vietcombank)"
-              value={bankCode}
-              onChange={(e) => setBankCode(e.target.value)}
-            />
+            <div className="space-y-1">
+              <select
+                className="w-full rounded-lg border border-outline bg-surface px-3 py-2"
+                value={legacyBank ? "__legacy__" : selectedBankValue}
+                disabled={banksLoading || Boolean(banksError)}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  if (next === "__legacy__") return;
+                  setBankCode(next);
+                }}
+              >
+                <option value="">
+                  {banksLoading ? "Đang tải ngân hàng..." : "Chọn ngân hàng"}
+                </option>
+                {legacyBank && (
+                  <option value="__legacy__">
+                    Giá trị cũ không hợp lệ: {bankCode} — chọn lại
+                  </option>
+                )}
+                {bankOptions.map((bank) => (
+                  <option key={`${bank.code}-${bank.value}`} value={bank.value}>
+                    {bank.supported ? "" : "(không hỗ trợ) "}
+                    {bank.label}
+                  </option>
+                ))}
+              </select>
+              {banksError && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-body-sm text-error">{banksError}</p>
+                  <button
+                    type="button"
+                    className="text-body-sm text-primary underline"
+                    onClick={() => onRetryBanks?.()}
+                  >
+                    Thử lại
+                  </button>
+                </div>
+              )}
+              {!banksError && banksLoading === false && bankCode.trim() && !selectedBankValue && bankOptions.length === 0 && (
+                <p className="text-body-sm text-ink-muted">
+                  Đã lưu: {bankCode} — chờ danh sách ngân hàng để xác nhận.
+                </p>
+              )}
+              {legacyBank && !banksError && (
+                <p className="text-body-sm text-ink-muted">
+                  Mã ngân hàng hiện tại không có trong danh sách SePay. Vui lòng chọn lại.
+                </p>
+              )}
+            </div>
             <input
               className="w-full rounded-lg border border-outline px-3 py-2"
               placeholder="Tên chủ tài khoản (không dấu, tùy chọn)"
@@ -150,9 +252,9 @@ function MerchantForm({
         </label>
         <button
           type="button"
-          disabled={saveMutation.isPending}
+          disabled={saveMutation.isPending || bankGateActive}
           onClick={() => saveMutation.mutate()}
-          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-on-primary"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-on-primary disabled:opacity-50"
         >
           <MaterialIcon name="save" size={18} />
           Lưu {provider}
@@ -199,7 +301,19 @@ function PaymentIntegrationsContent() {
     queryFn: () => adminApi.adminGetPaymentMerchants(),
   });
 
+  const banksQuery = useQuery({
+    queryKey: ["sepay", "banks"],
+    queryFn: fetchSepayBankOptions,
+    staleTime: 24 * 60 * 60 * 1000,
+  });
+
   const merchants = data?.data;
+  const bankOptions = banksQuery.data ?? [];
+  const banksError = banksQuery.error
+    ? banksQuery.error instanceof Error
+      ? banksQuery.error.message
+      : "Không tải được danh sách ngân hàng."
+    : null;
 
   return (
     <>
@@ -216,8 +330,22 @@ function PaymentIntegrationsContent() {
         <p className="text-ink-muted">Đang tải...</p>
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
-          <MerchantForm config={merchants.payos} provider="payos" />
-          <MerchantForm config={merchants.sepay} provider="sepay" />
+          <MerchantForm
+            config={merchants.payos}
+            provider="payos"
+            bankOptions={bankOptions}
+            banksError={banksError}
+            banksLoading={banksQuery.isLoading}
+            onRetryBanks={() => void banksQuery.refetch()}
+          />
+          <MerchantForm
+            config={merchants.sepay}
+            provider="sepay"
+            bankOptions={bankOptions}
+            banksError={banksError}
+            banksLoading={banksQuery.isLoading}
+            onRetryBanks={() => void banksQuery.refetch()}
+          />
         </div>
       )}
     </>
