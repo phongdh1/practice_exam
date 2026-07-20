@@ -1,9 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   Headers,
   HttpCode,
+  Logger,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -21,6 +24,8 @@ import { WebhooksService } from "./webhooks.service";
 
 @Controller()
 export class PaymentsController {
+  private readonly logger = new Logger(PaymentsController.name);
+
   constructor(
     private readonly checkoutService: CheckoutService,
     private readonly webhooksService: WebhooksService,
@@ -70,7 +75,11 @@ export class PaymentsController {
     return this.webhooksService.handleProviderWebhook("payos", headers, body);
   }
 
-  /** SePay bank webhooks require exact `{"success": true}` (no API envelope). */
+  /**
+   * SePay requires HTTP 200 + exact `{"success": true}` (no API envelope).
+   * Business misses (unknown payment / amount mismatch) still ack — SePay maps any HTTP 404
+   * to "endpoint not found" in their UI even when the route exists.
+   */
   @Post("webhooks/sepay")
   @HttpCode(200)
   async sepayWebhook(
@@ -78,7 +87,24 @@ export class PaymentsController {
     @Body() body: unknown,
     @Res() res: Response,
   ) {
-    await this.webhooksService.handleProviderWebhook("sepay", headers, body);
+    try {
+      await this.webhooksService.handleProviderWebhook("sepay", headers, body);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        this.logger.warn(`SePay webhook: payment not matched — ${JSON.stringify(body)}`);
+        return res.status(200).json({ success: true });
+      }
+      if (
+        error instanceof BadRequestException &&
+        typeof error.getResponse() === "object" &&
+        error.getResponse() !== null &&
+        (error.getResponse() as { code?: string }).code === "PAYMENT_AMOUNT_MISMATCH"
+      ) {
+        this.logger.warn(`SePay webhook: amount mismatch — ${JSON.stringify(body)}`);
+        return res.status(200).json({ success: true });
+      }
+      throw error;
+    }
     return res.status(200).json({ success: true });
   }
 }

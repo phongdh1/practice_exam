@@ -43,7 +43,7 @@ const navItems: { id: AdminNavItem; label: string; icon: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard" },
   { id: "catalog", label: "Subject", icon: "category" },
   { id: "course", label: "Course", icon: "layers" },
-  { id: "content", label: "Content", icon: "edit_note" },
+  { id: "content", label: "Question Bank", icon: "edit_note" },
   { id: "users", label: "Users", icon: "group" },
   { id: "payments", label: "Payments", icon: "payments" },
 ];
