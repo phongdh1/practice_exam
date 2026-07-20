@@ -217,3 +217,8 @@
 - Narrow `PaymentMerchantConfigView` so PayOS fixtures are not forced to carry SePay bank nulls; consider SePay-specific view variant.
 - Add package tests asserting payment/merchant DTO shapes after wire-visible type changes.
 - Web/Zalo checkout should consume typed `CheckoutResult` instead of `as` casts on JSON.
+
+## Deferred from: one-shot payments-menu-integrations-config (2026-07-20)
+
+- No automated test that Payments tab hrefs match page role gates (finance vs super_admin).
+- Payments ↔ Integrations IA is still partial (Zalo/webhook stay as ad-hoc links on the config page).

@@ -2,6 +2,7 @@
 
 import { AdminPageShell } from "@/components/admin-page-shell";
 import { AdminRoleGate } from "@/components/admin-role-gate";
+import { PaymentsSectionTabs } from "@/components/payments-section-tabs";
 
 import { adminApi } from "@/lib/admin-api";
 import { queryKeys } from "@practice-exam/api-client";
@@ -22,6 +23,9 @@ function MerchantForm({
   const [apiKey, setApiKey] = useState("");
   const [checksumKey, setChecksumKey] = useState("");
   const [webhookSecret, setWebhookSecret] = useState("");
+  const [bankAccountNumber, setBankAccountNumber] = useState(config.bankAccountNumber ?? "");
+  const [bankCode, setBankCode] = useState(config.bankCode ?? "");
+  const [accountHolder, setAccountHolder] = useState(config.accountHolder ?? "");
   const [testMode, setTestMode] = useState(config.testMode);
   const [testPaymentId, setTestPaymentId] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -29,11 +33,18 @@ function MerchantForm({
   const saveMutation = useMutation({
     mutationFn: () =>
       adminApi.adminUpdatePaymentMerchant(provider, {
-        merchantId: merchantId || config.merchantId || "",
+        merchantId: merchantId || config.merchantId || undefined,
         apiKey: apiKey || undefined,
         checksumKey: checksumKey || undefined,
         webhookSecret: webhookSecret || undefined,
         testMode,
+        ...(provider === "sepay"
+          ? {
+              bankAccountNumber: bankAccountNumber || undefined,
+              bankCode: bankCode || undefined,
+              accountHolder: accountHolder || undefined,
+            }
+          : {}),
       }),
     onSuccess: () => {
       setMessage("Đã lưu cấu hình merchant.");
@@ -72,30 +83,60 @@ function MerchantForm({
       </dl>
 
       <div className="space-y-3">
+        {provider === "sepay" && (
+          <div className="space-y-3 rounded-lg border border-dashed border-outline-variant p-3">
+            <p className="text-label text-ink-muted">
+              Tài khoản ngân hàng (VietQR) — SePay webhook sẽ khớp mã CK + số tiền
+            </p>
+            <input
+              className="w-full rounded-lg border border-outline px-3 py-2"
+              placeholder="Số tài khoản"
+              value={bankAccountNumber}
+              onChange={(e) => setBankAccountNumber(e.target.value)}
+            />
+            <input
+              className="w-full rounded-lg border border-outline px-3 py-2"
+              placeholder="Mã ngân hàng (VD: VCB, BIDV, Vietcombank)"
+              value={bankCode}
+              onChange={(e) => setBankCode(e.target.value)}
+            />
+            <input
+              className="w-full rounded-lg border border-outline px-3 py-2"
+              placeholder="Tên chủ tài khoản (không dấu, tùy chọn)"
+              value={accountHolder}
+              onChange={(e) => setAccountHolder(e.target.value)}
+            />
+          </div>
+        )}
+
         <input
           className="w-full rounded-lg border border-outline px-3 py-2"
-          placeholder={config.merchantId ?? "Merchant ID"}
+          placeholder={config.merchantId ?? "Merchant ID (PayOS / SePay hosted)"}
           value={merchantId}
           onChange={(e) => setMerchantId(e.target.value)}
         />
         <input
           type="password"
           className="w-full rounded-lg border border-outline px-3 py-2"
-          placeholder={config.apiKeyMasked ? `API key (${config.apiKeyMasked})` : "API key"}
+          placeholder={config.apiKeyMasked ? `API key (${config.apiKeyMasked})` : "API key / webhook auth"}
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
         />
         <input
           type="password"
           className="w-full rounded-lg border border-outline px-3 py-2"
-          placeholder="Checksum key (tuỳ chọn)"
+          placeholder="Checksum key (PayOS)"
           value={checksumKey}
           onChange={(e) => setChecksumKey(e.target.value)}
         />
         <input
           type="password"
           className="w-full rounded-lg border border-outline px-3 py-2"
-          placeholder="Webhook secret (tuỳ chọn)"
+          placeholder={
+            config.webhookSecretMasked
+              ? `Webhook secret (${config.webhookSecretMasked})`
+              : "Webhook secret (SePay API Key / HMAC)"
+          }
           value={webhookSecret}
           onChange={(e) => setWebhookSecret(e.target.value)}
         />
@@ -143,9 +184,12 @@ function MerchantForm({
 
 export default function PaymentIntegrationsPage() {
   return (
-    <AdminRoleGate allowedRoles={["super_admin"]}>
-      <PaymentIntegrationsContent />
-    </AdminRoleGate>
+    <AdminPageShell>
+      <PaymentsSectionTabs />
+      <AdminRoleGate allowedRoles={["super_admin"]}>
+        <PaymentIntegrationsContent />
+      </AdminRoleGate>
+    </AdminPageShell>
   );
 }
 
@@ -158,8 +202,8 @@ function PaymentIntegrationsContent() {
   const merchants = data?.data;
 
   return (
-    <AdminPageShell>
-      <div className="mb-4 flex gap-3 text-body-sm">
+    <>
+      <div className="mb-4 mt-4 flex gap-3 text-body-sm">
         <InternalLink href="/integrations/zalo" className="text-primary underline">
           Zalo Mini App (A-80)
         </InternalLink>
@@ -176,6 +220,6 @@ function PaymentIntegrationsContent() {
           <MerchantForm config={merchants.sepay} provider="sepay" />
         </div>
       )}
-    </AdminPageShell>
+    </>
   );
 }
