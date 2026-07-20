@@ -8,13 +8,16 @@ import {
   CandidateFooter,
   DisclaimerGate,
   FALLBACK_PLATFORM_DISCLAIMER,
+  LandingCtaBand,
+  LandingFeaturedSubjects,
+  LandingFeatures,
   LandingHero,
   mergeLandingContent,
   PullToRefresh,
   SubjectCatalogGrid,
 } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWebSession } from "@/components/web-session-provider";
 
 const apiClient = createApiClient({
@@ -22,6 +25,10 @@ const apiClient = createApiClient({
 });
 
 const CATALOG_PAGE_SIZE = 12;
+
+type CatalogSubject = Awaited<
+  ReturnType<typeof apiClient.listSubjectsPaginated>
+>["data"]["items"][number];
 
 async function fetchFreeTierUsage() {
   const res = await fetch("/api/entitlements/free-tier");
@@ -33,6 +40,7 @@ async function fetchFreeTierUsage() {
 export default function HomePage() {
   const { isAuthenticated, user } = useWebSession();
   const [page, setPage] = useState(1);
+  const [featuredPool, setFeaturedPool] = useState<CatalogSubject[]>([]);
 
   const {
     data: subjectsResponse,
@@ -61,6 +69,7 @@ export default function HomePage() {
   const catalog = subjectsResponse?.data;
   const subjects = catalog?.items ?? [];
   const disclaimer = disclaimerResponse?.data ?? FALLBACK_PLATFORM_DISCLAIMER;
+  const disclaimerText = disclaimer.text?.trim() || FALLBACK_PLATFORM_DISCLAIMER.text;
   const landingContent = mergeLandingContent(landingContentResponse?.data);
   const freeTierUsedBySubjectId = useMemo(() => {
     const map: Record<string, number> = {};
@@ -70,19 +79,39 @@ export default function HomePage() {
     return map;
   }, [entitlementsResponse]);
 
+  useEffect(() => {
+    if (page === 1 && !isLoading && !isError) {
+      setFeaturedPool(subjects);
+    }
+  }, [page, isLoading, isError, subjects]);
+
+  const getSubjectHref = (subject: { id: string }) => `/subjects/${subject.id}`;
+
   const content = (
-    <>
-      {!isAuthenticated && <LandingHero content={landingContent} catalogHref="#catalog" />}
+    <div className="pb-20 md:pb-0">
+      {!isAuthenticated && (
+        <>
+          <LandingHero content={landingContent} catalogHref="#catalog" />
+          <LandingFeatures />
+          {featuredPool.length > 0 && (
+            <LandingFeaturedSubjects
+              subjects={featuredPool}
+              getSubjectHref={getSubjectHref}
+              catalogHref="#catalog"
+            />
+          )}
+        </>
+      )}
       <PullToRefresh
-        className="min-h-screen pb-20 md:pb-0"
+        className="min-h-screen"
         onRefresh={() => refetch()}
         disabled={isFetching}
       >
         <main
           id="catalog"
-          className="mx-auto max-w-content px-gutter-mobile py-8 md:px-gutter-desktop"
+          className="mx-auto max-w-content scroll-mt-20 px-gutter-mobile py-8 md:px-gutter-desktop"
         >
-          <div className="mt-8">
+          <div className={!isAuthenticated ? "mt-4" : "mt-8"}>
             {isLoading && <CatalogSkeleton />}
             {isError && (
               <p className="text-sm text-error" role="alert">
@@ -96,7 +125,7 @@ export default function HomePage() {
                   totalCount={catalog?.total}
                   userName={isAuthenticated ? (user?.displayName ?? "Học viên") : undefined}
                   freeTierUsedBySubjectId={freeTierUsedBySubjectId}
-                  getSubjectHref={(subject) => `/subjects/${subject.id}`}
+                  getSubjectHref={getSubjectHref}
                 />
                 {catalog && (
                   <CatalogPagination
@@ -111,12 +140,16 @@ export default function HomePage() {
           </div>
         </main>
       </PullToRefresh>
-      <CandidateFooter />
-    </>
+      {!isAuthenticated && <LandingCtaBand />}
+      <CandidateFooter
+        variant={isAuthenticated ? "compact" : "marketing"}
+        disclaimerText={disclaimerText}
+      />
+    </div>
   );
 
   return (
-    <DisclaimerGate text={disclaimer.text} version={disclaimer.version} screenId="W-03">
+    <DisclaimerGate text={disclaimerText} version={disclaimer.version} screenId="W-03">
       {content}
     </DisclaimerGate>
   );

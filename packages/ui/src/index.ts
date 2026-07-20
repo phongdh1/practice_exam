@@ -128,6 +128,12 @@ export { CandidateBottomNav, type CandidateBottomNavProps } from "./components/c
 export { CandidateFooter, type CandidateFooterProps } from "./components/candidate-footer";
 export { AuthShell, type AuthShellProps } from "./components/auth-shell";
 export { LandingHero, type LandingHeroProps, DEFAULT_LANDING_CONTENT, mergeLandingContent } from "./components/landing-hero";
+export { LandingFeatures, type LandingFeaturesProps } from "./components/landing-features";
+export {
+  LandingFeaturedSubjects,
+  type LandingFeaturedSubjectsProps,
+} from "./components/landing-featured-subjects";
+export { LandingCtaBand, type LandingCtaBandProps } from "./components/landing-cta-band";
 export { SafeMarkdown, type SafeMarkdownProps } from "./components/safe-markdown";
 export {
   AdminSidebar,

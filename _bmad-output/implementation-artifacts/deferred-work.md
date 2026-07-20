@@ -235,3 +235,8 @@
 
 - Native `<select>` is not searchable; custom combobox deferred if bank list UX becomes painful.
 - Dual inline `setMessage` + toast remains on some pages by design; consolidating to toast-only is a later UX pass.
+
+## Deferred from: quick-dev web-landing-ui (2026-07-20)
+
+- Featured subjects pool is cached from catalog page 1 only; hot subjects that only appear on later pages are not featured until a dedicated unpaged/hot query exists.
+- Guest marketing may briefly flash while session resolves (`isAuthenticated` false during load) — pre-existing guest-gating pattern on home.
