@@ -693,6 +693,14 @@ function SubjectCheckoutPage() {
         cancelUrl: `${origin}/subjects/${subjectId}`,
       });
 
+      if (result.data.checkoutMode === "vietqr" || result.data.qrImageUrl) {
+        navigate({
+          to: "/checkout/pending",
+          search: { paymentId: result.data.paymentId, subjectId },
+        });
+        return;
+      }
+
       if (result.data.checkoutUrl.includes("/mock-checkout")) {
         await client.simulateMockCheckout(result.data.paymentId, provider);
         navigate({
@@ -768,7 +776,18 @@ function CheckoutPendingPage() {
   return (
     <main className="p-4">
       <p className="text-sm text-ink-muted">Z-25 / Z-26 — Xác nhận thanh toán</p>
-      {!terminal && !isError && <PaymentPendingView screenId="Z-25" className="mt-4" />}
+      {!terminal && !isError && (
+        <PaymentPendingView
+          screenId="Z-25"
+          className="mt-4"
+          qrImageUrl={payment?.qrImageUrl}
+          transferContent={payment?.transferContent}
+          amountVnd={payment?.amountVnd}
+          bankAccountNumber={payment?.bankAccountNumber}
+          bankCode={payment?.bankCode}
+          accountHolder={payment?.accountHolder}
+        />
+      )}
       {payment?.status === "paid" && payment.subscription && (
         <PaymentConfirmationView
           className="mt-4"

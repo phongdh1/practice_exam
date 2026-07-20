@@ -19,6 +19,7 @@ describe("CheckoutService", () => {
       update: jest.fn(),
       findFirst: jest.fn(),
       findUnique: jest.fn(),
+      findMany: jest.fn(),
     },
     paymentWebhookEvent: {
       findUnique: jest.fn(),
@@ -201,6 +202,64 @@ describe("CheckoutService", () => {
 
     expect(result.duplicate).toBe(true);
     expect(subscriptionsService.activateOrRenewFromPayment).not.toHaveBeenCalled();
+  });
+
+  it("matches SePay bank webhook by transfer code and amount then unlocks", async () => {
+    const payment = {
+      id: "pay-sepay-1",
+      userId: "user-1",
+      subjectId: "subject-1",
+      channel: "web",
+      status: "pending",
+      amountVnd: 100_000,
+      externalRef: "PEABCDEF1234",
+      promoCode: null,
+      isTest: false,
+    };
+    mockPrisma.paymentWebhookEvent.findUnique.mockResolvedValue(null);
+    mockPrisma.payment.findFirst.mockResolvedValue(payment);
+    mockPrisma.payment.findUnique.mockResolvedValue(payment);
+    mockPrisma.paymentWebhookEvent.create.mockResolvedValue({ id: "evt-sepay-1" });
+    mockPrisma.payment.update.mockResolvedValue({});
+    subscriptionsService.activateOrRenewFromPayment.mockResolvedValue({
+      subscriptionId: "sub-1",
+      periodStart: new Date(),
+      periodEnd: new Date(),
+    });
+
+    await webhooksService.processVerifiedWebhook("sepay", {
+      paymentId: "",
+      externalEventId: "92704",
+      status: "paid",
+      transferCode: "PEABCDEF1234",
+      amountVnd: 100_000,
+    });
+
+    expect(mockPrisma.payment.findFirst).toHaveBeenCalled();
+    expect(subscriptionsService.activateOrRenewFromPayment).toHaveBeenCalledWith(
+      expect.objectContaining({ paymentId: "pay-sepay-1" }),
+      expect.anything(),
+    );
+  });
+
+  it("rejects SePay bank webhook when amount mismatches", async () => {
+    mockPrisma.paymentWebhookEvent.findUnique.mockResolvedValue(null);
+    mockPrisma.payment.findFirst.mockResolvedValue({
+      id: "pay-sepay-2",
+      amountVnd: 100_000,
+      externalRef: "PEABCDEF1234",
+      status: "pending",
+    });
+
+    await expect(
+      webhooksService.processVerifiedWebhook("sepay", {
+        paymentId: "",
+        externalEventId: "92705",
+        status: "paid",
+        transferCode: "PEABCDEF1234",
+        amountVnd: 99_000,
+      }),
+    ).rejects.toMatchObject({ response: expect.objectContaining({ code: "PAYMENT_AMOUNT_MISMATCH" }) });
   });
 
   it("reserves promo usage when checkout includes promo code", async () => {

@@ -11,9 +11,15 @@ import type {
 } from "../payment-provider.port";
 import {
   assertWebhookSignature,
+  headerValue,
   mockCheckoutUrl,
   parseWebhookBody,
 } from "./payment-adapter.utils";
+import {
+  buildPaymentTransferCode,
+  buildSepayVietQrUrl,
+  sanitizeTransferContent,
+} from "./sepay-vietqr";
 
 function usesMockCheckout(config: PaymentMerchantConfigStored): boolean {
   return (
@@ -23,11 +29,21 @@ function usesMockCheckout(config: PaymentMerchantConfigStored): boolean {
   );
 }
 
+function hasBankQrConfig(config: PaymentMerchantConfigStored): boolean {
+  return Boolean(config.bankAccountNumber?.trim() && config.bankCode?.trim());
+}
+
+function isSepayBankWebhook(body: unknown): body is Record<string, unknown> {
+  if (typeof body !== "object" || body === null || Array.isArray(body)) return false;
+  const record = body as Record<string, unknown>;
+  return "transferAmount" in record && "id" in record && ("content" in record || "code" in record);
+}
+
 @Injectable()
 export class ConfiguredPaymentAdapter implements PaymentProviderAdapter {
   constructor(
     readonly provider: PaymentProvider,
-    private readonly integrationConfig: IntegrationConfigService,
+    protected readonly integrationConfig: IntegrationConfigService,
   ) {}
 
   async createCheckout(input: CreateCheckoutInput): Promise<CreateCheckoutResult> {
@@ -38,11 +54,12 @@ export class ConfiguredPaymentAdapter implements PaymentProviderAdapter {
       return {
         checkoutUrl: mockCheckoutUrl(input.paymentId, this.provider),
         externalRef,
+        checkoutMode: "redirect",
       };
     }
 
     const checkoutUrl = await this.createProductionCheckoutUrl(config, input);
-    return { checkoutUrl, externalRef };
+    return { checkoutUrl, externalRef, checkoutMode: "redirect" };
   }
 
   async verifyWebhook(
@@ -76,7 +93,7 @@ export class ConfiguredPaymentAdapter implements PaymentProviderAdapter {
     return this.createPayosStyleCheckoutUrl(config, input);
   }
 
-  private async requireMerchantConfig(): Promise<PaymentMerchantConfigStored> {
+  protected async requireMerchantConfig(): Promise<PaymentMerchantConfigStored> {
     const config = await this.integrationConfig.getPaymentMerchantStored(this.provider);
     if (!config?.merchantId || !config.apiKey) {
       throw new BadRequestException({
@@ -146,6 +163,163 @@ export class SepayAdapter extends ConfiguredPaymentAdapter {
 
   protected override webhookSignatureHeaders(): string[] {
     return ["x-sepay-signature", "x-webhook-signature"];
+  }
+
+  protected override async requireMerchantConfig(): Promise<PaymentMerchantConfigStored> {
+    const config = await this.integrationConfig.getPaymentMerchantStored(this.provider);
+    if (!config) {
+      throw new BadRequestException({
+        code: "PAYMENT_PROVIDER_NOT_CONFIGURED",
+        message: "Chưa cấu hình SePay.",
+      });
+    }
+    if (hasBankQrConfig(config)) {
+      return config;
+    }
+    if (!config.merchantId || !config.apiKey || config.apiKey === "sepay-bank") {
+      throw new BadRequestException({
+        code: "PAYMENT_PROVIDER_NOT_CONFIGURED",
+        message: "Chưa cấu hình tài khoản ngân hàng SePay để tạo mã VietQR.",
+      });
+    }
+    return config;
+  }
+
+  override async createCheckout(input: CreateCheckoutInput): Promise<CreateCheckoutResult> {
+    const config = await this.requireMerchantConfig();
+    const transferContent = buildPaymentTransferCode(input.paymentId);
+
+    if (hasBankQrConfig(config)) {
+      const qrImageUrl = buildSepayVietQrUrl({
+        accountNumber: config.bankAccountNumber!,
+        bankCode: config.bankCode!,
+        amountVnd: input.amountVnd,
+        transferContent,
+        accountHolder: config.accountHolder,
+      });
+
+      if (usesMockCheckout(config)) {
+        return {
+          checkoutUrl: mockCheckoutUrl(input.paymentId, this.provider),
+          externalRef: transferContent,
+          qrImageUrl,
+          transferContent,
+          bankAccountNumber: config.bankAccountNumber,
+          bankCode: config.bankCode,
+          accountHolder: config.accountHolder,
+          checkoutMode: "vietqr",
+        };
+      }
+
+      return {
+        checkoutUrl: qrImageUrl,
+        externalRef: transferContent,
+        qrImageUrl,
+        transferContent,
+        bankAccountNumber: config.bankAccountNumber,
+        bankCode: config.bankCode,
+        accountHolder: config.accountHolder,
+        checkoutMode: "vietqr",
+      };
+    }
+
+    return super.createCheckout(input);
+  }
+
+  override async verifyWebhook(
+    headers: Record<string, string | string[] | undefined>,
+    body: unknown,
+  ): Promise<VerifiedWebhookPayload> {
+    if (isSepayBankWebhook(body)) {
+      return this.verifyBankWebhook(headers, body);
+    }
+    return super.verifyWebhook(headers, body);
+  }
+
+  private async verifyBankWebhook(
+    headers: Record<string, string | string[] | undefined>,
+    body: Record<string, unknown>,
+  ): Promise<VerifiedWebhookPayload> {
+    const config = await this.integrationConfig.getPaymentMerchantStored(this.provider);
+    this.assertSepayBankAuth(headers, body, config);
+
+    const transferType = String(body.transferType ?? "in");
+    if (transferType !== "in") {
+      throw new Error("Ignored non-inbound transfer");
+    }
+
+    const amountRaw = body.transferAmount;
+    const amountVnd =
+      typeof amountRaw === "number" ? amountRaw : Number.parseInt(String(amountRaw ?? ""), 10);
+    if (!Number.isFinite(amountVnd) || amountVnd <= 0) {
+      throw new Error("Invalid transferAmount");
+    }
+
+    const codeRaw = body.code;
+    const contentRaw = body.content;
+    const codeFromField =
+      typeof codeRaw === "string" && codeRaw.trim() ? sanitizeTransferContent(codeRaw) : "";
+    const content =
+      typeof contentRaw === "string" ? sanitizeTransferContent(contentRaw) : "";
+    const transferCode = codeFromField || content;
+    if (!transferCode) {
+      throw new Error("Missing transfer payment code");
+    }
+
+    const eventId = String(body.id ?? "");
+    if (!eventId) {
+      throw new Error("Missing SePay transaction id");
+    }
+
+    return {
+      paymentId: "",
+      externalEventId: eventId,
+      status: "paid",
+      transferCode,
+      amountVnd,
+    };
+  }
+
+  private assertSepayBankAuth(
+    headers: Record<string, string | string[] | undefined>,
+    body: unknown,
+    config: PaymentMerchantConfigStored | null,
+  ): void {
+    const allowUnsigned =
+      process.env.PAYMENT_MOCK_ENABLED === "true" ||
+      process.env.NODE_ENV === "test" ||
+      config?.testMode === true;
+
+    const secret = config?.webhookSecret ?? config?.apiKey;
+    if (!secret || secret === "sepay-bank") {
+      if (allowUnsigned) return;
+      throw new Error("Webhook secret not configured");
+    }
+
+    const authorization = headerValue(headers, "authorization");
+    const apiKeyHeader =
+      headerValue(headers, "x-api-key") ?? headerValue(headers, "apikey");
+    const secretHeader = headerValue(headers, "x-secret-key");
+
+    if (authorization) {
+      const token = authorization.replace(/^(Bearer|Apikey)\s+/i, "").trim();
+      if (token === secret) return;
+    }
+    if (apiKeyHeader === secret || secretHeader === secret) return;
+
+    try {
+      assertWebhookSignature(headers, body, secret, [
+        "x-sepay-signature",
+        "x-webhook-signature",
+        "authorization",
+      ]);
+      return;
+    } catch {
+      // fall through
+    }
+
+    if (allowUnsigned) return;
+    throw new Error("Invalid SePay webhook authentication");
   }
 
   protected override async createProductionCheckoutUrl(

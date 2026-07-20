@@ -78,13 +78,21 @@ export class WebhooksService {
       return { processed: true, duplicate: true };
     }
 
-    const payment = await this.prisma.payment.findUnique({
-      where: { id: verified.paymentId },
-    });
+    const payment = await this.resolvePayment(provider, verified);
     if (!payment) {
       throw new NotFoundException({
         code: "PAYMENT_NOT_FOUND",
         message: "Không tìm thấy giao dịch thanh toán.",
+      });
+    }
+
+    if (
+      verified.amountVnd != null &&
+      payment.amountVnd !== verified.amountVnd
+    ) {
+      throw new BadRequestException({
+        code: "PAYMENT_AMOUNT_MISMATCH",
+        message: "Số tiền webhook không khớp đơn hàng.",
       });
     }
 
@@ -152,6 +160,48 @@ export class WebhooksService {
     );
     const result = await this.processVerifiedWebhook(event.provider, payload, event.payload);
     return { processed: result.processed };
+  }
+
+  private async resolvePayment(
+    provider: PaymentProvider,
+    verified: VerifiedWebhookPayload,
+  ) {
+    if (verified.paymentId) {
+      return this.prisma.payment.findUnique({ where: { id: verified.paymentId } });
+    }
+
+    if (!verified.transferCode) {
+      return null;
+    }
+
+    const code = verified.transferCode.toUpperCase();
+    const exact = await this.prisma.payment.findFirst({
+      where: {
+        provider,
+        externalRef: code,
+        status: { in: ["pending", "paid"] },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (exact) return exact;
+
+    // SePay may embed the payment code inside a longer transfer content string.
+    const recent = await this.prisma.payment.findMany({
+      where: {
+        provider,
+        status: { in: ["pending", "paid"] },
+        externalRef: { not: null },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
+    return (
+      recent.find((p) => {
+        const ref = p.externalRef?.toUpperCase() ?? "";
+        return Boolean(ref) && (code.includes(ref) || ref.includes(code));
+      }) ?? null
+    );
   }
 
   private async markPaidAndActivate(paymentId: string): Promise<void> {

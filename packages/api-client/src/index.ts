@@ -736,11 +736,14 @@ export class ApiClient {
   adminUpdatePaymentMerchant(
     provider: "payos" | "sepay",
     input: {
-      merchantId: string;
+      merchantId?: string;
       apiKey?: string;
       checksumKey?: string;
       webhookSecret?: string;
       testMode: boolean;
+      bankAccountNumber?: string;
+      bankCode?: string;
+      accountHolder?: string;
     },
   ): Promise<ApiResponse<PaymentMerchantConfigView>> {
     return this.request<PaymentMerchantConfigView>(`/api/v1/admin/integrations/payments/${provider}`, {

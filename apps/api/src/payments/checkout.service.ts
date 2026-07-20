@@ -11,6 +11,7 @@ import { PaymentProviderRegistry } from "./payment-provider.registry";
 import { WebhooksService } from "./webhooks.service";
 import { IntegrationConfigService } from "../integrations/integration-config.service";
 import { PaymentsAdminService } from "../payments-admin/payments-admin.service";
+import { buildSepayVietQrUrl } from "./adapters/sepay-vietqr";
 
 @Injectable()
 export class CheckoutService {
@@ -91,6 +92,12 @@ export class CheckoutService {
       provider,
       channel: input.channel,
       amountVnd: payment.amountVnd,
+      qrImageUrl: checkout.qrImageUrl ?? null,
+      transferContent: checkout.transferContent ?? checkout.externalRef ?? null,
+      bankAccountNumber: checkout.bankAccountNumber ?? null,
+      bankCode: checkout.bankCode ?? null,
+      accountHolder: checkout.accountHolder ?? null,
+      checkoutMode: checkout.checkoutMode ?? "redirect",
     };
   }
 
@@ -110,6 +117,29 @@ export class CheckoutService {
       ? await this.subscriptionsService.getForSubject(userId, payment.subjectId)
       : null;
 
+    const merchant =
+      payment.provider === "sepay"
+        ? await this.integrationConfig.getPaymentMerchantStored("sepay")
+        : null;
+    const isVietQr =
+      payment.provider === "sepay" &&
+      Boolean(merchant?.bankAccountNumber && merchant?.bankCode && payment.externalRef);
+
+    let qrImageUrl: string | null = null;
+    if (isVietQr && merchant?.bankAccountNumber && merchant.bankCode && payment.externalRef) {
+      const storedUrl = payment.checkoutUrl;
+      qrImageUrl =
+        storedUrl?.includes("qr.sepay.vn") || storedUrl?.includes("vietqr.app")
+          ? storedUrl
+          : buildSepayVietQrUrl({
+              accountNumber: merchant.bankAccountNumber,
+              bankCode: merchant.bankCode,
+              amountVnd: payment.amountVnd,
+              transferContent: payment.externalRef,
+              accountHolder: merchant.accountHolder,
+            });
+    }
+
     return {
       id: payment.id,
       status: payment.status,
@@ -120,6 +150,12 @@ export class CheckoutService {
       checkoutUrl: payment.checkoutUrl,
       paidAt: payment.paidAt?.toISOString() ?? null,
       subscription,
+      transferContent: payment.externalRef,
+      qrImageUrl,
+      bankAccountNumber: merchant?.bankAccountNumber ?? null,
+      bankCode: merchant?.bankCode ?? null,
+      accountHolder: merchant?.accountHolder ?? null,
+      checkoutMode: isVietQr ? "vietqr" : "redirect",
     };
   }
 

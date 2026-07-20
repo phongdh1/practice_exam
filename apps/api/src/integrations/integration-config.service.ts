@@ -159,11 +159,14 @@ export class IntegrationConfigService {
   async updatePaymentMerchantConfig(
     provider: PaymentProvider,
     input: {
-      merchantId: string;
+      merchantId?: string;
       apiKey?: string;
       checksumKey?: string;
       webhookSecret?: string;
       testMode: boolean;
+      bankAccountNumber?: string;
+      bankCode?: string;
+      accountHolder?: string;
     },
     adminId: string,
   ): Promise<PaymentMerchantConfigView> {
@@ -172,7 +175,27 @@ export class IntegrationConfigService {
     const checksumKey = mergeSecretField(input.checksumKey, existing?.checksumKey);
     const webhookSecret = mergeSecretField(input.webhookSecret, existing?.webhookSecret);
 
-    if (!input.merchantId?.trim() || !apiKey) {
+    const merchantId = (input.merchantId ?? existing?.merchantId ?? "").trim();
+    const bankAccountNumber = (
+      input.bankAccountNumber ??
+      existing?.bankAccountNumber ??
+      ""
+    ).trim();
+    const bankCode = (input.bankCode ?? existing?.bankCode ?? "").trim();
+    const accountHolder = (input.accountHolder ?? existing?.accountHolder ?? "").trim();
+
+    const hasHostedCreds = Boolean(merchantId && apiKey);
+    const hasBankQr = Boolean(bankAccountNumber && bankCode);
+
+    if (provider === "sepay") {
+      if (!hasHostedCreds && !hasBankQr) {
+        throw new BadRequestException({
+          code: "PAYMENT_CONFIG_INVALID",
+          message:
+            "SePay cần tài khoản ngân hàng (số TK + mã NH) để tạo VietQR, hoặc Merchant ID + API key.",
+        });
+      }
+    } else if (!hasHostedCreds) {
       throw new BadRequestException({
         code: "PAYMENT_CONFIG_INVALID",
         message: "Merchant ID và API key là bắt buộc.",
@@ -180,17 +203,21 @@ export class IntegrationConfigService {
     }
 
     const next: PaymentMerchantConfigStored = {
-      merchantId: input.merchantId.trim(),
-      apiKey,
+      merchantId: merchantId || (provider === "sepay" ? "sepay-bank" : merchantId),
+      apiKey: apiKey || (provider === "sepay" ? "sepay-bank" : apiKey!),
       checksumKey: checksumKey || undefined,
       webhookSecret: webhookSecret || undefined,
       testMode: input.testMode,
+      bankAccountNumber: bankAccountNumber || undefined,
+      bankCode: bankCode || undefined,
+      accountHolder: accountHolder || undefined,
     };
 
     await this.saveSetting(paymentMerchantConfigKey(provider), next);
     await this.writeAudit(adminId, provider, "update_merchant_config", {
       merchantId: next.merchantId,
       testMode: next.testMode,
+      hasBankQr: Boolean(next.bankAccountNumber && next.bankCode),
     });
 
     return this.toPaymentMerchantView(provider, next);
@@ -208,15 +235,25 @@ export class IntegrationConfigService {
     stored: PaymentMerchantConfigStored | null,
   ): PaymentMerchantConfigView {
     const webhookPath = `/api/v1/webhooks/${provider}`;
+    const hasHosted = Boolean(
+      stored?.merchantId &&
+        stored.merchantId !== "sepay-bank" &&
+        stored?.apiKey &&
+        stored.apiKey !== "sepay-bank",
+    );
+    const hasBankQr = Boolean(stored?.bankAccountNumber && stored?.bankCode);
     return {
       provider,
-      merchantId: stored?.merchantId ?? null,
-      apiKeyMasked: maskSecret(stored?.apiKey),
+      merchantId: stored?.merchantId && stored.merchantId !== "sepay-bank" ? stored.merchantId : null,
+      apiKeyMasked: stored?.apiKey && stored.apiKey !== "sepay-bank" ? maskSecret(stored.apiKey) : null,
       checksumKeyMasked: maskSecret(stored?.checksumKey),
       webhookSecretMasked: maskSecret(stored?.webhookSecret),
       testMode: stored?.testMode ?? true,
       webhookUrl: `${publicApiBase()}${webhookPath}`,
-      configured: Boolean(stored?.merchantId && stored?.apiKey),
+      configured: provider === "sepay" ? hasHosted || hasBankQr : hasHosted,
+      bankAccountNumber: stored?.bankAccountNumber ?? null,
+      bankCode: stored?.bankCode ?? null,
+      accountHolder: stored?.accountHolder ?? null,
     };
   }
 

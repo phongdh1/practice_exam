@@ -87,6 +87,28 @@ describe("IntegrationConfigService", () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it("accepts sepay bank-only merchant config for VietQR", async () => {
+    mockPrisma.systemSetting.findUnique.mockResolvedValue(null);
+    mockPrisma.systemSetting.upsert.mockResolvedValue({});
+
+    const view = await service.updatePaymentMerchantConfig(
+      "sepay",
+      {
+        testMode: true,
+        bankAccountNumber: "0123456789",
+        bankCode: "VCB",
+        accountHolder: "NGUYEN VAN A",
+        webhookSecret: "whsec",
+      },
+      "admin-uuid",
+    );
+
+    expect(view.configured).toBe(true);
+    expect(view.bankAccountNumber).toBe("0123456789");
+    expect(view.bankCode).toBe("VCB");
+    expect(mockPrisma.systemSetting.upsert).toHaveBeenCalled();
+  });
+
   it("marks provider test mode from stored config", async () => {
     mockPrisma.systemSetting.findUnique.mockResolvedValue({
       key: "payment_merchant_payos",

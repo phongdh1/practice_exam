@@ -61,6 +61,12 @@ export default function SubjectCheckoutPage() {
 
       const paymentId = body.data.paymentId as string;
       const checkoutUrl = body.data.checkoutUrl as string;
+      const checkoutMode = body.data.checkoutMode as string | undefined;
+
+      if (checkoutMode === "vietqr" || body.data.qrImageUrl) {
+        router.push(`/checkout/pending?paymentId=${paymentId}&subjectId=${subjectId}`);
+        return;
+      }
 
       if (checkoutUrl.includes("/mock-checkout")) {
         await webAuthFetch(`/api/payments/${paymentId}?provider=${provider}`, { method: "POST" });

@@ -15,9 +15,9 @@ export class UpdateZaloConfigDto {
 }
 
 export class UpdatePaymentMerchantDto {
+  @IsOptional()
   @IsString()
-  @MinLength(1)
-  merchantId!: string;
+  merchantId?: string;
 
   @IsOptional()
   @IsString()
@@ -33,6 +33,18 @@ export class UpdatePaymentMerchantDto {
 
   @IsBoolean()
   testMode!: boolean;
+
+  @IsOptional()
+  @IsString()
+  bankAccountNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  bankCode?: string;
+
+  @IsOptional()
+  @IsString()
+  accountHolder?: string;
 }
 
 export class TestPaymentWebhookDto {

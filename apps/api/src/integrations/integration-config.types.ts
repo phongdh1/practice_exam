@@ -15,4 +15,8 @@ export interface PaymentMerchantConfigStored {
   checksumKey?: string;
   webhookSecret?: string;
   testMode: boolean;
+  /** SePay bank-transfer / VietQR fields */
+  bankAccountNumber?: string;
+  bankCode?: string;
+  accountHolder?: string;
 }

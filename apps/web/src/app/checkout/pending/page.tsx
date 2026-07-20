@@ -17,12 +17,6 @@ async function fetchPayment(paymentId: string) {
   return res.json();
 }
 
-async function fetchSubjectName(subjectId: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/v1/subjects`);
-  const body = await res.json();
-  return body.data?.find((s: { id: string }) => s.id === subjectId)?.name ?? "môn học";
-}
-
 function CheckoutPendingContent() {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("paymentId");
@@ -63,7 +57,18 @@ function CheckoutPendingContent() {
     <main className="mx-auto max-w-lg p-8">
       <p className="text-sm text-ink-muted">W-25 / W-26 — Xác nhận thanh toán</p>
 
-      {!terminal && !isError && <PaymentPendingView screenId="W-25" className="mt-6" />}
+      {!terminal && !isError && (
+        <PaymentPendingView
+          screenId="W-25"
+          className="mt-6"
+          qrImageUrl={payment?.qrImageUrl}
+          transferContent={payment?.transferContent}
+          amountVnd={payment?.amountVnd}
+          bankAccountNumber={payment?.bankAccountNumber}
+          bankCode={payment?.bankCode}
+          accountHolder={payment?.accountHolder}
+        />
+      )}
 
       {payment?.status === "paid" && payment.subscription && (
         <PaymentConfirmationView

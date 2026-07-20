@@ -3,14 +3,16 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
   Param,
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
 } from "@nestjs/common";
 import type { PaymentProvider } from "@prisma/client";
-import type { Request } from "express";
+import type { Request, Response } from "express";
 import { JwtAuthGuard } from "../auth/guards/auth.guards";
 import { AuthUserPayload } from "../auth/token.service";
 import { CheckoutService } from "./checkout.service";
@@ -68,11 +70,15 @@ export class PaymentsController {
     return this.webhooksService.handleProviderWebhook("payos", headers, body);
   }
 
+  /** SePay bank webhooks require exact `{"success": true}` (no API envelope). */
   @Post("webhooks/sepay")
-  sepayWebhook(
+  @HttpCode(200)
+  async sepayWebhook(
     @Headers() headers: Record<string, string | string[] | undefined>,
     @Body() body: unknown,
+    @Res() res: Response,
   ) {
-    return this.webhooksService.handleProviderWebhook("sepay", headers, body);
+    await this.webhooksService.handleProviderWebhook("sepay", headers, body);
+    return res.status(200).json({ success: true });
   }
 }
