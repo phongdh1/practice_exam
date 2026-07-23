@@ -3,6 +3,7 @@
 import { MaterialIcon } from "@practice-exam/ui";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { CoverImagePreview } from "@/components/cover-image-preview";
 import { parseCoverImageUrlInput } from "@/lib/cover-image-url";
 
 export type CourseEditorVisibility = "active" | "archived";
@@ -350,18 +351,17 @@ export function CourseEditorForm({
               ].join(" ")}
             >
               {form.coverImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <CoverImagePreview
                   src={form.coverImageUrl}
                   alt="Ảnh bìa khóa học"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className="absolute inset-0 z-0 h-full w-full object-cover"
                 />
               ) : null}
               <div
                 className={[
                   "z-10 flex flex-col items-center gap-2",
                   form.coverImageUrl
-                    ? "rounded-lg border border-outline-variant bg-surface-container-lowest/90 p-4 shadow-sm"
+                    ? "rounded-lg border border-outline-variant bg-surface-container-lowest/75 p-3 shadow-sm backdrop-blur-[2px]"
                     : "",
                 ].join(" ")}
               >
@@ -417,6 +417,15 @@ export function CourseEditorForm({
                   Dùng URL http:// hoặc https://. Ảnh sẽ xem trước ngay khi link hợp lệ.
                 </p>
               )}
+              {form.coverImageUrl ? (
+                <div className="relative mt-2 aspect-video overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low">
+                  <CoverImagePreview
+                    src={form.coverImageUrl}
+                    alt="Xem trước ảnh bìa khóa học"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+              ) : null}
             </div>
 
             <p className="text-xs text-on-surface-variant">
@@ -462,8 +471,7 @@ export function CourseEditorForm({
             <div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low shadow-sm">
               <div className="relative aspect-[16/9] bg-primary/10">
                 {form.coverImageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <CoverImagePreview
                     src={form.coverImageUrl}
                     alt=""
                     className="absolute inset-0 h-full w-full object-cover"

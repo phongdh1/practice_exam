@@ -246,3 +246,8 @@
 - Extract shared CoverImageField component to remove duplicated draft/apply/commit logic in course + subject editors.
 - Optional client guards: max URL length, reject embedded credentials, broken-image preview placeholder.
 - Server-side `@IsUrl` / host allowlist left out per Ask First default.
+
+## Deferred from: quick-dev fix-admin-cover-preview (2026-07-23)
+
+- Retry cover preview with default referrer if `referrerPolicy=no-referrer` fails (some hosts require Referer).
+- Loading skeleton while remote cover image fetches.

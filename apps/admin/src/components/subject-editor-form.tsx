@@ -4,6 +4,7 @@ import { MaterialIcon } from "@practice-exam/ui";
 import type { SubjectGoLiveStatus } from "@practice-exam/types";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { CoverImagePreview } from "@/components/cover-image-preview";
 import { parseCoverImageUrlInput } from "@/lib/cover-image-url";
 
 export type SubjectEditorVisibility = "active" | "archived";
@@ -619,14 +620,20 @@ export function SubjectEditorForm({
               className="relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-outline-variant bg-surface-container-low transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {form.coverImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <CoverImagePreview
                   src={form.coverImageUrl}
                   alt="Ảnh bìa môn học"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className="absolute inset-0 z-0 h-full w-full object-cover"
                 />
               ) : null}
-              <div className="z-10 flex flex-col items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest/90 p-4 shadow-sm">
+              <div
+                className={[
+                  "z-10 flex flex-col items-center gap-2",
+                  form.coverImageUrl
+                    ? "rounded-lg border border-outline-variant bg-surface-container-lowest/75 p-3 shadow-sm backdrop-blur-[2px]"
+                    : "rounded-lg border border-outline-variant bg-surface-container-lowest/90 p-4 shadow-sm",
+                ].join(" ")}
+              >
                 <MaterialIcon name="cloud_upload" size={24} className="text-primary" />
                 <span className="text-xs font-bold text-primary">
                   {uploadingCover ? "Đang tải..." : form.coverImageUrl ? "Thay đổi ảnh" : "Tải ảnh lên"}
@@ -673,6 +680,15 @@ export function SubjectEditorForm({
                   URL http:// hoặc https:// — xem trước khi link hợp lệ
                 </p>
               )}
+              {form.coverImageUrl ? (
+                <div className="relative mt-2 aspect-video overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low">
+                  <CoverImagePreview
+                    src={form.coverImageUrl}
+                    alt="Xem trước ảnh bìa môn học"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+              ) : null}
             </div>
             <p className="mt-3 text-center text-[10px] italic text-ink-muted">
               Tỷ lệ khuyến nghị 16:9. Định dạng JPEG, PNG hoặc WebP (Tối đa 2MB)
