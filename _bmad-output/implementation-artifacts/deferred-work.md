@@ -240,3 +240,9 @@
 
 - Featured subjects pool is cached from catalog page 1 only; hot subjects that only appear on later pages are not featured until a dedicated unpaged/hot query exists.
 - Guest marketing may briefly flash while session resolves (`isAuthenticated` false during load) — pre-existing guest-gating pattern on home.
+
+## Deferred from: quick-dev admin-cover-image-url (2026-07-23)
+
+- Extract shared CoverImageField component to remove duplicated draft/apply/commit logic in course + subject editors.
+- Optional client guards: max URL length, reject embedded credentials, broken-image preview placeholder.
+- Server-side `@IsUrl` / host allowlist left out per Ask First default.

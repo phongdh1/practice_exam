@@ -2,7 +2,8 @@
 
 import { MaterialIcon } from "@practice-exam/ui";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { parseCoverImageUrlInput } from "@/lib/cover-image-url";
 
 export type CourseEditorVisibility = "active" | "archived";
 
@@ -117,8 +118,40 @@ export function CourseEditorForm({
 }: CourseEditorFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localCoverError, setLocalCoverError] = useState<string | null>(null);
+  const [coverUrlDraft, setCoverUrlDraft] = useState(form.coverImageUrl ?? "");
+  const [coverUrlError, setCoverUrlError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [codeManuallyEdited, setCodeManuallyEdited] = useState(false);
+
+  useEffect(() => {
+    setCoverUrlDraft(form.coverImageUrl ?? "");
+    setCoverUrlError(null);
+  }, [form.coverImageUrl]);
+
+  const applyCoverUrlDraft = (raw: string) => {
+    setCoverUrlDraft(raw);
+    const parsed = parseCoverImageUrlInput(raw);
+    if (!parsed.ok) {
+      setCoverUrlError(parsed.error);
+      return;
+    }
+    setCoverUrlError(null);
+    onChange((prev) => ({ ...prev, coverImageUrl: parsed.value }));
+  };
+
+  const commitCoverUrlDraft = () => {
+    const parsed = parseCoverImageUrlInput(coverUrlDraft);
+    if (!parsed.ok) {
+      setCoverUrlDraft(form.coverImageUrl ?? "");
+      setCoverUrlError(null);
+      return;
+    }
+    setCoverUrlError(null);
+    setCoverUrlDraft(parsed.value ?? "");
+    if (parsed.value !== form.coverImageUrl) {
+      onChange((prev) => ({ ...prev, coverImageUrl: parsed.value }));
+    }
+  };
 
   const deleteEnabled =
     mode === "edit" && subjectCount === 0 && Boolean(onDelete) && !saving && !deleting;
@@ -171,7 +204,12 @@ export function CourseEditorForm({
       className="mx-auto flex max-w-6xl flex-col gap-8 pb-12"
       onSubmit={(event) => {
         event.preventDefault();
-        if (saving || deleting || uploadingCover) return;
+        if (saving || deleting || uploadingCover || coverUrlError) return;
+        const parsed = parseCoverImageUrlInput(coverUrlDraft);
+        if (!parsed.ok) {
+          setCoverUrlError(parsed.error);
+          return;
+        }
         onSubmit();
       }}
     >
@@ -345,12 +383,41 @@ export function CourseEditorForm({
                 className="text-xs font-medium text-error hover:underline disabled:opacity-40"
                 onClick={() => {
                   if (uploadingCover) return;
+                  setCoverUrlDraft("");
+                  setCoverUrlError(null);
                   onChange((prev) => ({ ...prev, coverImageUrl: null }));
                 }}
               >
                 Xóa ảnh bìa
               </button>
             )}
+
+            <div className="space-y-1.5">
+              <label htmlFor="course-cover-url" className="text-xs font-medium text-on-surface">
+                Hoặc dán link ảnh
+              </label>
+              <input
+                id="course-cover-url"
+                type="text"
+                inputMode="url"
+                autoComplete="off"
+                placeholder="https://..."
+                value={coverUrlDraft}
+                disabled={uploadingCover || saving}
+                onChange={(event) => applyCoverUrlDraft(event.target.value)}
+                onBlur={commitCoverUrlDraft}
+                className="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-sm text-on-surface outline-none focus:border-primary disabled:opacity-60"
+              />
+              {coverUrlError ? (
+                <p className="text-xs text-error" role="alert">
+                  {coverUrlError}
+                </p>
+              ) : (
+                <p className="text-xs text-on-surface-variant">
+                  Dùng URL http:// hoặc https://. Ảnh sẽ xem trước ngay khi link hợp lệ.
+                </p>
+              )}
+            </div>
 
             <p className="text-xs text-on-surface-variant">
               Định dạng JPG, PNG hoặc WebP. Dung lượng tối đa 5MB.

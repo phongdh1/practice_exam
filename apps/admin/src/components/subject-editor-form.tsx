@@ -3,7 +3,8 @@
 import { MaterialIcon } from "@practice-exam/ui";
 import type { SubjectGoLiveStatus } from "@practice-exam/types";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { parseCoverImageUrlInput } from "@/lib/cover-image-url";
 
 export type SubjectEditorVisibility = "active" | "archived";
 
@@ -230,6 +231,38 @@ export function SubjectEditorForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [codeManuallyEdited, setCodeManuallyEdited] = useState(false);
   const [localCoverError, setLocalCoverError] = useState<string | null>(null);
+  const [coverUrlDraft, setCoverUrlDraft] = useState(form.coverImageUrl ?? "");
+  const [coverUrlError, setCoverUrlError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCoverUrlDraft(form.coverImageUrl ?? "");
+    setCoverUrlError(null);
+  }, [form.coverImageUrl]);
+
+  const applyCoverUrlDraft = (raw: string) => {
+    setCoverUrlDraft(raw);
+    const parsed = parseCoverImageUrlInput(raw);
+    if (!parsed.ok) {
+      setCoverUrlError(parsed.error);
+      return;
+    }
+    setCoverUrlError(null);
+    onChange((prev) => ({ ...prev, coverImageUrl: parsed.value }));
+  };
+
+  const commitCoverUrlDraft = () => {
+    const parsed = parseCoverImageUrlInput(coverUrlDraft);
+    if (!parsed.ok) {
+      setCoverUrlDraft(form.coverImageUrl ?? "");
+      setCoverUrlError(null);
+      return;
+    }
+    setCoverUrlError(null);
+    setCoverUrlDraft(parsed.value ?? "");
+    if (parsed.value !== form.coverImageUrl) {
+      onChange((prev) => ({ ...prev, coverImageUrl: parsed.value }));
+    }
+  };
 
   const selectedCourse = courses.find((course) => course.id === form.courseId);
   const courseActive = selectedCourse?.visibility === "active";
@@ -288,7 +321,12 @@ export function SubjectEditorForm({
       className="mx-auto flex max-w-6xl flex-col gap-8 pb-12"
       onSubmit={(event) => {
         event.preventDefault();
-        if (saving || deleting || uploadingCover) return;
+        if (saving || deleting || uploadingCover || coverUrlError) return;
+        const parsed = parseCoverImageUrlInput(coverUrlDraft);
+        if (!parsed.ok) {
+          setCoverUrlError(parsed.error);
+          return;
+        }
         onSubmit();
       }}
     >
@@ -602,12 +640,40 @@ export function SubjectEditorForm({
                 className="mt-2 w-full text-center text-xs font-medium text-error hover:underline disabled:opacity-40"
                 onClick={() => {
                   if (uploadingCover) return;
+                  setCoverUrlDraft("");
+                  setCoverUrlError(null);
                   onChange((prev) => ({ ...prev, coverImageUrl: null }));
                 }}
               >
                 Xóa ảnh bìa
               </button>
             )}
+            <div className="mt-3 space-y-1.5">
+              <label htmlFor="subject-cover-url" className="text-xs font-medium text-on-surface">
+                Hoặc dán link ảnh
+              </label>
+              <input
+                id="subject-cover-url"
+                type="text"
+                inputMode="url"
+                autoComplete="off"
+                placeholder="https://..."
+                value={coverUrlDraft}
+                disabled={uploadingCover || saving}
+                onChange={(event) => applyCoverUrlDraft(event.target.value)}
+                onBlur={commitCoverUrlDraft}
+                className="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-sm text-on-surface outline-none focus:border-primary disabled:opacity-60"
+              />
+              {coverUrlError ? (
+                <p className="text-xs text-error" role="alert">
+                  {coverUrlError}
+                </p>
+              ) : (
+                <p className="text-center text-[10px] italic text-ink-muted">
+                  URL http:// hoặc https:// — xem trước khi link hợp lệ
+                </p>
+              )}
+            </div>
             <p className="mt-3 text-center text-[10px] italic text-ink-muted">
               Tỷ lệ khuyến nghị 16:9. Định dạng JPEG, PNG hoặc WebP (Tối đa 2MB)
             </p>
