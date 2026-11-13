@@ -19,6 +19,7 @@ const EMPTY_FORM: CourseEditorFormValues = {
   description: "",
   displayOrder: 0,
   coverImageUrl: null,
+  mockExamQuestionCount: "50",
   visibility: "archived",
 };
 
@@ -56,6 +57,7 @@ function EditCourseContent() {
       description: course.description ?? "",
       displayOrder: course.displayOrder,
       coverImageUrl: course.coverImageUrl,
+      mockExamQuestionCount: String(course.mockExamQuestionCount ?? 50),
       visibility: course.visibility,
     });
     setHydratedId(course.id);
@@ -75,6 +77,7 @@ function EditCourseContent() {
         displayOrder: form.displayOrder,
         visibility: form.visibility,
         coverImageUrl: form.coverImageUrl,
+        mockExamQuestionCount: Number(form.mockExamQuestionCount),
       }),
     onSuccess: () => {
       setActionError(null);

@@ -7,6 +7,8 @@ import {
   IsUUID,
   ArrayMinSize,
   MinLength,
+  Min,
+  Max,
   ValidateIf,
 } from "class-validator";
 
@@ -26,6 +28,12 @@ export class CreateCourseDto {
   @IsOptional()
   @IsInt()
   displayOrder?: number;
+
+  @ValidateIf((_, value) => value !== undefined)
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  mockExamQuestionCount?: number;
 
   @IsOptional()
   @ValidateIf((_, value) => value !== null)
@@ -51,6 +59,12 @@ export class UpdateCourseDto {
   @IsOptional()
   @IsInt()
   displayOrder?: number;
+
+  @ValidateIf((_, value) => value !== undefined)
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  mockExamQuestionCount?: number;
 
   @IsOptional()
   @IsEnum(["active", "archived"])

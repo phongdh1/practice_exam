@@ -19,6 +19,7 @@ describe("MockExamsService", () => {
   const templateRecord = {
     id: "tpl-1",
     subjectId: "sub-1",
+    subject: { course: { mockExamQuestionCount: 2 } },
     name: "Mock PLCK",
     description: null,
     status: "approved" as const,
@@ -75,6 +76,7 @@ describe("MockExamsService", () => {
   const mockPrisma = {
     subject: {
       findUnique: jest.fn(async () => ({ id: "sub-1" })),
+      findFirst: jest.fn(async () => ({ name: "PLCK", course: { mockExamQuestionCount: 50 } })),
     },
     mockExamTemplate: {
       findMany: jest.fn(async () => [templateRecord]),
@@ -157,6 +159,36 @@ describe("MockExamsService", () => {
     });
   });
 
+  it("uses the course count in candidate listings and selects that many unique published questions", async () => {
+    const configured = { ...templateRecord, subject: { course: { mockExamQuestionCount: 3 } },
+      sections: templateRecord.sections.map((section) => ({ ...section, difficultyRules: null })) };
+    mockPrisma.mockExamTemplate.findMany.mockResolvedValueOnce([configured] as never);
+    mockPrisma.mockExamTemplate.findUnique.mockResolvedValueOnce(configured as never);
+
+    const [candidate] = await service.listBySubject("sub-1");
+    expect(candidate.sections[0].questionCount).toBe(3);
+    const plan = await service.buildAttemptQuestionPlan("tpl-1");
+    expect(new Set(plan.sections[0].questionIds)).toEqual(new Set(["q-1", "q-2", "q-3"]));
+    expect(mockPrisma.question.findMany).toHaveBeenCalledWith({
+      where: { subjectId: "sub-1", status: "published" },
+    });
+  });
+
+  it("reports the configured question count when the published pool is too small", async () => {
+    const configured = {
+      ...templateRecord,
+      subject: { course: { mockExamQuestionCount: 50 } },
+    };
+    mockPrisma.mockExamTemplate.findUnique.mockResolvedValueOnce(configured);
+
+    await expect(service.buildAttemptQuestionPlan("tpl-1")).rejects.toMatchObject({
+      response: expect.objectContaining({
+        code: "INSUFFICIENT_QUESTION_POOL",
+        details: expect.objectContaining({ required: 50, available: 3 }),
+      }),
+    });
+  });
+
   it("returns remaining attempt count for user", async () => {
     const status = await service.getAttemptStatus("user-1", "tpl-1");
     expect(status.limit).toBe(3);
@@ -214,6 +246,37 @@ describe("MockExamsService", () => {
       questionCount: 2,
       selectionMode: "randomized",
     });
+  });
+
+  it("creates an approved random template when the published bank reaches the course count", async () => {
+    const created = {
+      ...templateRecord,
+      subject: { course: { mockExamQuestionCount: 50 } },
+    };
+    mockPrisma.mockExamTemplate.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([created]);
+    mockPrisma.question.count.mockResolvedValueOnce(50);
+
+    const [template] = await service.listBySubject("sub-1");
+
+    expect(template.sections[0].questionCount).toBe(50);
+    expect(mockPrisma.question.count).toHaveBeenCalledWith({
+      where: { subjectId: "sub-1", status: "published" },
+    });
+    expect(mockPrisma.mockExamTemplate.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        subjectId: "sub-1",
+        status: "approved",
+        sections: { create: expect.objectContaining({ questionCount: 50, selectionMode: "randomized" }) },
+      }),
+    });
+  });
+
+  it("does not create a template before enough questions are published", async () => {
+    mockPrisma.mockExamTemplate.findMany.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    mockPrisma.question.count.mockResolvedValueOnce(49);
+
+    await expect(service.listBySubject("sub-1")).resolves.toEqual([]);
+    expect(mockPrisma.mockExamTemplate.create).not.toHaveBeenCalled();
   });
 
   it("findApprovedForCandidate rejects draft templates", async () => {

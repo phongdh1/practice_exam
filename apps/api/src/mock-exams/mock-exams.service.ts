@@ -1,10 +1,11 @@
+import { createHash } from "node:crypto";
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import type { MockExamSection, Prisma, Question, QuestionDifficulty } from "@prisma/client";
-import type { MockExamCandidateTemplateListItem } from "@practice-exam/types";
+import { Prisma, type MockExamSection, type Question, type QuestionDifficulty } from "@prisma/client";
+import { DEFAULT_MOCK_EXAM_QUESTION_COUNT, type MockExamCandidateTemplateListItem } from "@practice-exam/types";
 import { getIctPeriodKey } from "@practice-exam/utils";
 import { PrismaService } from "../prisma/prisma.service";
 import { DEFAULT_MONTHLY_ATTEMPT_LIMIT } from "./mock-exam.constants";
@@ -76,18 +77,79 @@ export class MockExamsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async listBySubject(subjectId: string): Promise<MockExamCandidateTemplateListItem[]> {
-    const templates = await this.prisma.mockExamTemplate.findMany({
+    const templates = await this.listApprovedTemplates(subjectId);
+    if (templates.length === 0) {
+      await this.ensureDefaultTemplate(subjectId);
+    }
+    const approved = templates.length > 0 ? templates : await this.listApprovedTemplates(subjectId);
+    return approved.map((template) =>
+      this.toCandidateTemplateView({ ...template, sections: this.resolveCourseSections(template) }),
+    );
+  }
+
+  private listApprovedTemplates(subjectId: string) {
+    return this.prisma.mockExamTemplate.findMany({
       where: { subjectId, status: "approved" },
-      include: { sections: { orderBy: { sectionOrder: "asc" } } },
+      include: {
+        sections: { orderBy: { sectionOrder: "asc" } },
+        subject: { select: { course: { select: { mockExamQuestionCount: true } } } },
+      },
       orderBy: { name: "asc" },
     });
-    return templates.map((template) => this.toCandidateTemplateView(template));
+  }
+
+  private async ensureDefaultTemplate(subjectId: string): Promise<void> {
+    const subject = await this.prisma.subject.findFirst({
+      where: { id: subjectId, visibility: "active", course: { visibility: "active" } },
+      select: { name: true, course: { select: { mockExamQuestionCount: true } } },
+    });
+    if (!subject) return;
+
+    const questionCount = subject.course.mockExamQuestionCount;
+    const available = await this.prisma.question.count({
+      where: { subjectId, status: "published" },
+    });
+    if (available < questionCount) return;
+
+    // One stable ID per subject keeps concurrent catalog requests from creating duplicates.
+    const hash = createHash("sha256").update(`default-mock-exam:${subjectId}`).digest("hex");
+    const id = `${hash.slice(0, 8)}-${hash.slice(8, 12)}-8${hash.slice(13, 16)}-8${hash.slice(17, 20)}-${hash.slice(20, 32)}`;
+    try {
+      await this.prisma.mockExamTemplate.create({
+        data: {
+          id,
+          subjectId,
+          name: `${subject.name} - Thi thử ngẫu nhiên`,
+          status: "approved",
+          totalDurationMinutes: 60,
+          passingScorePercent: 70,
+          monthlyAttemptLimit: DEFAULT_MONTHLY_ATTEMPT_LIMIT,
+          sections: {
+            create: {
+              subjectId,
+              sectionOrder: 0,
+              questionCount,
+              timeLimitMinutes: 60,
+              selectionMode: "randomized",
+              weightPercent: 100,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") {
+        throw error;
+      }
+    }
   }
 
   async findApprovedForCandidate(id: string): Promise<MockExamCandidateTemplateListItem> {
     const template = await this.prisma.mockExamTemplate.findUnique({
       where: { id },
-      include: { sections: { orderBy: { sectionOrder: "asc" } } },
+      include: {
+        sections: { orderBy: { sectionOrder: "asc" } },
+        subject: { select: { course: { select: { mockExamQuestionCount: true } } } },
+      },
     });
     if (!template) {
       throw new NotFoundException({
@@ -101,13 +163,16 @@ export class MockExamsService {
         message: "Đề thi thử chưa sẵn sàng.",
       });
     }
-    return this.toCandidateTemplateView(template);
+    return this.toCandidateTemplateView({ ...template, sections: this.resolveCourseSections(template) });
   }
 
   async buildAttemptQuestionPlan(templateId: string): Promise<MockExamAttemptQuestionPlan> {
     const template = await this.prisma.mockExamTemplate.findUnique({
       where: { id: templateId },
-      include: { sections: { orderBy: { sectionOrder: "asc" } } },
+      include: {
+        sections: { orderBy: { sectionOrder: "asc" } },
+        subject: { select: { course: { select: { mockExamQuestionCount: true } } } },
+      },
     });
     if (!template) {
       throw new NotFoundException({
@@ -123,8 +188,7 @@ export class MockExamsService {
     }
 
     const sections: MockExamAttemptSectionPlan[] = [];
-    for (const section of template.sections) {
-      const questions = await this.selectQuestionsForSection(section);
+    for (const { section, questions } of await this.selectTemplateQuestions(this.resolveCourseSections(template))) {
       sections.push({
         sectionOrder: section.sectionOrder,
         subjectId: section.subjectId,
@@ -296,7 +360,10 @@ export class MockExamsService {
   async generatePreview(templateId: string): Promise<MockExamPreview> {
     const template = await this.prisma.mockExamTemplate.findUnique({
       where: { id: templateId },
-      include: { sections: { orderBy: { sectionOrder: "asc" } } },
+      include: {
+        sections: { orderBy: { sectionOrder: "asc" } },
+        subject: { select: { course: { select: { mockExamQuestionCount: true } } } },
+      },
     });
     if (!template) {
       throw new NotFoundException({
@@ -306,8 +373,7 @@ export class MockExamsService {
     }
 
     const sections: MockExamPreviewSection[] = [];
-    for (const section of template.sections) {
-      const questions = await this.selectQuestionsForSection(section);
+    for (const { section, questions } of await this.selectTemplateQuestions(this.resolveCourseSections(template))) {
       sections.push({
         sectionOrder: section.sectionOrder,
         subjectId: section.subjectId,
@@ -432,28 +498,65 @@ export class MockExamsService {
   private async validatePoolForTemplate(templateId: string) {
     const template = await this.prisma.mockExamTemplate.findUnique({
       where: { id: templateId },
-      include: { sections: { orderBy: { sectionOrder: "asc" } } },
+      include: {
+        sections: { orderBy: { sectionOrder: "asc" } },
+        subject: { select: { course: { select: { mockExamQuestionCount: true } } } },
+      },
     });
     if (!template) return;
 
-    for (const section of template.sections) {
-      const available = await this.countAvailableQuestions(section);
-      if (available < section.questionCount) {
-        throw new BadRequestException({
-          code: "INSUFFICIENT_QUESTION_POOL",
-          message: `Không đủ câu hỏi Published cho phần thi ${section.sectionOrder + 1}. Cần ${section.questionCount}, có ${available}.`,
-          details: {
-            sectionOrder: section.sectionOrder,
-            required: section.questionCount,
-            available,
-            subjectId: section.subjectId,
-          },
-        });
-      }
-    }
+    await this.selectTemplateQuestions(this.resolveCourseSections(template));
   }
 
-  private async selectQuestionsForSection(section: MockExamSection): Promise<Question[]> {
+  private resolveCourseSections(template: {
+    sections: MockExamSection[];
+    subject: { course: { mockExamQuestionCount: number } };
+  }): MockExamSection[] {
+    const randomSections = template.sections.filter((section) => section.selectionMode === "randomized");
+    if (randomSections.length === 0) return template.sections;
+
+    const fixedCount = template.sections.reduce(
+      (sum, section) => sum + (section.selectionMode === "fixed" ? section.questionCount : 0),
+      0,
+    );
+    const total = template.subject.course.mockExamQuestionCount ?? DEFAULT_MOCK_EXAM_QUESTION_COUNT;
+    const remaining = total - fixedCount - randomSections.length;
+    if (remaining < 0) {
+      throw new BadRequestException({
+        code: "MOCK_EXAM_QUESTION_COUNT_TOO_LOW",
+        message: `Khóa học cấu hình ${total} câu. Mẫu đề cần ít nhất ${fixedCount + randomSections.length} câu.`,
+      });
+    }
+
+    const originalRandomCount = randomSections.reduce((sum, section) => sum + section.questionCount, 0);
+    if (total === fixedCount + originalRandomCount) return template.sections;
+    let cumulativeWeight = 0;
+    let allocated = 0;
+    return template.sections.map((section) => {
+      if (section.selectionMode === "fixed") return section;
+      cumulativeWeight += section.questionCount;
+      const nextAllocated = Math.round(remaining * (cumulativeWeight / originalRandomCount));
+      const questionCount = 1 + nextAllocated - allocated;
+      allocated = nextAllocated;
+      return { ...section, questionCount };
+    });
+  }
+
+  private async selectTemplateQuestions(sections: MockExamSection[]) {
+    const used = new Set(
+      sections.filter((section) => section.selectionMode === "fixed")
+        .flatMap((section) => (section.fixedQuestionIds as string[] | null) ?? []),
+    );
+    const plan: Array<{ section: MockExamSection; questions: Question[] }> = [];
+    for (const section of sections) {
+      const questions = await this.selectQuestionsForSection(section, used);
+      for (const question of questions) used.add(question.id);
+      plan.push({ section, questions });
+    }
+    return plan;
+  }
+
+  private async selectQuestionsForSection(section: MockExamSection, used: Set<string>): Promise<Question[]> {
     if (section.selectionMode === "fixed") {
       const ids = (section.fixedQuestionIds as string[] | null) ?? [];
       const questions = await this.prisma.question.findMany({
@@ -481,7 +584,7 @@ export class MockExamsService {
       return ordered;
     }
 
-    const pool = await this.findPublishedPool(section);
+    const pool = (await this.findPublishedPool(section)).filter((question) => !used.has(question.id));
     if (pool.length < section.questionCount) {
       throw new BadRequestException({
         code: "INSUFFICIENT_QUESTION_POOL",
@@ -503,21 +606,6 @@ export class MockExamsService {
     return this.shuffle(pool).slice(0, section.questionCount);
   }
 
-  private async countAvailableQuestions(section: MockExamSection): Promise<number> {
-    if (section.selectionMode === "fixed") {
-      const ids = (section.fixedQuestionIds as string[] | null) ?? [];
-      return this.prisma.question.count({
-        where: {
-          id: { in: ids },
-          subjectId: section.subjectId,
-          status: "published",
-        },
-      });
-    }
-    const pool = await this.findPublishedPool(section);
-    return pool.length;
-  }
-
   private async findPublishedPool(section: MockExamSection): Promise<Question[]> {
     const topicTags = section.topicTags.length > 0 ? section.topicTags : undefined;
     return this.prisma.question.findMany({
@@ -534,11 +622,9 @@ export class MockExamsService {
     count: number,
     rules: DifficultyRulesDto,
   ): Question[] {
-    const targets = {
-      easy: Math.round((count * (rules.easy ?? 0)) / 100),
-      medium: Math.round((count * (rules.medium ?? 0)) / 100),
-      hard: count - Math.round((count * (rules.easy ?? 0)) / 100) - Math.round((count * (rules.medium ?? 0)) / 100),
-    };
+    const easy = Math.round((count * (rules.easy ?? 0)) / 100);
+    const easyAndMedium = Math.round((count * ((rules.easy ?? 0) + (rules.medium ?? 0))) / 100);
+    const targets = { easy, medium: easyAndMedium - easy, hard: count - easyAndMedium };
 
     const byDifficulty = {
       easy: this.shuffle(pool.filter((q) => q.difficulty === "easy")),

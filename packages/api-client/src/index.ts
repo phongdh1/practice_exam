@@ -574,6 +574,7 @@ export class ApiClient {
   }
 
   adminCreateCourse(input: {
+    mockExamQuestionCount?: number;
     code: string;
     name: string;
     description?: string | null;
@@ -589,6 +590,7 @@ export class ApiClient {
   adminUpdateCourse(
     id: string,
     input: {
+      mockExamQuestionCount?: number;
       code?: string;
       name?: string;
       description?: string | null;

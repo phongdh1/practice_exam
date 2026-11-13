@@ -58,6 +58,7 @@ export default function StudyListPage() {
               monthlyPriceVnd={subject.monthlyPriceVnd}
               api={studyApi}
               mode="list"
+              enableExpandAll
               screenId="W-12"
               paywallScreenId="W-14"
               onBack={() => router.push(`/subjects/${subjectId}`)}

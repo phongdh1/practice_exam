@@ -44,6 +44,7 @@ export class CoursesService {
           description: dto.description,
           displayOrder: dto.displayOrder ?? 0,
           visibility: "archived",
+          mockExamQuestionCount: dto.mockExamQuestionCount,
           coverImageUrl: normalizeCoverImageUrl(dto.coverImageUrl),
         },
         include: { _count: { select: { subjects: true } } },
@@ -78,6 +79,7 @@ export class CoursesService {
             ...(dto.code !== undefined && { code: dto.code.trim() }),
             ...(dto.name !== undefined && { name: dto.name.trim() }),
             ...(dto.description !== undefined && { description: dto.description }),
+            ...(dto.mockExamQuestionCount !== undefined && { mockExamQuestionCount: dto.mockExamQuestionCount }),
             ...(dto.displayOrder !== undefined && { displayOrder: dto.displayOrder }),
             ...(dto.visibility !== undefined && { visibility: dto.visibility }),
             ...(dto.coverImageUrl !== undefined && {
@@ -218,6 +220,7 @@ export class CoursesService {
     coverImageUrl: string | null;
     visibility: CourseVisibility;
     displayOrder: number;
+    mockExamQuestionCount: number;
     createdAt: Date;
     updatedAt: Date;
     _count: { subjects: number };
@@ -230,6 +233,7 @@ export class CoursesService {
       coverImageUrl: course.coverImageUrl,
       visibility: course.visibility,
       displayOrder: course.displayOrder,
+      mockExamQuestionCount: course.mockExamQuestionCount,
       subjectCount: course._count.subjects,
       createdAt: course.createdAt.toISOString(),
       updatedAt: course.updatedAt.toISOString(),

@@ -36,6 +36,7 @@ export interface PracticeFlowScreenProps {
   summaryScreenId?: "W-22" | "Z-22";
   resumeScreenId?: "W-20" | "Z-20";
   paywallScreenId?: "W-23" | "Z-23";
+  renderQuestionAction?: (question: PracticeQuestionData) => React.ReactNode;
   onBack: () => void;
   onSubscribe: () => void;
   className?: string;
@@ -65,6 +66,7 @@ export function PracticeFlowScreen({
   resumeScreenId,
   paywallScreenId,
   onBack,
+  renderQuestionAction,
   onSubscribe,
   className,
 }: PracticeFlowScreenProps) {
@@ -263,6 +265,7 @@ export function PracticeFlowScreen({
       {phase === "practice" && question && session && (
         <PracticeQuestionView
           question={question}
+          questionAction={renderQuestionAction?.(question)}
           questionNumber={question.questionNumber}
           selectedKeys={selectedKeys}
           revealed={revealed}

@@ -31,6 +31,7 @@ export interface StudyFlowScreenProps {
   screenId: "W-12" | "Z-12" | "W-13" | "Z-13";
   paywallScreenId?: "W-14" | "Z-14";
   enablePullToRefresh?: boolean;
+  enableExpandAll?: boolean;
   onBack: () => void;
   onSubscribe: () => void;
   onSelectQuestion: (questionId: string) => void;
@@ -60,6 +61,7 @@ export function StudyFlowScreen({
   screenId,
   paywallScreenId,
   enablePullToRefresh = false,
+  enableExpandAll = false,
   onBack,
   onSubscribe,
   onSelectQuestion,
@@ -169,7 +171,9 @@ export function StudyFlowScreen({
 
       {mode === "list" && listResult && studyTier && (
         <StudyQuestionList
+          key={`${subjectId}:${listResult.page}`}
           items={listResult.items}
+          loadQuestionDetail={enableExpandAll ? (id) => api.getQuestionDetail(subjectId, id) : undefined}
           studyTier={studyTier}
           total={listResult.total}
           page={listResult.page}

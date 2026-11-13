@@ -18,6 +18,7 @@ import {
 } from "@practice-exam/ui";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { webSessionFetch } from "@/lib/auth-fetch";
 import { useWebSession } from "@/components/web-session-provider";
 
 const apiClient = createApiClient({
@@ -30,11 +31,13 @@ type CatalogSubject = Awaited<
   ReturnType<typeof apiClient.listSubjectsPaginated>
 >["data"]["items"][number];
 
+type FreeTierUsageResponse = Awaited<ReturnType<typeof apiClient.getFreeTierUsage>>;
+
 async function fetchFreeTierUsage() {
-  const res = await fetch("/api/entitlements/free-tier");
+  const res = await webSessionFetch("/api/entitlements/free-tier");
   if (res.status === 401) return null;
   if (!res.ok) throw new Error("Failed to load entitlements");
-  return res.json();
+  return (await res.json()) as FreeTierUsageResponse;
 }
 
 export default function HomePage() {
@@ -71,12 +74,14 @@ export default function HomePage() {
   const disclaimer = disclaimerResponse?.data ?? FALLBACK_PLATFORM_DISCLAIMER;
   const disclaimerText = disclaimer.text?.trim() || FALLBACK_PLATFORM_DISCLAIMER.text;
   const landingContent = mergeLandingContent(landingContentResponse?.data);
-  const freeTierUsedBySubjectId = useMemo(() => {
-    const map: Record<string, number> = {};
+  const { usageBySubjectId, freeTierUsedBySubjectId } = useMemo(() => {
+    const usage: Record<string, FreeTierUsageResponse["data"]["items"][number]> = {};
+    const counts: Record<string, number> = {};
     for (const item of entitlementsResponse?.data?.items ?? []) {
-      map[item.subjectId] = item.used;
+      usage[item.subjectId] = item;
+      counts[item.subjectId] = item.used;
     }
-    return map;
+    return { usageBySubjectId: usage, freeTierUsedBySubjectId: counts };
   }, [entitlementsResponse]);
 
   useEffect(() => {
@@ -125,7 +130,14 @@ export default function HomePage() {
                   totalCount={catalog?.total}
                   userName={isAuthenticated ? (user?.displayName ?? "Học viên") : undefined}
                   freeTierUsedBySubjectId={freeTierUsedBySubjectId}
+                  hasSubscription={(subject) => usageBySubjectId[subject.id]?.hasActiveSubscription ?? false}
                   getSubjectHref={getSubjectHref}
+                  getSubjectActionHref={(subject) => {
+                    const usage = usageBySubjectId[subject.id];
+                    if (usage?.hasActiveSubscription || (usage?.used ?? 0) > 0) return undefined;
+                    const checkout = `/subjects/${subject.id}/checkout`;
+                    return isAuthenticated ? checkout : `/sign-in?returnTo=${encodeURIComponent(checkout)}`;
+                  }}
                 />
                 {catalog && (
                   <CatalogPagination

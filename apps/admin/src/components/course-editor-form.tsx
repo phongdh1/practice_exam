@@ -14,6 +14,7 @@ export type CourseEditorFormValues = {
   description: string;
   displayOrder: number;
   coverImageUrl: string | null;
+  mockExamQuestionCount: string;
   visibility: CourseEditorVisibility;
 };
 
@@ -287,6 +288,24 @@ export function CourseEditorForm({
                 rows={5}
                 className="w-full resize-none rounded-lg border border-outline-variant px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary"
               />
+            </div>
+
+            <div className="flex flex-col gap-2 sm:max-w-xs">
+              <label htmlFor="mock-exam-question-count" className="font-label text-label text-primary">
+                Số câu thi thử
+              </label>
+              <input
+                id="mock-exam-question-count"
+                type="number"
+                min={1}
+                max={2147483647}
+                step={1}
+                required
+                value={form.mockExamQuestionCount}
+                onChange={(event) => onChange({ ...form, mockExamQuestionCount: event.target.value })}
+                className="w-28 rounded-lg border border-outline-variant px-4 py-3"
+              />
+              <p className="text-caption text-ink-muted">Áp dụng cho lượt thi ngẫu nhiên mới. Mặc định 50 câu.</p>
             </div>
 
             <div className="flex flex-col gap-2 sm:max-w-xs">

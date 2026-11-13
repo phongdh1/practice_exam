@@ -302,7 +302,10 @@ export interface SubjectGoLiveStatus {
 export type CourseVisibilityType = "active" | "archived";
 export type SubjectVisibilityType = "active" | "archived";
 
+export const DEFAULT_MOCK_EXAM_QUESTION_COUNT = 50;
+
 export interface AdminCourseView {
+  mockExamQuestionCount: number;
   id: string;
   code: string;
   name: string;

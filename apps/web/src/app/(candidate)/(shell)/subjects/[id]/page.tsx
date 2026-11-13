@@ -2,7 +2,7 @@
 
 import { createApiClient, queryKeys } from "@practice-exam/api-client";
 import { disclaimerQueryOptions } from "@/lib/web-api";
-import { webAuthFetch } from "@/lib/auth-fetch";
+import { webAuthFetch, webSessionFetch } from "@/lib/auth-fetch";
 import {
   CatalogSkeleton,
   DisclaimerGate,
@@ -22,7 +22,7 @@ const apiClient = createApiClient({
 
 async function fetchSubjectSubscription(subjectId: string): Promise<SubjectSubscriptionView | null> {
   // Optional-auth probe: guests get 401 without a session — must not redirect (public subject detail).
-  const res = await fetch(`/api/subscriptions/${subjectId}`);
+  const res = await webSessionFetch(`/api/subscriptions/${subjectId}`);
   if (res.status === 401) return null;
   if (!res.ok) return null;
   const body = await res.json();
@@ -49,7 +49,7 @@ export default function SubjectDetailPage() {
     queryKey: queryKeys.entitlements.subject(subjectId),
     queryFn: async () => {
       // Optional-auth probe: guests get 401 without a session — must not redirect (public subject detail).
-      const res = await fetch(`/api/entitlements/${subjectId}`);
+      const res = await webSessionFetch(`/api/entitlements/${subjectId}`);
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to load entitlement");
       return res.json();
@@ -61,7 +61,7 @@ export default function SubjectDetailPage() {
     queryKey: queryKeys.study.tier(subjectId),
     queryFn: async () => {
       // Optional-auth probe: guests get 401 without a session — must not redirect (public subject detail).
-      const res = await fetch(`/api/study/subjects/${subjectId}/tier`);
+      const res = await webSessionFetch(`/api/study/subjects/${subjectId}/tier`);
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to load study tier");
       return res.json();

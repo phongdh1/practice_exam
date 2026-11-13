@@ -7,7 +7,7 @@ import {
 import { cn } from "../lib/utils";
 import { InternalLink } from "./internal-link";
 import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { MaterialIcon } from "./material-icon";
@@ -30,6 +30,8 @@ export interface SubjectCardProps extends React.HTMLAttributes<HTMLElement> {
   onCardClick?: () => void;
   onActionClick?: () => void;
   actionLabel?: string;
+  actionHref?: string;
+  hasActiveSubscription?: boolean;
 }
 
 function freeTierProgress(used: number, limit: number) {
@@ -54,6 +56,8 @@ export function SubjectCard({
   onCardClick,
   onActionClick,
   actionLabel,
+  actionHref,
+  hasActiveSubscription,
   className,
   ...props
 }: SubjectCardProps) {
@@ -62,7 +66,7 @@ export function SubjectCard({
     ? { kind: "subscription" as const, label: badge }
     : resolveSubjectCardStatusLabel({ subscription, freeTierUsed, freeTierLimit });
   const hasSubscription =
-    subscription?.status === "active" || subscription?.status === "expiring";
+    hasActiveSubscription ?? (subscription?.status === "active" || subscription?.status === "expiring");
   const used = freeTierUsed ?? 0;
   const limit = freeTierLimit ?? 20;
   const progress = freeTierProgress(used, limit);
@@ -73,6 +77,11 @@ export function SubjectCard({
       ? "Tiếp tục học"
       : "Đăng ký ngay";
 
+  const actionVariant = hasSubscription || used > 0 ? "default" : "outline";
+  const actionClassName = cn(
+    "mt-6 w-full rounded-lg py-3 text-label font-bold active:scale-95",
+    actionVariant === "outline" && "border-2 border-primary text-primary hover:bg-surface-container-high",
+  );
   const content = (
     <CardContent className="flex min-h-[220px] flex-col justify-between p-5">
       <div className="flex items-start justify-between">
@@ -127,23 +136,21 @@ export function SubjectCard({
           />
         </div>
       )}
-      {(onActionClick || href) && (
-        <Button
-          type="button"
-          variant={hasSubscription || used > 0 ? "default" : "outline"}
-          className={cn(
-            "mt-6 w-full rounded-lg py-3 text-label font-bold active:scale-95",
-            !(hasSubscription || used > 0) && "border-2 border-primary text-primary hover:bg-surface-container-high",
-          )}
-          size="lg"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onActionClick?.();
+      {onActionClick && (
+        <Button type="button" size="lg" variant={actionVariant} className={actionClassName}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onActionClick();
           }}
         >
           {actionLabel ?? defaultActionLabel}
         </Button>
+      )}
+      {href && !onActionClick && !actionHref && (
+        <span className={buttonVariants({ variant: actionVariant, size: "lg", className: actionClassName })}>
+          {actionLabel ?? defaultActionLabel}
+        </span>
       )}
     </CardContent>
   );
@@ -153,6 +160,21 @@ export function SubjectCard({
     (href || onCardClick) && "cursor-pointer",
     className,
   );
+
+  if (href && actionHref) {
+    return (
+      <Card className={cardClassName} data-component="subject-card" data-variant={variant} {...props}>
+        <InternalLink href={href} className="block no-underline" onClick={onCardClick}>
+          {content}
+        </InternalLink>
+        <div className="px-5 pb-5">
+          <Button asChild variant={actionVariant} size="lg" className={cn(actionClassName, "mt-0")}>
+            <InternalLink href={actionHref}>{actionLabel ?? defaultActionLabel}</InternalLink>
+          </Button>
+        </div>
+      </Card>
+    );
+  }
 
   if (href) {
     return (

@@ -10,6 +10,7 @@ import { MaterialIcon } from "./material-icon";
 export interface PracticeQuestionViewProps {
   question: PracticeQuestionView;
   questionNumber: number;
+  questionAction?: React.ReactNode;
   selectedKeys: string[];
   revealed: boolean;
   isCorrect: boolean | null;
@@ -48,6 +49,7 @@ function isMultipleChoice(type: QuestionTypeValue) {
 export function PracticeQuestionView({
   question,
   questionNumber,
+  questionAction,
   selectedKeys,
   revealed,
   isCorrect,
@@ -71,9 +73,12 @@ export function PracticeQuestionView({
     <div className={cn("space-y-6", className)} data-screen={screenId}>
       <div className="flex items-center justify-between gap-4">
         <p className="text-label font-medium text-ink-muted">Câu {questionNumber}</p>
-        <Button type="button" variant="ghost" size="sm" onClick={onEnd}>
-          Kết thúc
-        </Button>
+        <div className="flex flex-wrap justify-end gap-2">
+          {questionAction}
+          <Button type="button" variant="ghost" size="sm" onClick={onEnd}>
+            Kết thúc
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-5">

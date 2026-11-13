@@ -19,6 +19,7 @@ const INITIAL_FORM: CourseEditorFormValues = {
   description: "",
   displayOrder: 1,
   coverImageUrl: null,
+  mockExamQuestionCount: "50",
   visibility: "archived",
 };
 
@@ -46,6 +47,7 @@ function NewCourseContent() {
         description: form.description.trim() || null,
         displayOrder: form.displayOrder,
         coverImageUrl: form.coverImageUrl,
+        mockExamQuestionCount: Number(form.mockExamQuestionCount),
       }),
     onSuccess: () => {
       setActionError(null);

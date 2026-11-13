@@ -10,6 +10,8 @@ export interface SubjectCatalogGridProps {
   userName?: string;
   variant?: "web" | "zalo";
   getSubjectHref?: (subject: SubjectCatalogItem) => string;
+  hasSubscription?: (subject: SubjectCatalogItem) => boolean;
+  getSubjectActionHref?: (subject: SubjectCatalogItem) => string | undefined;
   onSubjectClick?: (subject: SubjectCatalogItem) => void;
   freeTierUsedBySubjectId?: Record<string, number>;
   /** Total catalog count across all pages (when paginated). Defaults to subjects.length. */
@@ -24,6 +26,8 @@ export function SubjectCatalogGrid({
   variant = "web",
   getSubjectHref,
   onSubjectClick,
+  getSubjectActionHref,
+  hasSubscription,
   freeTierUsedBySubjectId = {},
   totalCount,
   className,
@@ -93,6 +97,8 @@ export function SubjectCatalogGrid({
                       variant={variant}
                       icon={SUBJECT_ICONS[index % SUBJECT_ICONS.length]}
                       href={getSubjectHref?.(subject)}
+                      actionHref={getSubjectActionHref?.(subject)}
+                      hasActiveSubscription={hasSubscription?.(subject)}
                       onCardClick={onSubjectClick ? () => onSubjectClick(subject) : undefined}
                       onActionClick={onSubjectClick ? () => onSubjectClick(subject) : undefined}
                     />

@@ -246,6 +246,8 @@ model Course {
   createdAt     DateTime         @default(now()) @map("created_at")
   updatedAt     DateTime         @updatedAt @map("updated_at")
 
+  mockExamQuestionCount Int @default(50) @map("mock_exam_question_count")
+
   subjects Subject[]
 
   @@map("courses")

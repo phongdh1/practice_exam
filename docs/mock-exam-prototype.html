@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thi thử · Practice Exam</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fa;color:#152638;font:16px/1.55 Inter,system-ui,sans-serif}header{position:sticky;top:0;background:white;border-bottom:1px solid #dce5ed;z-index:1}header>div,main{max-width:1100px;margin:auto;padding:18px 24px}header>div,.line,.actions{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:800;color:#1b4f72}.timer{font-variant-numeric:tabular-nums;font-size:22px;font-weight:800;color:#1b4f72}.timer small{font-size:12px;font-weight:600;display:block}.warn{color:#9d2419}main{padding-top:36px}h1{margin:4px 0 18px;font-size:clamp(25px,4vw,36px)}h2{margin:6px 0 22px;font-size:23px;line-height:1.45}p{margin:0}.muted{color:#4d6175}.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:20px}.panel{background:white;border:1px solid #dce5ed;border-radius:16px;padding:24px}.eyebrow{font-size:13px;font-weight:750;color:#1b4f72}.option{display:flex;align-items:center;gap:12px;padding:13px;margin:10px 0;border:1px solid #cad8e4;border-radius:10px;cursor:pointer}.option:has(input:checked){background:#e9f3fb;border-color:#1b4f72}.option input{accent-color:#1b4f72}.actions{margin-top:24px;flex-wrap:wrap}button{border:1px solid #a9bfce;background:white;color:#1b4f72;border-radius:9px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}button.primary{background:#1b4f72;color:white;border-color:#1b4f72}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #347eae;outline-offset:3px}progress{width:100%;accent-color:#1b4f72}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.steps span,.steps button{border:1px solid #cad8e4;border-radius:8px;padding:6px;text-align:center}.steps .done{background:#e0f1e9;color:#19583d}.steps .here{border:2px solid #1b4f72;color:#1b4f72;font-weight:800}dialog{border:1px solid #cad8e4;border-radius:16px;padding:24px;max-width:min(430px,90vw)}dialog::backdrop{background:#14263880}@media(max-width:720px){.layout{grid-template-columns:1fr}main{padding-top:22px}.panel{padding:18px}header>div,main{padding-left:16px;padding-right:16px}}
+</style>
+<header><div><span class="brand">Practice Exam</span><span class="timer" id="timer"><small>Thời gian còn lại</small><span id="clock">12:40</span></span><button id="exit">Thoát</button></div></header>
+<main><p class="eyebrow">THI THỬ · ĐỀ MINH HỌA</p><h1>Claude Certified Developer</h1>
+<div class="layout"><section class="panel" id="content"></section><aside class="panel"><strong id="part"></strong><p class="muted" id="count"></p><progress id="progress" max="4" value="2" aria-label="Số câu đã lưu"></progress><div class="steps" id="steps" aria-label="Tiến độ câu hỏi"></div><p class="muted" id="note"></p></aside></div>
+</main>
+<dialog id="confirm"><form method="dialog"><h2 id="dialog-title"></h2><p id="dialog-copy"></p><div class="actions"><button value="cancel">Quay lại</button><button class="primary" value="confirm" id="confirm-button"></button></div></form></dialog>
+<script>
+const questions=[
+ ['Khi nào nên mô tả rõ định dạng đầu ra trong lời nhắc?',['Khi đầu ra cần được xử lý tự động','Chỉ khi câu hỏi có hình ảnh','Chỉ khi kết quả là văn bản tự do','Khi cần bỏ qua mọi ràng buộc']],
+ ['Cách nào giúp đánh giá thay đổi của một lời nhắc?',['Đổi toàn bộ bộ dữ liệu mỗi lần','So sánh trên cùng một bộ ví dụ','Chỉ kiểm tra ví dụ dễ nhất','Đánh giá theo độ dài câu trả lời']],
+ ['Bạn đang xây dựng một trợ lý đọc tài liệu nội bộ. Cách nào giúp người đọc kiểm chứng thông tin trong câu trả lời?',['Yêu cầu mô hình trả lời ngắn hơn','Đưa đoạn nguồn liên quan vào ngữ cảnh và yêu cầu trích dẫn','Tăng giới hạn độ dài của câu trả lời','Dùng cùng một câu trả lời mẫu cho mọi câu hỏi']],
+ ['Khi yêu cầu người dùng chưa rõ, trợ lý nên làm gì?',['Tự bỏ qua phần chưa rõ','Lặp lại nguyên văn yêu cầu','Hỏi về thông tin còn thiếu để tiếp tục','Đưa ra kết quả mà không nêu giả định']]
+];
+const answers=[0,1,null,null], correct=[0,1,1,2];
+const get=id=>document.getElementById(id);
+let index=2, phase='timed', selected=null, pending, end=Date.now()+760000;
+function render(){
+ const answered=answers.filter(a=>a!==null).length;
+ get('part').textContent=phase==='timed'?'Phần 1 · Kiến thức nền tảng':'Tiến độ bài thi';
+ get('count').textContent=answered+'/4 câu đã trả lời';
+ get('progress').value=answered;
+ get('note').textContent=phase==='timed'?'Bạn sẽ xem lại các câu sau khi hoàn thành phần thi.':'';
+ get('steps').innerHTML=answers.map((answer,i)=>{
+ const label='Câu '+(i+1)+(answer===null?' chưa trả lời':' đã trả lời');
+ const css=(answer===null?'':'done')+(i===index?' here':'');
+ return phase==='review'?'<button class="'+css+'" aria-label="'+label+'" onclick="jump('+i+')">'+(i+1)+'</button>':'<span class="'+css+'" aria-label="'+label+'">'+(i+1)+'</span>';
+ }).join('');
+ get('timer').hidden=phase!=='timed';
+ get('exit').hidden=phase==='done';
+ if(phase==='done'){
+ const score=answers.filter((answer,i)=>answer===correct[i]).length;
+ get('content').innerHTML='<p class="eyebrow">KẾT QUẢ MINH HỌA</p><h2>'+score+'/4 câu đúng</h2><p class="muted">Bài thi đã được nộp.</p>';
+ return;
+ }
+ const [stem,options]=questions[index];
+ get('content').innerHTML='<p class="eyebrow">'+(phase==='review'?'XEM LẠI · ':'')+'CÂU '+(index+1)+'/4</p><h2>'+stem+'</h2><p class="muted">Chọn một đáp án.</p>'+options.map((option,i)=>'<label class="option"><input type="radio" name="answer" value="'+i+'" '+(selected===i?'checked':'')+'><strong>'+'ABCD'[i]+'.</strong> '+option+'</label>').join('')+
+ '<div class="actions"><span class="muted" id="answer-state" role="status">'+(answers[index]===null?'Chưa trả lời':'Đã lưu đáp án')+'</span><button class="primary" id="next" '+(phase==='timed'&&selected===null?'disabled':'')+'>'+(phase==='review'?'Nộp bài':index===3?'Hoàn thành phần thi':'Câu tiếp theo')+'</button></div>';
+ get('content').querySelectorAll('input').forEach(input=>input.onchange=()=>{selected=Number(input.value);if(phase==='review')answers[index]=selected;get('next').disabled=false;get('answer-state').textContent=phase==='review'?'Đã lưu đáp án':'Đã chọn đáp án';if(phase==='review'){get('count').textContent=answers.filter(a=>a!==null).length+'/4 câu đã trả lời';get('progress').value=answers.filter(a=>a!==null).length;}});
+ get('next').onclick=()=>{
+ if(phase==='review'){ask('Nộp bài thi?', 'Bạn còn '+(4-answers.filter(a=>a!==null).length)+' câu chưa trả lời.', 'Nộp bài',()=>{phase='done';render()});return;}
+ if(selected===null)return;
+ answers[index]=selected;
+ if(index===3){phase='review';jump(0)}else jump(index+1);
+ };
+}
+function jump(i){index=i;selected=answers[i];render();}
+function ask(title,copy,label,action){get('dialog-title').textContent=title;get('dialog-copy').textContent=copy;get('confirm-button').textContent=label;pending=action;get('confirm').returnValue='cancel';get('confirm').showModal();}
+get('confirm').onclose=()=>{if(get('confirm').returnValue==='confirm')pending?.()};
+get('exit').onclick=()=>ask('Thoát bài thi?','Thời gian vẫn tiếp tục chạy. Bạn có thể quay lại lượt thi đang diễn ra.','Thoát',()=>{get('content').innerHTML='<h2>Đã rời màn hình thi</h2><button class="primary" onclick="render()">Tiếp tục bài thi</button>'});
+setInterval(()=>{if(phase!=='timed')return;const time=Math.max(0,Math.ceil((end-Date.now())/1000));get('clock').textContent=Math.floor(time/60)+':'+String(time%60).padStart(2,'0');get('timer').classList.toggle('warn',time<300);if(!time){if(selected!==null)answers[index]=selected;phase='review';jump(0)}},1000);
+render();
+</script>
+</html>

@@ -95,6 +95,7 @@ export function MockExamFlowScreen({
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [confirmSubmitOpen, setConfirmSubmitOpen] = useState(false);
+  const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false);
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
   const [reviewQuestionId, setReviewQuestionId] = useState<string | null>(null);
   const [questionReviewIndex, setQuestionReviewIndex] = useState(0);
@@ -535,6 +536,7 @@ export function MockExamFlowScreen({
         <>
           {attempt.phase === "in_section" && !reviewQuestionId && (
             <MockExamTimerBar
+              className={screenIds?.section === "Z-32" ? undefined : "top-16"}
               remainingMs={attempt.sectionRemainingMs}
               onExpire={() => void handleTimerExpire()}
               onSync={() => handleTimerSync()}
@@ -544,7 +546,10 @@ export function MockExamFlowScreen({
           <div className="mt-6">
             <MockExamSectionQuestion
               question={question}
-              sectionLabel={`Phần ${question.sectionIndex + 1}`}
+              sectionLabel={`Phần ${question.sectionIndex + 1}/${attempt.sectionCount}`}
+              totalQuestions={attempt.totalQuestions}
+              sectionQuestionCount={reviewQuestionId ? undefined : attempt.sections[question.sectionIndex]?.questionCount}
+              reviewing={Boolean(reviewQuestionId)}
               selectedKeys={selectedKeys}
               onToggleOption={handleToggleOption}
               onSaveAndNext={async () => {
@@ -575,7 +580,7 @@ export function MockExamFlowScreen({
           items={reviewItems}
           sectionCount={attempt.sectionCount}
           onJumpToQuestion={(questionId) => void handleJumpToQuestion(questionId)}
-          onSubmit={() => void handleSubmit()}
+          onSubmit={() => setSubmitConfirmOpen(true)}
           submitting={submitting}
           confirmOpen={confirmSubmitOpen}
           onConfirmOpenChange={setConfirmSubmitOpen}
@@ -601,6 +606,29 @@ export function MockExamFlowScreen({
           screenId={screenIds?.questionReview ?? "W-35"}
         />
       )}
+
+      <Dialog open={submitConfirmOpen} onOpenChange={setSubmitConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nộp bài thi?</DialogTitle>
+            <DialogDescription>
+              Còn {reviewItems.filter((item) => !item.answered).length} câu chưa trả lời.
+              Sau khi nộp, bạn không thể sửa đáp án.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={() => setSubmitConfirmOpen(false)}>
+              Xem lại bài
+            </Button>
+            <Button type="button" onClick={() => {
+              setSubmitConfirmOpen(false);
+              void handleSubmit();
+            }}>
+              Nộp bài
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={exitConfirmOpen} onOpenChange={setExitConfirmOpen}>
         <DialogContent>

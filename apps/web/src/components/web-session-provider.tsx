@@ -10,9 +10,11 @@ import {
   type ReactNode,
 } from "react";
 
+import { webSessionFetch } from "@/lib/auth-fetch";
+
 async function fetchWebSession(): Promise<AuthMeUser | null> {
   // Optional-auth probe: guests get 401 — must not redirect (public shell pages).
-  const res = await fetch("/api/auth/me");
+  const res = await webSessionFetch("/api/auth/me");
   if (res.status === 401) return null;
   if (!res.ok) throw new Error("Failed to load session");
   const body = await res.json();
