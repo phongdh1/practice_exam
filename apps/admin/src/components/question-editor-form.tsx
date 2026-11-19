@@ -4,7 +4,9 @@ import type { QuestionStatusType } from "@practice-exam/types";
 import { Badge, MaterialIcon } from "@practice-exam/ui";
 import Link from "next/link";
 import {
+  addQuestionOption,
   applyQuestionTypeChange,
+  removeQuestionOption,
   type QuestionEditorFormState,
 } from "@/lib/question-editor";
 
@@ -239,12 +241,34 @@ export function QuestionEditorForm({
                       value={option.text}
                       onChange={(event) => updateOptionText(option.key, event.target.value)}
                       placeholder={`Phương án ${option.key}`}
+                      aria-label={`Nội dung phương án ${option.key}`}
                       className="w-full rounded-lg border border-outline-variant px-4 py-3 text-body focus:border-primary focus:outline-none disabled:bg-surface-container-low disabled:opacity-80"
                     />
+                    {!readOnly && form.questionType !== "true_false" && (
+                      <button
+                        type="button"
+                        disabled={form.options.length <= 2}
+                        onClick={() => onChange(removeQuestionOption(form, option.key))}
+                        aria-label={`Xóa phương án ${option.key}`}
+                        className="mt-2 rounded-lg p-2 text-ink-muted hover:bg-error-muted hover:text-error disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <MaterialIcon name="delete" size={20} />
+                      </button>
+                    )}
                   </div>
                 );
               })}
             </div>
+            {!readOnly && form.questionType !== "true_false" && (
+              <button
+                type="button"
+                onClick={() => onChange(addQuestionOption(form))}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-primary px-4 py-2 text-label text-primary hover:bg-primary/5"
+              >
+                <MaterialIcon name="add" size={18} />
+                Thêm phương án
+              </button>
+            )}
           </section>
 
           <section className="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm">

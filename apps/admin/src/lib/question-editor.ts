@@ -47,6 +47,43 @@ export function createEmptyQuestionForm(): QuestionEditorFormState {
   };
 }
 
+export function addQuestionOption(form: QuestionEditorFormState): QuestionEditorFormState {
+  if (form.questionType === "true_false") return form;
+
+  // Spreadsheet-style labels continue after Z (AA, AB...) without a fixed limit.
+  const lastKey = form.options
+    .map((option) => option.key)
+    .filter((key) => /^[A-Z]+$/.test(key))
+    .sort((a, b) => a.length - b.length || a.localeCompare(b))
+    .at(-1);
+  const letters = (lastKey ?? "").split("");
+  let index = letters.length - 1;
+  while (index >= 0 && letters[index] === "Z") {
+    letters[index] = "A";
+    index -= 1;
+  }
+  if (index < 0) letters.unshift("A");
+  else letters[index] = String.fromCharCode(letters[index].charCodeAt(0) + 1);
+
+  return { ...form, options: [...form.options, { key: letters.join(""), text: "" }] };
+}
+
+export function removeQuestionOption(
+  form: QuestionEditorFormState,
+  key: string,
+): QuestionEditorFormState {
+  if (form.questionType === "true_false" || form.options.length <= 2) return form;
+
+  const options = form.options.filter((option) => option.key !== key);
+  if (options.length < 2) return form;
+
+  return {
+    ...form,
+    options,
+    correctOptionKeys: form.correctOptionKeys.filter((correctKey) => correctKey !== key),
+  };
+}
+
 export function questionDetailToForm(
   question: QuestionDetail,
   courseId: string,

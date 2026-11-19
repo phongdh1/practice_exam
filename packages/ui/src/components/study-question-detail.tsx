@@ -46,6 +46,7 @@ export function StudyQuestionDetail({
           return (
             <AnswerOption
               key={option.key}
+              optionKey={option.key}
               label={option.text}
               index={index}
               state={isCorrect ? "correct" : "default"}

@@ -96,6 +96,7 @@ export function PracticeQuestionView({
         {question.options.map((option, index) => (
           <AnswerOption
             key={option.key}
+            optionKey={option.key}
             label={option.text}
             index={index}
             state={optionState(option.key, selectedKeys, revealed, correctOptionKeys)}

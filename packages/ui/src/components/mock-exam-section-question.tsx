@@ -71,6 +71,7 @@ export function MockExamSectionQuestion({
             {question.options.map((option, index) => (
               <AnswerOption
                 key={option.key}
+                optionKey={option.key}
                 label={option.text}
                 index={index}
                 state={selectedKeys.includes(option.key) ? "selected" : "default"}

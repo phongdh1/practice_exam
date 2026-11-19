@@ -8,6 +8,7 @@ export interface AnswerOptionProps extends React.HTMLAttributes<HTMLButtonElemen
   label: string;
   state?: AnswerOptionState;
   index?: number;
+  optionKey?: string;
   disabled?: boolean;
 }
 
@@ -29,11 +30,19 @@ export function AnswerOption({
   label,
   state = "default",
   index,
+  optionKey,
   disabled,
   className,
   ...props
 }: AnswerOptionProps) {
   const icon = stateIcons[state];
+  let badge = optionKey;
+  if (badge === undefined && index !== undefined && Number.isInteger(index) && index >= 0) {
+    badge = "";
+    for (let value = index + 1; value > 0; value = Math.floor((value - 1) / 26)) {
+      badge = String.fromCharCode(65 + ((value - 1) % 26)) + badge;
+    }
+  }
 
   return (
     <button
@@ -48,9 +57,9 @@ export function AnswerOption({
       aria-pressed={state === "selected"}
       {...props}
     >
-      {index !== undefined && (
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-container text-label font-bold text-primary">
-          {String.fromCharCode(65 + index)}
+      {badge !== undefined && (
+        <span className="flex h-8 min-w-8 shrink-0 items-center justify-center rounded-full bg-surface-container px-1 text-label font-bold text-primary">
+          {badge}
         </span>
       )}
       <span className="flex-1 pt-0.5">{label}</span>

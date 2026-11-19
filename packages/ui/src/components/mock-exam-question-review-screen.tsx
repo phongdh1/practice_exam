@@ -46,6 +46,7 @@ export function MockExamQuestionReviewScreen({
             return (
               <AnswerOption
                 key={option.key}
+                optionKey={option.key}
                 label={option.text}
                 index={index}
                 state={state}

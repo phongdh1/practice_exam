@@ -42,6 +42,7 @@ export function QuestionPreview({
           return (
             <AnswerOption
               key={option.key}
+              optionKey={option.key}
               label={option.text}
               index={index}
               state={state}

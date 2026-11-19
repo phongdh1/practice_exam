@@ -185,7 +185,9 @@ function BulkImportContent() {
           <div>
             <p className="text-sm font-bold text-on-surface">Cột trong file mẫu</p>
             <p className="mt-1 text-body-sm text-on-surface-variant">
-              Loại câu hỏi, Câu hỏi, Đáp án A–D, Đáp án đúng, Giải thích, Độ khó, Chủ đề. Chọn{" "}
+              Loại câu hỏi, Câu hỏi, Đáp án A–F, Đáp án đúng, Giải thích, Độ khó, Chủ đề.
+              Có thể thêm cột Đáp án G, H… Z, AA…; bỏ trống phương án không dùng.
+              Đáp án đúng nhập mã tương ứng (ví dụ: E hoặc A,E,F). Câu Đúng/Sai chỉ dùng A, B. Chọn{" "}
               <strong className="text-on-surface">Loại câu hỏi</strong> và{" "}
               <strong className="text-on-surface">Độ khó</strong> từ dropdown (sheet DanhMuc). Xem
               thêm sheet HuongDan trong file tải về.

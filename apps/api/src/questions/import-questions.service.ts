@@ -19,6 +19,8 @@ export const IMPORT_TEMPLATE_COLUMNS = {
   optionB: "Đáp án B",
   optionC: "Đáp án C",
   optionD: "Đáp án D",
+  optionE: "Đáp án E",
+  optionF: "Đáp án F",
   correctKey: "Đáp án đúng",
   explanation: "Giải thích",
   difficulty: "Độ khó",
@@ -101,6 +103,7 @@ export interface ImportRow {
   optionB: string;
   optionC?: string;
   optionD?: string;
+  options?: { key: string; text: string }[];
   correctOptionKeys: string[];
   explanation?: string;
   difficulty?: string;
@@ -293,8 +296,9 @@ export class ImportQuestionsService {
     huongDan.columns = [{ header: "Hướng dẫn import câu hỏi", key: "guide", width: 90 }];
     huongDan.addRows([
       { guide: "Nhập dữ liệu trên sheet Câu hỏi. Chọn Loại câu hỏi và Độ khó từ dropdown (danh mục ở sheet DanhMuc)." },
-      { guide: "Một lựa chọn: đáp án đúng là 1 chữ cái (A, B, C hoặc D)." },
-      { guide: "Nhiều lựa chọn: đáp án đúng là 2+ chữ cái, phân tách bằng dấu phẩy (vd: A,C)." },
+      { guide: "Một lựa chọn: đáp án đúng là 1 mã lựa chọn (A, B, C, ..., Z, AA, AB, ...)." },
+      { guide: "Thêm cột Đáp án G, Đáp án H, ... để nhập thêm lựa chọn. Câu hỏi lựa chọn cần ít nhất 2 phương án có nội dung; bỏ trống cột không dùng." },
+      { guide: "Nhiều lựa chọn: đáp án đúng là 2+ mã lựa chọn, phân tách bằng dấu phẩy (vd: A,E,AA)." },
       { guide: "Đúng/Sai: chỉ dùng đáp án A=Đúng, B=Sai; đáp án đúng là A hoặc B." },
       { guide: "Tối đa 500 dòng mỗi lần import. Câu hỏi import luôn ở trạng thái Nháp." },
     ]);
@@ -320,7 +324,7 @@ export class ImportQuestionsService {
         errorTitle: "Loại câu hỏi",
         error: "Chọn từ danh sách: Một lựa chọn, Nhiều lựa chọn, Đúng/Sai",
       };
-      cauHoi.getCell(`I${row}`).dataValidation = {
+      cauHoi.getCell(row, headers.indexOf(IMPORT_TEMPLATE_COLUMNS.difficulty) + 1).dataValidation = {
         ...listValidation("DanhMuc!$C$2:$C$4"),
         allowBlank: true,
         errorTitle: "Độ khó",
@@ -380,6 +384,7 @@ export class ImportQuestionsService {
       const optionB = String(row.option_b ?? row["Đáp án B"] ?? row.B ?? "");
       const optionC = String(row.option_c ?? row["Đáp án C"] ?? row.C ?? "") || undefined;
       const optionD = String(row.option_d ?? row["Đáp án D"] ?? row.D ?? "") || undefined;
+      const options = this.parseOptions(row);
       const explanation = String(row.explanation ?? row["Giải thích"] ?? "") || undefined;
       const tags = String(row.tags ?? row["Chủ đề"] ?? "") || undefined;
 
@@ -387,8 +392,7 @@ export class ImportQuestionsService {
         !stem.trim() &&
         !optionA.trim() &&
         !optionB.trim() &&
-        !optionC?.trim() &&
-        !optionD?.trim() &&
+        options.length === 0 &&
         !correctRaw.trim() &&
         !explanation?.trim() &&
         !tags?.trim() &&
@@ -410,6 +414,7 @@ export class ImportQuestionsService {
         optionB,
         optionC,
         optionD,
+        options,
         correctOptionKeys: this.parseCorrectOptionKeys(correctRaw),
         explanation,
         difficulty: difficultyRaw,
@@ -434,18 +439,20 @@ export class ImportQuestionsService {
     }
 
     if (row.questionType === "true_false") {
-      if (row.optionC?.trim() || row.optionD?.trim()) {
+      if (this.buildOptions(row).some((option) => !["A", "B"].includes(option.key))) {
         return { field: "options", message: "Câu hỏi đúng/sai chỉ được có đáp án A và B." };
       }
       if (!row.optionA?.trim() || !row.optionB?.trim()) {
         return { field: "options", message: "Câu hỏi đúng/sai phải có đáp án A (Đúng) và B (Sai)." };
       }
-    } else if (!row.optionA?.trim() || !row.optionB?.trim()) {
-      return { field: "options", message: "Phải có ít nhất đáp án A và B." };
     }
 
     const options = this.buildOptions(row);
     const optionKeys = new Set(options.map((o) => o.key));
+
+    if (options.length < 2) {
+      return { field: "options", message: "Phải có ít nhất 2 phương án có nội dung." };
+    }
 
     if (row.questionType === "true_false" && options.length !== 2) {
       return { field: "options", message: "Câu hỏi đúng/sai phải có đúng 2 lựa chọn." };
@@ -461,9 +468,6 @@ export class ImportQuestionsService {
     }
 
     for (const key of row.correctOptionKeys) {
-      if (!["A", "B", "C", "D"].includes(key)) {
-        return { field: "correctKey", message: "Đáp án đúng phải là A, B, C hoặc D." };
-      }
       if (!optionKeys.has(key)) {
         return { field: "correctKey", message: `Thiếu đáp án ${key} tương ứng với đáp án đúng.` };
       }
@@ -511,13 +515,36 @@ export class ImportQuestionsService {
   }
 
   private buildOptions(row: ImportRow) {
+    if (row.options) {
+      return row.options
+        .map((option) => ({ key: option.key, text: option.text.trim() }))
+        .filter((option) => option.text);
+    }
     const options = [
       { key: "A", text: row.optionA.trim() },
       { key: "B", text: row.optionB.trim() },
-    ];
+    ].filter((option) => option.text);
     if (row.optionC?.trim()) options.push({ key: "C", text: row.optionC.trim() });
     if (row.optionD?.trim()) options.push({ key: "D", text: row.optionD.trim() });
     return options;
+  }
+
+  private parseOptions(row: Record<string, string>): { key: string; text: string }[] {
+    const optionKeys = new Set<string>();
+    for (const header of Object.keys(row)) {
+      // Multi-letter labels require a prefix so metadata such as ID/URL isn't imported as an answer.
+      const match = /^option_([a-z]+)$|^Đáp án ([A-Z]+)$|^([A-Z])$/.exec(header);
+      const key = (match?.[1] ?? match?.[2] ?? match?.[3])?.toUpperCase();
+      if (key) optionKeys.add(key);
+    }
+
+    return [...optionKeys]
+      .sort((left, right) => left.length - right.length || left.localeCompare(right))
+      .map((key) => ({
+        key,
+        text: String(row[`option_${key.toLowerCase()}`] ?? row[`Đáp án ${key}`] ?? row[key] ?? "").trim(),
+      }))
+      .filter((option) => option.text);
   }
 
   private mapDifficulty(value?: string): "easy" | "medium" | "hard" {
