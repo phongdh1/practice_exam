@@ -7,6 +7,7 @@ import {
   type SubjectEditorFormValues,
 } from "@/components/subject-editor-form";
 import { adminApi } from "@/lib/admin-api";
+import { readCoverImage } from "@/lib/cover-image";
 import { toastApiError, toastApiSuccess } from "@/lib/admin-toast";
 import { queryKeys } from "@practice-exam/api-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -148,11 +149,9 @@ function EditSubjectContent() {
     setCoverUploadError(null);
     setUploadingCover(true);
     try {
-      const res = await adminApi.adminUploadLandingAsset(file);
-      const url = res.data?.url;
-      if (!url) throw new Error("Upload không trả về URL.");
+      const url = await readCoverImage(file);
       setForm((prev) => ({ ...prev, coverImageUrl: url }));
-      toastApiSuccess("Đã tải ảnh bìa");
+      toastApiSuccess("Đã chọn ảnh bìa. Nhấn Lưu thay đổi để lưu ảnh.");
     } catch (error) {
       setCoverUploadError(error instanceof Error ? error.message : "Tải ảnh thất bại.");
       toastApiError(error, "Tải ảnh bìa thất bại");

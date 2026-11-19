@@ -350,6 +350,40 @@ describe("SubjectsService", () => {
     );
   });
 
+  it("persists a base64 cover on create", async () => {
+    const coverImageUrl = "data:image/png;base64,aGVsbG8=";
+    mockPrisma.subject.create.mockResolvedValue({ id: "new-sub", coverImageUrl });
+
+    const result = await service.createSubject({
+      courseId: activeCourse.id,
+      code: "BASE64",
+      name: "Base64 cover",
+      monthlyAmountVnd: 100_000,
+      freeTierLimit: 20,
+      coverImageUrl,
+    });
+
+    expect(mockPrisma.subject.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ coverImageUrl }) }),
+    );
+    expect(result.coverImageUrl).toBe(coverImageUrl);
+  });
+
+  it("persists a replacement base64 cover on update", async () => {
+    const coverImageUrl = "data:image/webp;base64,aGVsbG8=";
+    mockPrisma.subject.update.mockResolvedValue({ id: "sub-1", coverImageUrl });
+
+    const result = await service.updateSubject("sub-1", { coverImageUrl });
+
+    expect(mockPrisma.subject.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "sub-1" },
+        data: expect.objectContaining({ coverImageUrl }),
+      }),
+    );
+    expect(result.coverImageUrl).toBe(coverImageUrl);
+  });
+
   it("persists coverImageUrl clear and isHot off on update", async () => {
     mockPrisma.subject.update.mockResolvedValue({ id: "sub-1" });
 

@@ -5,7 +5,11 @@ import type { SubjectGoLiveStatus } from "@practice-exam/types";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { CoverImagePreview } from "@/components/cover-image-preview";
-import { parseCoverImageUrlInput } from "@/lib/cover-image-url";
+import {
+  parseCoverImageInput,
+  COVER_IMAGE_ACCEPT,
+  COVER_IMAGE_MAX_BYTES,
+} from "@/lib/cover-image";
 
 export type SubjectEditorVisibility = "active" | "archived";
 
@@ -59,8 +63,8 @@ type SubjectEditorFormProps = {
 };
 
 const MIN_MONTHLY_AMOUNT_VND = 10_000;
-const COVER_ACCEPT = "image/jpeg,image/png,image/webp";
-const COVER_MAX_BYTES = 2 * 1024 * 1024;
+const COVER_ACCEPT = COVER_IMAGE_ACCEPT;
+const COVER_MAX_BYTES = COVER_IMAGE_MAX_BYTES;
 
 function parseFiniteNumber(raw: string): number | null {
   if (raw.trim() === "") return null;
@@ -242,7 +246,7 @@ export function SubjectEditorForm({
 
   const applyCoverUrlDraft = (raw: string) => {
     setCoverUrlDraft(raw);
-    const parsed = parseCoverImageUrlInput(raw);
+    const parsed = parseCoverImageInput(raw);
     if (!parsed.ok) {
       setCoverUrlError(parsed.error);
       return;
@@ -252,7 +256,7 @@ export function SubjectEditorForm({
   };
 
   const commitCoverUrlDraft = () => {
-    const parsed = parseCoverImageUrlInput(coverUrlDraft);
+    const parsed = parseCoverImageInput(coverUrlDraft);
     if (!parsed.ok) {
       setCoverUrlDraft(form.coverImageUrl ?? "");
       setCoverUrlError(null);
@@ -305,13 +309,13 @@ export function SubjectEditorForm({
 
   const handleCoverPick = async (file: File | undefined) => {
     setLocalCoverError(null);
-    if (!file || !onUploadCover) return;
+    if (!file || !onUploadCover || uploadingCover || saving || deleting) return;
     if (!COVER_ACCEPT.split(",").includes(file.type)) {
       setLocalCoverError("Chỉ chấp nhận ảnh JPEG, PNG hoặc WebP.");
       return;
     }
     if (file.size > COVER_MAX_BYTES) {
-      setLocalCoverError("Ảnh tối đa 2MB.");
+      setLocalCoverError("Ảnh tối đa 10MB.");
       return;
     }
     await onUploadCover(file);
@@ -323,7 +327,7 @@ export function SubjectEditorForm({
       onSubmit={(event) => {
         event.preventDefault();
         if (saving || deleting || uploadingCover || coverUrlError) return;
-        const parsed = parseCoverImageUrlInput(coverUrlDraft);
+        const parsed = parseCoverImageInput(coverUrlDraft);
         if (!parsed.ok) {
           setCoverUrlError(parsed.error);
           return;
@@ -665,7 +669,7 @@ export function SubjectEditorForm({
                 inputMode="url"
                 autoComplete="off"
                 placeholder="https://..."
-                value={coverUrlDraft}
+                value={coverUrlDraft.startsWith("data:") ? "" : coverUrlDraft}
                 disabled={uploadingCover || saving}
                 onChange={(event) => applyCoverUrlDraft(event.target.value)}
                 onBlur={commitCoverUrlDraft}
@@ -691,7 +695,7 @@ export function SubjectEditorForm({
               ) : null}
             </div>
             <p className="mt-3 text-center text-[10px] italic text-ink-muted">
-              Tỷ lệ khuyến nghị 16:9. Định dạng JPEG, PNG hoặc WebP (Tối đa 2MB)
+              Tỷ lệ khuyến nghị 16:9. Định dạng JPEG, PNG hoặc WebP (Tối đa 10MB)
             </p>
           </div>
 

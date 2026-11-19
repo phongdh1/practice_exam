@@ -4,7 +4,7 @@ import { MaterialIcon } from "@practice-exam/ui";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { CoverImagePreview } from "@/components/cover-image-preview";
-import { parseCoverImageUrlInput } from "@/lib/cover-image-url";
+import { parseCoverImageInput, COVER_IMAGE_ACCEPT, COVER_IMAGE_MAX_BYTES } from "@/lib/cover-image";
 
 export type CourseEditorVisibility = "active" | "archived";
 
@@ -36,8 +36,8 @@ type CourseEditorFormProps = {
   onDelete?: () => void;
 };
 
-const COVER_ACCEPT = "image/jpeg,image/png,image/webp";
-const COVER_MAX_BYTES = 5 * 1024 * 1024;
+const COVER_ACCEPT = COVER_IMAGE_ACCEPT;
+const COVER_MAX_BYTES = COVER_IMAGE_MAX_BYTES;
 
 function parseFiniteNumber(raw: string): number | null {
   if (raw.trim() === "") return null;
@@ -132,7 +132,7 @@ export function CourseEditorForm({
 
   const applyCoverUrlDraft = (raw: string) => {
     setCoverUrlDraft(raw);
-    const parsed = parseCoverImageUrlInput(raw);
+    const parsed = parseCoverImageInput(raw);
     if (!parsed.ok) {
       setCoverUrlError(parsed.error);
       return;
@@ -142,7 +142,7 @@ export function CourseEditorForm({
   };
 
   const commitCoverUrlDraft = () => {
-    const parsed = parseCoverImageUrlInput(coverUrlDraft);
+    const parsed = parseCoverImageInput(coverUrlDraft);
     if (!parsed.ok) {
       setCoverUrlDraft(form.coverImageUrl ?? "");
       setCoverUrlError(null);
@@ -192,7 +192,7 @@ export function CourseEditorForm({
       return;
     }
     if (file.size > COVER_MAX_BYTES) {
-      setLocalCoverError("Ảnh tối đa 5MB.");
+      setLocalCoverError("Ảnh tối đa 10MB.");
       return;
     }
     await onUploadCover(file);
@@ -207,7 +207,7 @@ export function CourseEditorForm({
       onSubmit={(event) => {
         event.preventDefault();
         if (saving || deleting || uploadingCover || coverUrlError) return;
-        const parsed = parseCoverImageUrlInput(coverUrlDraft);
+        const parsed = parseCoverImageInput(coverUrlDraft);
         if (!parsed.ok) {
           setCoverUrlError(parsed.error);
           return;
@@ -421,7 +421,7 @@ export function CourseEditorForm({
                 inputMode="url"
                 autoComplete="off"
                 placeholder="https://..."
-                value={coverUrlDraft}
+                value={coverUrlDraft.startsWith("data:") ? "" : coverUrlDraft}
                 disabled={uploadingCover || saving}
                 onChange={(event) => applyCoverUrlDraft(event.target.value)}
                 onBlur={commitCoverUrlDraft}
@@ -448,7 +448,7 @@ export function CourseEditorForm({
             </div>
 
             <p className="text-xs text-on-surface-variant">
-              Định dạng JPG, PNG hoặc WebP. Dung lượng tối đa 5MB.
+              Định dạng JPG, PNG hoặc WebP. Dung lượng tối đa 10MB.
             </p>
           </div>
         </div>

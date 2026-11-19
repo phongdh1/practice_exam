@@ -115,6 +115,34 @@ describe("CoursesService", () => {
     expect(result.visibility).toBe("archived");
   });
 
+  it("persists a base64 cover when creating a course", async () => {
+    const coverImageUrl = "data:image/png;base64,AQID";
+    mockPrisma.course.create.mockResolvedValueOnce({ ...mockCourses[1], coverImageUrl });
+    const result = await service.createCourse({ code: "inline", name: "Inline cover", coverImageUrl });
+    expect(mockPrisma.course.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ coverImageUrl }) }),
+    );
+    expect(result.coverImageUrl).toBe(coverImageUrl);
+  });
+
+  it("preserves, replaces and clears course cover images", async () => {
+    const coverImageUrl = "data:image/webp;base64,AQID";
+    mockPrisma.course.update.mockResolvedValueOnce({ ...mockCourses[0], coverImageUrl });
+    const result = await service.updateCourse("course-1", { coverImageUrl });
+    expect(result.coverImageUrl).toBe(coverImageUrl);
+    expect(mockPrisma.course.update).toHaveBeenLastCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ coverImageUrl }) }),
+    );
+    mockPrisma.course.update.mockResolvedValueOnce({ ...mockCourses[0], coverImageUrl });
+    await service.updateCourse("course-1", { name: "New name" });
+    expect(mockPrisma.course.update.mock.calls.at(-1)[0].data).not.toHaveProperty("coverImageUrl");
+    mockPrisma.course.update.mockResolvedValueOnce({ ...mockCourses[0], coverImageUrl: null });
+    await service.updateCourse("course-1", { coverImageUrl: null });
+    expect(mockPrisma.course.update).toHaveBeenLastCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ coverImageUrl: null }) }),
+    );
+  });
+
   it("archives and activates courses", async () => {
     mockPrisma.course.update.mockImplementation(async ({ data }: { data: { visibility: string } }) => ({
       ...mockCourses[0],
